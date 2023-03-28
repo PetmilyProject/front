@@ -20,24 +20,14 @@ const AddButtonScreen = () => null;
 const ContentTab = () => {
   return (
     <Tab.Navigator>
-      <Tab.Screen
-        name={ContentRoutes.HOME}
-        component={HomeScreen}
-      />
-      <Tab.Screen
-        name={ContentRoutes.LIST}
-        component={ListScreen}
-      />
+      <Tab.Screen name={ContentRoutes.HOME} component={HomeScreen} />
+      <Tab.Screen name={ContentRoutes.LIST} component={ListScreen} />
 
-      <Tab.Screen
-        name={'AddButton'}
-        component={AddButtonScreen}
-      />
+      <Tab.Screen name={'AddButton'} component={AddButtonScreen} />
 
-      <Tab.Screen
-        name={'SignInScreen'}
-        component={SignInScreen}
-      />
+      <Tab.Screen name={'SignInScreen'} component={SignInScreen} />
+
+      <Tab.Screen name={'Map'} component={MapScreen} />
     </Tab.Navigator>
   );
 };
