@@ -3,11 +3,11 @@ import AuthStack from './AuthStack';
 import ContentTab from './ContentTab';
 
 const Navigation = () => {
-    return (
-        <NavigationContainer>
-            {<ContentTab />}
-        </NavigationContainer>
-    );
+  return (
+    <NavigationContainer>
+      <AuthStack />
+    </NavigationContainer>
+  );
 };
 
 export default Navigation;

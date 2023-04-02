@@ -39,7 +39,7 @@ const ContentTab = () => {
             default:
               iconName = '';
               break;
-          }          
+          }
           return getTabBarIcon({ focused, color, size, name: iconName });
         },
       })}
