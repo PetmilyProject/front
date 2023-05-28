@@ -7,16 +7,17 @@ import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
 import { CarePetRoutes } from '../../../navigations/routes';
 
-const CarePetList = ({ navigation, content, subconst, onAddPress }) => {
+const CarePetList = ({ petName, onAddPress }) => {
   const [schdueltextColor, setSchduleTextColor] = useState(YELLOW.DARK);
   const [phototextColor, setPhotoTextColor] = useState(BLACK);
   const [rearertextColor, setRearerTextColor] = useState(BLACK);
-
+  
   const onSchdulePress = () => {
     setSchduleTextColor(YELLOW.DARK);
     setPhotoTextColor(BLACK);
     setRearerTextColor(BLACK);
   };
+
   const onPhotoPress = () => {
     setSchduleTextColor(BLACK);
     setPhotoTextColor(YELLOW.DARK);
@@ -32,6 +33,7 @@ const CarePetList = ({ navigation, content, subconst, onAddPress }) => {
       color: schdueltextColor,
     },
   });
+
   return (
     <View style={styles.container}>
       <View style={{ paddingRight: 60 }}>
@@ -44,7 +46,7 @@ const CarePetList = ({ navigation, content, subconst, onAddPress }) => {
           </View>
           <View style={styles.container_content}>
             <View style={styles.container_name}>
-              <Text style={styles.name}>이월이</Text>
+              <Text style={styles.name}>{petName}</Text>
             </View>
             <View style={styles.container_row}>
               <Pressable onPress={onSchdulePress}>

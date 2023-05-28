@@ -56,7 +56,12 @@ const MainCarePetScreen = ({ navigation, route }) => {
 
   const renderScreen = () => {
     if (content === '일정') {
-      return schdule === null ? <EmptySchduleScreen /> : <ScheduleListScreen petName={petName} />;
+      return schdule === null ? <EmptySchduleScreen /> : (
+        <View>
+          {/* <CarePetList petName={petName}  /> */}
+          <ScheduleListScreen petName={petName} />
+        </View>
+      );
     } else if (content === '사진첩') {
       return photo === null ? (
         <EmptyPhotoSceen />
@@ -71,10 +76,10 @@ const MainCarePetScreen = ({ navigation, route }) => {
       return null; // Return null or another default screen/component if needed
     }
   };
-
+  
   return (
     <View style={styles.container}>
-      <CarePetList onAddPress={onAddPress} />
+      <CarePetList petName={petName} onAddPress={onAddPress} />
       <View style={styles.container2}>{renderScreen()}</View>
     </View>
   );
