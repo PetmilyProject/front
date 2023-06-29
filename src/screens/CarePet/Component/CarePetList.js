@@ -43,11 +43,7 @@ const CarePetList = ({
       color: schedueltextColor,
     },
   });
-<<<<<<< HEAD
-
-=======
-  console.log(petName);
->>>>>>> 101a65ebc82092193844c2359d94a74aaee1b83a
+  
   return (
     <View style={styles.container}>
       <View style={{ paddingRight: 60 }}>
