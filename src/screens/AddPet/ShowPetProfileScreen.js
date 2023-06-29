@@ -5,10 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 import EmptyPetProfileScreen from './EmptyPetProfileScreen';
 import PetProfileListScreen from './PetProfileListScreen';
 
-const ShowPetProfileScreen = () => {
+const ShowPetProfileScreen = (petName) => {
   const [petProfiles, setPetProfiles] = useState([]);
   const navigation = useNavigation();
-
   useEffect(() => {
     const fetchPetProfiles = async () => {
       try {

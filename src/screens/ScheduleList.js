@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function ScheduleList() {
+function ScheduleList(petName) {
   const [responseData, setResponseData] = useState([]);
 
   // 서버에서 일정 데이터를 가져오는 비동기 함수
@@ -20,7 +20,7 @@ function ScheduleList() {
           .then((token) => {
             axios
               .get(
-                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${inviter}/초코`,
+                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${inviter}/${petName}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,

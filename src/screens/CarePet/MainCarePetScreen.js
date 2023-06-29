@@ -35,7 +35,8 @@ const MainCarePetScreen = ({ navigation, route }) => {
 
   const onAddPress = () => {
     if (content === '일정') {
-      navigation.navigate(CarePetRoutes.ADD_SCHDULE);
+      console.log("펫 : " + petName)
+      navigation.navigate(CarePetRoutes.ADD_SCHDULE, petName);
     } else if (content === '사진첩') {
       navigation.navigate(CarePetRoutes.ADD_PHOTO);
     }
