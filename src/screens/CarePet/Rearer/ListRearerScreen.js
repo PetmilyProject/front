@@ -1,7 +1,11 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 
 const ListRearerScreen = () => {
-  return <View>양육자 리스트</View>;
+  return (
+    <View>
+      <Text>양육자 리스트</Text>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

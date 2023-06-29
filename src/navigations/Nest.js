@@ -8,7 +8,7 @@ import FirstScreen from '../screens/FirstScreen';
 import AddScheduleScreen from '../screens/CarePet/Schdule/AddScheduleScreen';
 import EmptyPetProfileScreen from '../screens/AddPet/EmptyPetProfileScreen';
 import PetRegisterScreen from '../screens/AddPet/PetRegisterScreen';
-import { AddPetRoutes, CarePetRoutes } from './routes';
+import { AddPetRoutes, CarePetRoutes, UserInfoRoutes } from './routes';
 import PetProfileListScreen from '../screens/AddPet/PetProfileListScreen';
 import PetMainScreen from '../screens/PetMainScreen';
 import EmptySchduleScreen from '../screens/CarePet/Schdule/EmptySchduleScreen';
@@ -18,13 +18,12 @@ import ViewPhotoScreen from '../screens/CarePet/Photo/ViewPhotoScreen';
 import EmptyPhotoSceen from '../screens/CarePet/Photo/EmptyPhotoScreen';
 import ListPhotoScreen from '../screens/CarePet/Photo/ListPhotoScreen';
 import ViewCalender from '../screens/Calender/ViewCalender';
-import ShowPetProfileScreen from '../screens/AddPet/ShowPetProfileScreen';
 import { Ionicons } from '@expo/vector-icons';
+import WithdrawalScreen from '../screens/CarePet/Schdule/WithdrawalScreen';
+
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
-const AlbumStack = createStackNavigator();
 const SignInStack = createStackNavigator();
-const AddPetScheduleStack = createStackNavigator();
 const UserInfoStack = createStackNavigator();
 
 export const AuthContext = createContext();
@@ -58,11 +57,18 @@ const AddPetStackScreen = () => {
         component={PetProfileListScreen}
         options={{ title: '메인' }}
       />
+      {/* RegisterPet */}
+      <AddPetStack.Screen
+        name={AddPetRoutes.REGISTER}
+        component={PetRegisterScreen}
+        options={{ title: '펫정보' }}
+      />
       {/* Care Pet */}
       <AddPetStack.Screen
         name={CarePetRoutes.MAIN_CARE_PET}
         component={MainCarePetScreen}
-        options={{ title: '일정등록' }}
+        options={{ headerShown: false }}
+        // options={{ title: '일정등록' }}
       />
       {/* Care Pet - 일정 */}
       <AddPetStack.Screen
@@ -73,7 +79,8 @@ const AddPetStackScreen = () => {
       <AddPetStack.Screen
         name={CarePetRoutes.ADD_SCHDULE}
         component={AddScheduleScreen}
-        options={{ headerShown: false }}
+        options={{ title: '일정등록' }}
+        // options={{ headerShown: false }}
       />
       {/* Care Pet - 사진첩 */}
       <AddPetStack.Screen
@@ -101,51 +108,18 @@ const AddPetStackScreen = () => {
   );
 };
 
-const AlbumStackScreen = () => {
-  return (
-    <AlbumStack.Navigator>
-      <AlbumStack.Screen
-        name={CarePetRoutes.ADD_PHOTO}
-        component={AddphotoScreen}
-      />
-      <AlbumStack.Screen
-        name={CarePetRoutes.VIEW_PHOTO}
-        component={ViewPhotoScreen}
-      />
-    </AlbumStack.Navigator>
-  );
-};
-
-const AddPetScheduleStackScreen = () => {
-  return (
-    <AddPetScheduleStack.Navigator>
-      {/* <AddPetScheduleStack.Screen
-        name="schedulescreen"
-        component={PetMainScreen}
-        options={{ title: '펫일정' }}
-      /> */}
-      <AddPetScheduleStack.Screen
-        name="펫 일정"
-        component={PetMainScreen}
-        options={{ headerShown: false }}
-      />
-      <AddPetScheduleStack.Screen
-        name="AddPetSchedule"
-        component={AddScheduleScreen}
-        options={{ title: '일정 추가' }}
-      />
-    </AddPetScheduleStack.Navigator>
-  );
-};
-
 const UserInfoStackScreen = () => {
   return (
     <UserInfoStack.Navigator>
       <UserInfoStack.Screen
-        name="내 정보"
+        name={UserInfoRoutes.MAIN_USER}
         component={UserInfoScreen}
         options={{ title: '내 정보' }}
-        // options={{ headerShown: false }}
+      />
+      <UserInfoStack.Screen
+        name={UserInfoRoutes.WITHDRAWAL}
+        component={WithdrawalScreen}
+        options={{ title: '계정삭제' }}
       />
     </UserInfoStack.Navigator>
   );
@@ -190,27 +164,26 @@ const TabStackScreen = () => {
           tabBarIcon: ({ color, size }) => {
             let iconName;
 
-            if (route.name === '메인') {
-              iconName = 'home-outline'; // 메인 아이콘의 이름
-            } else if (route.name === '캘린더') {
-              iconName = 'calendar-outline'; // 캘린더 아이콘의 이름
+            if (route.name === '캘린더') {
+              iconName = 'calendar'; // 메인 아이콘의 이름
+            } else if (route.name === '메인') {
+              iconName = 'home'; // 캘린더 아이콘의 이름
             } else if (route.name === '커뮤니티') {
-              iconName = 'chatbubbles-outline'; // 커뮤니티 아이콘의 이름
+              iconName = 'chatbubbles'; // 커뮤니티 아이콘의 이름
             } else if (route.name === '내정보') {
-              iconName = 'person-outline'; // 내정보 아이콘의 이름
+              iconName = 'person'; // 내정보 아이콘의 이름
             }
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
         })}
       >
+        <TabStack.Screen name="캘린더" component={ViewCalender} />
         <TabStack.Screen
           name="메인"
           component={AddPetStackScreen}
           options={{ headerShown: false }}
         />
-        {/* <TabStack.Screen name="펫정보" component={HomeScreen} /> */}
-        <TabStack.Screen name="캘린더" component={ViewCalender} />
 
         {
           <TabStack.Screen

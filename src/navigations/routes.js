@@ -31,3 +31,8 @@ export const CarePetRoutes = {
   LIST_PHOTO: 'ListPhotoScreen',
   VIEW_PHOTO: 'ViewPhotoScreen',
 };
+
+export const UserInfoRoutes = {
+  MAIN_USER: 'UserInfoScreen',
+  WITHDRAWAL: 'WithdrawalScreen',
+};

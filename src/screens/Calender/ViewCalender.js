@@ -48,6 +48,36 @@ const ViewCalender = () => {
     </TouchableOpacity>
   );
 
+  const renderRecurringItems = () => {
+    // 반복 일정 데이터를 만들고 FlatList로 렌더링합니다.
+    const recurringData = [
+      { id: 1, schedule: '반복 일정 1', hm: '10:00 AM' },
+      { id: 2, schedule: '반복 일정 2', hm: '02:00 PM' },
+      { id: 3, schedule: '반복 일정 3', hm: '06:00 PM' },
+    ];
+    return (
+      <View>
+        <Text
+          style={{
+            marginLeft: 10,
+            marginTop: 20,
+            fontSize: 18,
+            color: YELLOW.DEFAULT,
+            fontWeight: '700',
+          }}
+        >
+          반복 일정
+        </Text>
+        <FlatList
+          data={recurringData}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          style={styles.container2}
+        />
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Calendar style={styles.calendar} />
@@ -69,6 +99,7 @@ const ViewCalender = () => {
           keyExtractor={(item) => item.id.toString()}
           style={styles.container2}
         />
+        {renderRecurringItems()}
       </View>
     </View>
   );

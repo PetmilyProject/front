@@ -10,9 +10,6 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ScheduleList() {
-  const [scheduleData, setScheduleData] = useState([]);
-  const [hm, setHm] = useState('');
-  const [inviter, setInviter] = useState('');
   const [responseData, setResponseData] = useState([]);
 
   // 서버에서 일정 데이터를 가져오는 비동기 함수
@@ -63,10 +60,6 @@ function ScheduleList() {
         keyExtractor={(item) => item.id.toString()}
         style={styles.container}
       />
-      {/* responseData 출력 */}
-      {/* {responseData.map((item, index) => (
-        <Text key={index}>{item.schedule}</Text>
-      ))} */}
     </View>
   );
 }

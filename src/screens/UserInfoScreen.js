@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import WithdrawalScreen from './CarePet/Schdule/WithdrawalScreen';
 import { AuthContext } from '../navigations/Nest';
 import FirstScreen from './FirstScreen';
 import * as Update from 'expo-updates';
@@ -65,39 +66,40 @@ const UserInfoScreen = () => {
     }
   };
 
+  // 회원탈퇴 함수
+  const handleWithdrawal = async () => {
+    navigation.navigate('WithdrawalScreen');
+  };
+
   return (
     <View style={styles.container}>
-      {/* 강아지 사진과 이름 */}
-      <View style={styles.topContainer}>
+      {/* 강아지 사진 */}
+      <View style={styles.imageContainer}>
         <Image
           style={styles.dogImage}
           source={require('../assets/pet_icon.png')}
         />
-        <View>
-          <Text style={styles.labelText}>이메일</Text>
-          <Text style={styles.valueText}>{email}</Text>
-        </View>
-        <View>
-          <Text style={styles.labelText}>닉네임</Text>
-          <Text style={styles.valueText}>{userName}</Text>
-        </View>
       </View>
 
-      {/* 등록된 양육자와 사진 */}
-      <View style={styles.userContainer}>
-        <Text> 등록된 양육자 </Text>
-        <Image
-          style={styles.userImage}
-          source={require('../assets/defaultimage.png')}
-        />
+      {/* 이메일과 닉네임 */}
+      <View style={styles.infoContainer}>
+        <View style={styles.infoRow}>
+          <Text style={styles.nicknameText}>{userName}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.emailText}>{email}</Text>
+        </View>
       </View>
 
       {/* 로그아웃과 회원탈퇴 버튼 */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleLogout}>
+        <TouchableOpacity style={styles.button1}>
+          <Text style={styles.buttonText}>양육자 초기화</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button1} onPress={handleLogout}>
           <Text style={styles.buttonText}>로그아웃</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button2} onPress={handleWithdrawal}>
           <Text style={styles.buttonText}>회원탈퇴</Text>
         </TouchableOpacity>
       </View>
@@ -112,35 +114,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
     paddingTop: 50,
   },
-  topContainer: {
-    alignItems: 'center',
+  imageContainer: {
+    marginBottom: 20,
+  },
+  infoRow: {
     flexDirection: 'row',
+    marginBottom: 20,
   },
   dogImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
   },
-  labelText: {
-    fontSize: 17,
+
+  nicknameText: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginLeft: 10,
+    textAlign: 'center',
+    marginLeft: 45,
   },
-  valueText: {
+  emailText: {
     fontSize: 15,
     fontWeight: 'bold',
     marginLeft: 10,
   },
-  userContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 30,
-  },
-  userImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
+
   userText: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -149,18 +147,27 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 50,
   },
-  button: {
-    backgroundColor: '#2196F3',
-    padding: 10,
-    borderRadius: 5,
+  button1: {
+    backgroundColor: '#FFCC33',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 50,
     marginVertical: 10,
-    width: 200,
+    width: 300,
+    alignItems: 'center',
+  },
+  button2: {
+    backgroundColor: '#999999',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 50,
+    marginVertical: 10,
+    width: 300,
     alignItems: 'center',
   },
   buttonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: 'black',
+    fontSize: 14,
   },
 });
 

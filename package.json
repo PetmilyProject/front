@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/vector-icons": "^13.0.0",
     "@react-native-async-storage/async-storage": "^1.18.1",
     "@react-native-community/datetimepicker": "6.7.3",
     "@react-native-community/masked-view": "^0.1.11",
@@ -42,8 +43,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-svg": "^13.9.0",
     "react-native-vector-icons": "^9.2.0",
-    "reactotron-react-native": "^5.0.3",
-    "@expo/vector-icons": "^13.0.0"
+    "reactotron-react-native": "^5.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

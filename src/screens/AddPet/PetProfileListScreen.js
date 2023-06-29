@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ScrollView, StyleSheet, Text, View, Image } from 'react-native';
-import ComponentAMD from '../../components/ComponentAMD';
+import ComponentAMD2 from '../../components/ComponentAMD2';
 import PetProfile from '../../components/AddPet/PetProfile';
 import { useRoute } from '@react-navigation/native';
 import { AddPetRoutes, CarePetRoutes } from '../../navigations/routes';
 import { nanoid } from 'nanoid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PetRegisterScreen from './PetRegisterScreen';
 
-const PetProfileListScreen = ({ navigation }) => {
+const PetProfileListScreen = ({ navigation, AddPress }) => {
   const route = useRoute();
   const [petProfiles, setPetProfiles] = useState([]);
   var petProfiles2 = [];
@@ -51,7 +52,7 @@ const PetProfileListScreen = ({ navigation }) => {
     fetchData();
   }, []);
 
-  const AddPress = () => {
+  const handleAddPress = () => {
     navigation.navigate(AddPetRoutes.REGISTER);
   };
 
@@ -76,7 +77,7 @@ const PetProfileListScreen = ({ navigation }) => {
   return (
     <>
       <View style={styles.container}>
-        <ComponentAMD onPress={AddPress} navigation={navigation} />
+        <ComponentAMD2 onPress={handleAddPress} />
       </View>
 
       <ScrollView style={styles.scroll}>

@@ -8,17 +8,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddScheduleScreen = ({ navigation, route }) => {
   const [schedule, setSchedule] = useState('');
+  const [time, setTime] = useState('');
   const [date, setDate] = useState('');
-  const [hm, setHm] = useState('');
   const [repeat, setRepeat] = useState('');
-  const [alarm, setAlarm] = useState(false);
   const [inviter, setInviter] = useState('');
-  const [petName, setPetName] = useState('');
+  const [alarm, setAlarm] = useState(false);
 
   const handleScheduleSubmit = () => {
-    setPetName('초코');
-
-    // 서버에 일정 데이터를 POST 요청으로 보냄
     AsyncStorage.getItem('inviter')
       .then((inviter) => {
         AsyncStorage.getItem('token')
@@ -30,26 +26,24 @@ const AddScheduleScreen = ({ navigation, route }) => {
                     `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${inviter}/${petName}`,
                     {
                       schedule: schedule,
+                      time: time,
                       date: date,
-                      hm: hm,
+                      repeat: repeat,
                       inviter: inviter,
                       petName: petName,
+                    },
+                    {
                       headers: {
                         Authorization: `Bearer ${token}`,
                       },
                     }
                   )
                   .then((response) => {
-                    // 요청에 성공한 경우 처리 로직 작성
-                    setSchedule(response.data.schedule);
-                    setDate(response.data.date);
-                    setHm(response.data.hm);
-
+                    // Handle the successful response here
                     console.log(response.data);
                   })
                   .catch((error) => {
-                    // 요청에 실패한 경우 에러 처리
-                    console.log(inviter, petName);
+                    // Handle the error here
                     console.error(error);
                   });
               })
@@ -68,20 +62,32 @@ const AddScheduleScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      {/* 일정 */}
+      {/* Schedule */}
       <View style={styles.box}>
         <Text style={styles.title}>일정</Text>
         <TextInput
-          placeholder="일정추가"
+          placeholder="ex) 밥먹기"
           value={schedule}
           onChangeText={setSchedule}
           style={styles.input}
         />
       </View>
 
-      {/* 날짜 */}
+      {/* Time */}
       <View style={styles.box}>
-        <Text style={styles.title}>날짜</Text>
+        <Text style={styles.title}>시간</Text>
+        <View style={styles.inputBox}>
+          <TimePicker
+            selectedTime={time}
+            onTimeChange={setTime}
+            style={styles.input}
+          />
+        </View>
+      </View>
+
+      {/* Date */}
+      <View style={styles.box}>
+        <Text style={styles.title}>일자</Text>
         <View style={styles.inputBox}>
           <DatePicker
             selectedDate={date}
@@ -91,43 +97,42 @@ const AddScheduleScreen = ({ navigation, route }) => {
         </View>
       </View>
 
-      {/* 시간 */}
+      {/* Repeat */}
       <View style={styles.box}>
-        <Text style={styles.title}>시간</Text>
-        <View style={styles.inputBox}>
-          <TimePicker
-            selectedTime={hm}
-            onTimeChange={setHm}
-            style={styles.input}
-          />
-        </View>
-      </View>
-
-      {/* 반복 */}
-      {/* <View style={styles.box}>
         <Text style={styles.title}>반복</Text>
         <TextInput
-          placeholder="반복"
+          placeholder="7일 1회"
           value={repeat}
           onChangeText={setRepeat}
           style={styles.input}
         />
-      </View> */}
+      </View>
 
-      {/* 알림 */}
-      {/* <View style={styles.box}>
+      {/* Inviter */}
+      <View style={styles.box}>
+        <Text style={styles.title}>수행자</Text>
+        <TextInput
+          placeholder="Inviter"
+          value={inviter}
+          onChangeText={setInviter}
+          style={styles.input}
+        />
+      </View>
+
+      {/* Alarm */}
+      <View style={styles.box}>
         <Text style={styles.title}>알림</Text>
         <View style={styles.inputBox}>
           <Pressable onPress={() => setAlarm(!alarm)}>
-            <Text>{alarm ? '켜짐' : '꺼짐'}</Text>
+            <Text>{alarm ? 'On' : 'Off'}</Text>
           </Pressable>
         </View>
-      </View> */}
+      </View>
 
-      {/* 등록 버튼 */}
-      <Button title="등록" onPress={handleScheduleSubmit} />
+      {/* Submit Button */}
+      <Button title="등록하기" onPress={handleScheduleSubmit} />
 
-      {/* 구분선 */}
+      {/* Separator */}
       <View style={styles.separator} />
     </View>
   );
@@ -141,9 +146,13 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   box: {
-    flex: 1, // 각 항목의 박스 크기를 동일하게 설정
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    borderRadius: 100, // Set borderRadius to half the size of the box
+    width: 300, // Set the desired width of the box
+    height: 200, // Set the desired height of the box
+    marginVertical: 10, // Adjust the vertical margin as needed
   },
   title: {
     marginRight: 10,
