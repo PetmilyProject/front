@@ -21,7 +21,7 @@ const PetProfileListScreen = ({ navigation }) => {
   const onPress = (petName) => {
     navigation.navigate(CarePetRoutes.MAIN_CARE_PET, petName);
   };
-  
+
   //펫 계정 수정 삭제
   const handleLongPressed = () => {
     console.log('길게누르기');

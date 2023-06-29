@@ -33,7 +33,7 @@ const CarePetList = ({ petName, onAddPress }) => {
       color: schdueltextColor,
     },
   });
-
+  console.log(petName);
   return (
     <View style={styles.container}>
       <View style={{ paddingRight: 60 }}>

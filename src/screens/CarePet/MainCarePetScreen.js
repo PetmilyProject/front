@@ -56,9 +56,10 @@ const MainCarePetScreen = ({ navigation, route }) => {
 
   const renderScreen = () => {
     if (content === '일정') {
-      return schdule === null ? <EmptySchduleScreen /> : (
+      return schdule === null ? (
+        <EmptySchduleScreen />
+      ) : (
         <View>
-          {/* <CarePetList petName={petName}  /> */}
           <ScheduleListScreen petName={petName} />
         </View>
       );

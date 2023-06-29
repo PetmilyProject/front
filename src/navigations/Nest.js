@@ -19,7 +19,7 @@ import EmptyPhotoSceen from '../screens/CarePet/Photo/EmptyPhotoScreen';
 import ListPhotoScreen from '../screens/CarePet/Photo/ListPhotoScreen';
 import ViewCalender from '../screens/Calender/ViewCalender';
 import ShowPetProfileScreen from '../screens/AddPet/ShowPetProfileScreen';
-
+import { Ionicons } from '@expo/vector-icons';
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
 const AlbumStack = createStackNavigator();
@@ -62,7 +62,7 @@ const AddPetStackScreen = () => {
       <AddPetStack.Screen
         name={CarePetRoutes.MAIN_CARE_PET}
         component={MainCarePetScreen}
-        options={{ headerShown: false }}
+        options={{ title: '일정등록' }}
       />
       {/* Care Pet - 일정 */}
       <AddPetStack.Screen
@@ -185,7 +185,25 @@ const TabStackScreen = () => {
 
   return (
     <AuthContext.Provider value={authContext}>
-      <TabStack.Navigator>
+      <TabStack.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, size }) => {
+            let iconName;
+
+            if (route.name === '메인') {
+              iconName = 'home-outline'; // 메인 아이콘의 이름
+            } else if (route.name === '캘린더') {
+              iconName = 'calendar-outline'; // 캘린더 아이콘의 이름
+            } else if (route.name === '커뮤니티') {
+              iconName = 'chatbubbles-outline'; // 커뮤니티 아이콘의 이름
+            } else if (route.name === '내정보') {
+              iconName = 'person-outline'; // 내정보 아이콘의 이름
+            }
+
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
+      >
         <TabStack.Screen
           name="메인"
           component={AddPetStackScreen}
