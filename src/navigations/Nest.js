@@ -178,20 +178,18 @@ const TabStackScreen = () => {
           },
         })}
       >
-        <TabStack.Screen name="캘린더" component={ViewCalender} />
         <TabStack.Screen
           name="메인"
           component={AddPetStackScreen}
           options={{ headerShown: false }}
         />
-
-        {
-          <TabStack.Screen
-            name="커뮤니티"
-            component={ListPhotoScreen}
-            options={{ headerShown: false }}
-          />
-        }
+        <TabStack.Screen name="캘린더" component={ViewCalender} />
+        
+        <TabStack.Screen
+          name="커뮤니티"
+          component={ListPhotoScreen}
+          //options={{ headerShown: false }}
+        />
 
         <TabStack.Screen
           name="내정보"

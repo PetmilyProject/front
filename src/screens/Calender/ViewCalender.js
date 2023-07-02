@@ -1,45 +1,79 @@
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { WHITE, YELLOW } from '../../colors';
 import { color } from 'react-native-reanimated';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native';
 
 const ViewCalender = () => {
+  var petData;
+  const [myPets, setMyPets] = useState([]);
   const [responseData, setResponseData] = useState([]);
+  const [petSchedules, setPetSchedules] = useState([]);
+  const [currentPetIndex, setCurrentPetIndex] = useState(0); // 현재 선택된 펫 인덱스
+
   // 서버에서 일정 데이터를 가져오는 비동기 함수
   useEffect(() => {
-    AsyncStorage.getItem('schedule')
-      .then((inviter) => {
-        AsyncStorage.getItem('token')
-          .then((token) => {
-            axios
-              .get(
-                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${inviter}/초코`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              )
-              .then((response) => {
-                // console.log(response.data[1].schedule);
-                setResponseData(response.data);
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    async function getPetData() {
+      try {
+        const email = await AsyncStorage.getItem('email');
+        const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/get-all/${email}`;
+
+        const response = await axios.get(url);
+        petData = response.data;
+
+        var petScheduleUrl = [];
+        setMyPets([]);
+
+        petData.map((pet) => {
+          setMyPets((prevPets) => [...prevPets, pet.petName]);
+          petScheduleUrl.push(
+            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${email}/${pet.petName}`
+          );
+        });
+
+        // 이전 내용이 들어가므로 그 부분을 삭제해줌
+        petSchedules.splice(0, petSchedules.length);
+
+        for (let i = 0; i < petScheduleUrl.length; i++) {
+          const scheduleResponse = await axios.get(petScheduleUrl[i]);
+          const scheduledata = scheduleResponse.data;
+
+          petSchedules.push(scheduledata);
+        }
+        
+        console.log(petSchedules);
+        // petSchedules를 업데이트합니다.
+        setPetSchedules([...petSchedules]);
+      } catch (error) {
+        console.log('펫 정보를 받지 못했습니다.');
+      }
+    }
+    getPetData();
   }, []);
+
+  const handlePreviousPet = () => {
+    setCurrentPetIndex((prevIndex) => {
+      if (prevIndex > 0) {
+        return prevIndex - 1;
+      } else {
+        return myPets.length - 1;
+      }
+    });
+  };
+
+  const handleNextPet = () => {
+    setCurrentPetIndex((prevIndex) => {
+      if (prevIndex < myPets.length - 1) {
+        return prevIndex + 1;
+      } else {
+        return 0;
+      }
+    });
+  };
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.scheduleItem}>
@@ -79,29 +113,47 @@ const ViewCalender = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Calendar style={styles.calendar} />
-      <View>
-        <Text
-          style={{
-            marginLeft: 10,
-            marginTop: 20,
-            fontSize: 18,
-            color: YELLOW.DEFAULT,
-            fontWeight: '700',
-          }}
-        >
-          예정된 일정
-        </Text>
-        <FlatList
-          data={responseData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-          style={styles.container2}
-        />
+    <ScrollView>
+      <View style={styles.container}>
+        <Calendar style={styles.calendar} />
+        <View>
+          <Text
+            style={{
+              marginLeft: 10,
+              marginTop: 20,
+              marginBottom: 30,
+              fontSize: 18,
+              color: YELLOW.DEFAULT,
+              fontWeight: '700',
+            }}
+          >
+            예정된 일정
+          </Text>
+          <View style={styles.petNavigation}>
+            <TouchableOpacity onPress={handlePreviousPet}>
+              <Text style={styles.navigationText}>&lt;</Text>
+            </TouchableOpacity>
+            <Text style={styles.petName}>{myPets[currentPetIndex]}</Text>
+            <TouchableOpacity onPress={handleNextPet}>
+              <Text style={styles.navigationText}>&gt;</Text>
+            </TouchableOpacity>
+          </View>
+          {petSchedules[currentPetIndex] &&
+            petSchedules[currentPetIndex].map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.scheduleItem}
+                onPress={() => handlePress(item)}
+              >
+                <Text style={styles.details}>{item.schedule}</Text>
+                <Text style={styles.time}>{item.hm}</Text>
+              </TouchableOpacity>
+            ))}
+        </View>
+
         {renderRecurringItems()}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -134,6 +186,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 120,
+  },
+  petNavigation: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
+    marginBottom: 10,
+  },
+  navigationText: {
+    fontSize: 24,
+    color: 'gray',
+  },
+  petName: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
