@@ -30,6 +30,7 @@ export const CarePetRoutes = {
   ADD_PHOTO: 'AddPhotoScreen',
   LIST_PHOTO: 'ListPhotoScreen',
   VIEW_PHOTO: 'ViewPhotoScreen',
+  DETAIL_PHOTO: 'DetailPhotoScreen',
 };
 
 export const UserInfoRoutes = {

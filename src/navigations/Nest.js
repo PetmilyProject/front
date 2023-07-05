@@ -20,11 +20,13 @@ import ListPhotoScreen from '../screens/CarePet/Photo/ListPhotoScreen';
 import ViewCalender from '../screens/Calender/ViewCalender';
 import { Ionicons } from '@expo/vector-icons';
 import WithdrawalScreen from '../screens/CarePet/Schdule/WithdrawalScreen';
+import DetailPhotoScreen from '../screens/CarePet/Photo/DetailPhotoScreen';
 
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
 const SignInStack = createStackNavigator();
 const UserInfoStack = createStackNavigator();
+const PhotoStack = createStackNavigator();
 
 export const AuthContext = createContext();
 export const PetContext = createContext();
@@ -82,31 +84,44 @@ const AddPetStackScreen = () => {
         options={{ title: '일정등록' }}
         // options={{ headerShown: false }}
       />
-      {/* Care Pet - 사진첩 */}
-      <AddPetStack.Screen
-        name={CarePetRoutes.EMPTY_PHOTO}
-        component={EmptyPhotoSceen}
-        options={{ headerShown: false }}
-      />
-      <AddPetStack.Screen
-        name={CarePetRoutes.LIST_PHOTO}
-        component={ListPhotoScreen}
-        options={{ headerShown: false }}
-      />
-      <AddPetStack.Screen
-        name={CarePetRoutes.ADD_PHOTO}
-        component={AddphotoScreen}
-        options={{ title: '사진등록' }}
-      />
-      <AddPetStack.Screen
-        name={CarePetRoutes.VIEW_PHOTO}
-        component={ViewPhotoScreen}
-        options={{ title: '사진상세' }}
-      />
+      
       <AddPetStack.Screen name="PetMain" component={UserInfoScreen} />
     </AddPetStack.Navigator>
   );
 };
+
+const PhotoStackScreen = () => {
+  return (
+    <PhotoStack.Navigator>
+      {/* Care Pet - 사진첩 */}
+      {/* <PhotoStack.Screen
+        name={CarePetRoutes.EMPTY_PHOTO}
+        component={EmptyPhotoSceen}
+        options={{ headerShown: false }}
+      /> */}
+      <PhotoStack.Screen
+        name={CarePetRoutes.LIST_PHOTO}
+        component={ListPhotoScreen}
+        options={{ headerShown: false }}
+      />
+      <PhotoStack.Screen
+        name={CarePetRoutes.ADD_PHOTO}
+        component={AddphotoScreen}
+        options={{ title: '사진등록' }}
+      />
+      <PhotoStack.Screen
+        name={CarePetRoutes.VIEW_PHOTO}
+        component={ViewPhotoScreen}
+        options={{ title: '사진상세' }}
+      />
+      <PhotoStack.Screen 
+        name={CarePetRoutes.DETAIL_PHOTO}
+        component={DetailPhotoScreen}
+        options={{ headerShown: false }}
+      />
+    </PhotoStack.Navigator>
+  );
+}
 
 const UserInfoStackScreen = () => {
   return (
@@ -187,7 +202,7 @@ const TabStackScreen = () => {
         
         <TabStack.Screen
           name="커뮤니티"
-          component={ListPhotoScreen}
+          component={PhotoStackScreen}
           //options={{ headerShown: false }}
         />
 

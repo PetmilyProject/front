@@ -8,6 +8,7 @@ import { AddPetRoutes, CarePetRoutes } from '../../navigations/routes';
 import { nanoid } from 'nanoid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PetRegisterScreen from './PetRegisterScreen';
+import DetailPhotoScreen from '../CarePet/Photo/DetailPhotoScreen';
 
 const PetProfileListScreen = ({ navigation, AddPress }) => {
   const route = useRoute();
