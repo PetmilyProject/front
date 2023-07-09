@@ -16,7 +16,7 @@ import { useRoute } from '@react-navigation/native';
 
 const MainCarePetScreen = ({ navigation, route }) => {
   const petName = route.params;
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState('일정');
   const [schdule, setSchdule] = useState('');
   const [health, setHealth] = useState(null);
   const [photo, setPhoto] = useState(true);
@@ -35,7 +35,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
 
   const onAddPress = () => {
     if (content === '일정') {
-      console.log("펫 : " + petName)
+      //console.log("펫 : " + petName)
       navigation.navigate(CarePetRoutes.ADD_SCHDULE, petName);
     } else if (content === '사진첩') {
       navigation.navigate(CarePetRoutes.ADD_PHOTO);

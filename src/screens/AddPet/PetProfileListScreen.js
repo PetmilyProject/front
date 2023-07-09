@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ScrollView, StyleSheet, Text, View, Image } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Image, RefreshControl } from 'react-native';
 import ComponentAMD2 from '../../components/ComponentAMD2';
 import PetProfile from '../../components/AddPet/PetProfile';
 import { useRoute } from '@react-navigation/native';
@@ -19,6 +19,8 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   var id;
   var petData;
   var cnt = 0;
+  const [refreshing, setRefreshing] = useState(false);
+
   //petcare 이동
   const onPress = (petName) => {
     //console.log("너의 이름은 : ", petName);
@@ -30,26 +32,27 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
     console.log('길게누르기');
   };
 
+  const fetchData = async () => {
+    try {
+      const email = await AsyncStorage.getItem('email');
+      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${email}`;
+
+      const response = await axios.get(url);
+      const userData = response.data;
+
+      petData = userData.pets;
+      //inviter = userData.inviter;
+      setPetProfiles(petData);
+      petData.forEach(function (pet) {
+        petProfiles2.push(pet);
+        getImageUrl(pet.inviter, pet.id);
+      });
+    } catch (error) {
+      console.log('Error fetching pet data:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const email = await AsyncStorage.getItem('email');
-        const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${email}`;
-
-        const response = await axios.get(url);
-        const userData = response.data;
-
-        petData = userData.pets;
-        //inviter = userData.inviter;
-        setPetProfiles(petData);
-        petData.forEach(function (pet) {
-          petProfiles2.push(pet);
-          getImageUrl(pet.inviter, pet.id);
-        });
-      } catch (error) {
-        console.log('Error fetching pet data:', error);
-      }
-    };
 
     fetchData();
   }, []);
@@ -76,13 +79,30 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
     }
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+
+    try {
+      await fetchData();
+    } catch (error) {
+      console.log('Error refreshing pet data:', error);
+    }
+
+    setRefreshing(false);
+  };
+
   return (
     <>
       <View style={styles.container}>
-        <ComponentAMD2 onPress={handleAddPress} />
+        <ComponentAMD2 onPress={handleAddPress} onRefresh={handleRefresh} />
       </View>
 
-      <ScrollView style={styles.scroll}>
+      <ScrollView 
+        style={styles.scroll}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
         {petProfiles.map((profile) => (
           <PetProfile
             key={profile.id}

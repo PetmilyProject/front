@@ -15,3 +15,8 @@ export const YELLOW = {
   DEFAULT: '#fbbf24',
   DARK: '#f59e0b',
 };
+export const RED = {
+  LIGHT: '#F08080',
+  DEFAULT: '#FF0000',
+  DARK:	'#B22222'
+}

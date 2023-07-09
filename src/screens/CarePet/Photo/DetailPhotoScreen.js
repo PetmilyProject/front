@@ -1,9 +1,10 @@
-import { Text, View, StyleSheet, FlatList, TouchableOpacity, TextInput, Button, Image } from 'react-native';
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, TextInput, Pressable, Image } from 'react-native';
 import { useState, useEffect } from 'react';
-import SquareButton, { ColorTypes } from '../../../components/Button';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { RED, GRAY, BLACK } from '../../../colors';
 
 const DetailPhotoScreen = ({ navigation, route }) => {
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(BLACK.DEFAULT);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const param = route.params;
@@ -16,16 +17,25 @@ const DetailPhotoScreen = ({ navigation, route }) => {
     }
   };
 
+  const LikeHandle = () => {
+    if (liked === BLACK.DEFAULT) {
+      setLiked(RED.DEFAULT);
+    } else if (liked === RED.DEFAULT) {
+      setLiked(BLACK.DEFAULT);
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
       {/* 사진 출력 영역 */}
       <Image source={{uri: `http://43.200.8.47:8080/shared-images/lsyun1234@naver.com/downloadImage/${param.pet.sharedPetId}.jpg`}} style={{ width: '100%', height: 300 }} />
 
       {/* 좋아요 버튼 */}
-      <TouchableOpacity onPress={() => setLiked(!liked)} style={{ padding: 10 }}>
-        <Text>{liked ? 'Unlike' : 'Like'}</Text>
+      <TouchableOpacity onPress={LikeHandle} style={{ flexDirection: 'row', padding: 10 }}>
+        <MaterialCommunityIcons name="cards-heart" size={36} color={liked} />
+        <Text style={{ fontSize: 25, lineHeight: 36 }}> {0}</Text>
       </TouchableOpacity>
-
+      
       {/* 댓글 입력 */}
       <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10 }}>
         <TextInput

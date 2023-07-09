@@ -1,5 +1,5 @@
 import { Image, Text, View, StyleSheet, Pressable } from 'react-native';
-import { BLACK, GRAY, YELLOW } from '../../../colors';
+import { RED, GRAY, YELLOW } from '../../../colors';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,8 +11,8 @@ const ViewPhotoScreen = () => {
 
   const LikeHandle = () => {
     if (like === GRAY.DEFAULT) {
-      setLike('red');
-    } else if (like === 'red') {
+      setLike(RED);
+    } else if (like === RED) {
       setLike(GRAY.DEFAULT);
     }
   };

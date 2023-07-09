@@ -14,6 +14,7 @@ const ViewCalender = () => {
   const [responseData, setResponseData] = useState([]);
   const [petSchedules, setPetSchedules] = useState([]);
   const [currentPetIndex, setCurrentPetIndex] = useState(0); // 현재 선택된 펫 인덱스
+  const [selectedDate, setSelectedDate] = useState();
 
   // 서버에서 일정 데이터를 가져오는 비동기 함수
   useEffect(() => {
@@ -83,27 +84,9 @@ const ViewCalender = () => {
   );
 
   const renderRecurringItems = () => {
-    // 반복 일정 데이터를 만들고 FlatList로 렌더링합니다.
-    const recurringData = [
-      { id: 1, schedule: '반복 일정 1', hm: '10:00 AM' },
-      { id: 2, schedule: '반복 일정 2', hm: '02:00 PM' },
-      { id: 3, schedule: '반복 일정 3', hm: '06:00 PM' },
-    ];
     return (
       <View>
-        <Text
-          style={{
-            marginLeft: 10,
-            marginTop: 20,
-            fontSize: 18,
-            color: YELLOW.DEFAULT,
-            fontWeight: '700',
-          }}
-        >
-          반복 일정
-        </Text>
         <FlatList
-          data={recurringData}
           renderItem={renderItem}
           keyExtractor={(item) => item.id.toString()}
           style={styles.container2}
@@ -112,11 +95,27 @@ const ViewCalender = () => {
     );
   };
 
+  const handleDayPress = (day) => {
+    setSelectedDate(day.dateString);
+  };
+
+  const markedDates = {
+    [selectedDate]: {
+      selected: true,
+      selectedColor: 'blue',
+    },
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Calendar style={styles.calendar} />
+        <Calendar 
+          style={styles.calendar} 
+          onDayPress={handleDayPress}
+          markedDates={markedDates}
+        />
         <View>
+          {/*selectedDate && <Text>Selected Date : {selectedDate}</Text>*/}
           <Text
             style={{
               marginLeft: 10,

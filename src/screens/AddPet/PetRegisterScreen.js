@@ -9,6 +9,8 @@ import { TextInput } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import 'react-native-get-random-values';
 import { nanoid } from 'nanoid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const PetRegisterScreen = ({ navigation, route }) => {
   const [imgUrl, setImgUrl] = useState(null);
@@ -17,20 +19,51 @@ const PetRegisterScreen = ({ navigation, route }) => {
   const [species, setSpecies] = useState('');
   const [age, setAge] = useState('');
   const [character, setCharater] = useState('');
+  const [email, setEmail] = useState('');
 
-  const [list, setList] = useState(['']);
+  const [list, setList] = useState([]);
 
-  const onInsert = () => {
-    const newPet = {
-      id: nanoid(),
-      name: name,
-      gender: gender,
-      species: species,
-      age: age,
-      character: character,
-    };
-    setList((prev) => [newPet, ...prev]);
-    navigation.navigate(AddPetRoutes.LIST, { list: list, newPet: newPet });
+  const onInsert = async () => {
+    try {
+      const myEmail = await AsyncStorage.getItem('email');
+      setEmail(myEmail);
+      const userResponse = await axios.get(`http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`)
+      const myId = userResponse.data.userId;
+      const userInviter = userResponse.data.inviter;
+
+      const newPet = {
+        userId: myId,
+        name: name,
+        gender: gender,
+        species: species,
+        age: age,
+        character: character,
+      };
+      
+      const addPetUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/add/${myEmail}`;
+
+      axios
+      .post(
+        // 이 형식 그대로 안맞춰져서 안되는 거였음
+        addPetUrl,
+        {
+          userId: myId,
+          petName: name,
+          detailInfo: character,
+          petAge: age,
+          inviter: userInviter
+        }
+      )
+      .catch((error) => {
+        console.error('펫 추가 실패:', error);
+      });
+
+      setList((prev) => [newPet, ...prev]); 
+      navigation.navigate(AddPetRoutes.LIST, { list: list, newPet: newPet });
+    } catch (error) {
+      console.error("펫 추가 실패", error);
+    }  
+
   };
 
   const InsertUrl = (url) => {
