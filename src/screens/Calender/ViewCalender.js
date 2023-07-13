@@ -7,14 +7,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { FlatList } from 'react-native-gesture-handler';
 import { ScrollView } from 'react-native';
+import * as CalendarTools from '../../components/Calendar/CalendarTools';
 
 const ViewCalender = () => {
   var petData;
   const [myPets, setMyPets] = useState([]);
-  const [responseData, setResponseData] = useState([]);
   const [petSchedules, setPetSchedules] = useState([]);
   const [currentPetIndex, setCurrentPetIndex] = useState(0); // 현재 선택된 펫 인덱스
-  const [selectedDate, setSelectedDate] = useState();
+  const [selectedDate, setSelectedDate] = useState('');
 
   // 서버에서 일정 데이터를 가져오는 비동기 함수
   useEffect(() => {
@@ -22,39 +22,41 @@ const ViewCalender = () => {
       try {
         const email = await AsyncStorage.getItem('email');
         const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/get-all/${email}`;
-
         const response = await axios.get(url);
-        petData = response.data;
-
-        var petScheduleUrl = [];
-        setMyPets([]);
-
-        petData.map((pet) => {
-          setMyPets((prevPets) => [...prevPets, pet.petName]);
-          petScheduleUrl.push(
-            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${email}/${pet.petName}`
-          );
-        });
-
-        // 이전 내용이 들어가므로 그 부분을 삭제해줌
-        petSchedules.splice(0, petSchedules.length);
-
-        for (let i = 0; i < petScheduleUrl.length; i++) {
-          const scheduleResponse = await axios.get(petScheduleUrl[i]);
-          const scheduledata = scheduleResponse.data;
-
-          petSchedules.push(scheduledata);
-        }
         
-        console.log(petSchedules);
-        // petSchedules를 업데이트합니다.
-        setPetSchedules([...petSchedules]);
+        petData = response.data;
+        const updatedMyPets = [];
+  
+        for (let i = 0; i < petData.length; i++) {
+          updatedMyPets.push(petData[i].petName);
+        }
+        setMyPets(updatedMyPets);
+  
+        if (selectedDate === '') { setSelectedDate(CalendarTools.getNowDate()); }
+        
+        const updatedPetSchedules = [];
+  
+        // 페이지로 현재 펫 정함. 문제 생길 시 고칠 수 있음
+        const scheduleUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${email}/${myPets[currentPetIndex]}`;
+        const scheduleResponse = await axios.get(scheduleUrl);
+        const scheduledata = scheduleResponse.data;
+  
+        for (let i = 0; i < scheduledata.length; i++) {
+          const able = scheduledata[i].period;
+
+          if (CalendarTools.getYoil(able, selectedDate) === 1) { 
+            updatedPetSchedules.push(scheduledata[i]);
+          }
+        }
+  
+        setPetSchedules(updatedPetSchedules);
       } catch (error) {
         console.log('펫 정보를 받지 못했습니다.');
       }
     }
+  
     getPetData();
-  }, []);
+  }, [selectedDate, currentPetIndex]);  
 
   const handlePreviousPet = () => {
     setCurrentPetIndex((prevIndex) => {
@@ -137,8 +139,8 @@ const ViewCalender = () => {
               <Text style={styles.navigationText}>&gt;</Text>
             </TouchableOpacity>
           </View>
-          {petSchedules[currentPetIndex] &&
-            petSchedules[currentPetIndex].map((item) => (
+          {petSchedules &&
+            petSchedules.map((item) => (
               <TouchableOpacity
                 key={item.id}
                 style={styles.scheduleItem}

@@ -100,11 +100,11 @@ const AddScheduleScreen = ({navigation, route}) => {
         <Text style={styles.title}>주기</Text>
         <TextInput
           placeholder="숫자를 입력하세요 (단위 : 일)"
-          value={Number(repeat * 86400000)}
+          value={Number(repeat)}
           onChangeText={ event => {
             const inputValue = event;
             const numericValue = Number(inputValue);
-            const calculatedValue = numericValue * 86400000;
+            const calculatedValue = numericValue;
             setRepeat(calculatedValue.toString());
           }}
           style={styles.input}

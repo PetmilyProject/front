@@ -11,8 +11,8 @@ const ShowPetProfileScreen = (petName) => {
   useEffect(() => {
     const fetchPetProfiles = async () => {
       try {
-        const myEmail = await AsyncStorage.getItem('email');
-        const response = await fetch(
+          const myEmail = await AsyncStorage.getItem('email');
+          const response = await fetch(
           `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/get-all/${myEmail}`
         );
         const data = await response.json();
