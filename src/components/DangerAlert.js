@@ -15,7 +15,6 @@ const DangerAlert = ({
   leftBtnColor,
   rightBtnColor,
 }) => {
-  console.log();
   return (
     <Modal
       style={styles.container}
