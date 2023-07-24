@@ -6,7 +6,7 @@ import DatePicker from '../../../components/DatePicker';
 import TimePicker from '../../../components/TimePicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AddScheduleScreen = ({navigation, route}) => {
+const AddScheduleScreen = ({ navigation, route }) => {
   // route.params -> 이 부분이 이전 데이터 가져오는 부분
   const petName = route.params;
   const [schedule, setSchedule] = useState('');
@@ -17,37 +17,39 @@ const AddScheduleScreen = ({navigation, route}) => {
   const [alarm, setAlarm] = useState(0);
 
   const handleScheduleSubmit = () => {
-    console.log(petName, schedule, date, time, repeat, alarm, "end \n")
+    console.log(petName, schedule, date, time, repeat, alarm, 'end \n');
     AsyncStorage.getItem('email')
       .then((inviter) => {
         AsyncStorage.getItem('token')
           .then((token) => {
-              axios
-                .post(
-                  `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${inviter}/${petName}`,
-                  {
-                    schedule: schedule,
-                    date: date,
-                    hm: time,
-                    period: repeat,
-                    notice: alarm,
-                    isCompleted: 0
-                    //inviter: inviter,
+            axios
+              .post(
+                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${inviter}/${petName}`,
+                {
+                  schedule: schedule,
+                  date: date,
+                  hm: time,
+                  period: repeat,
+                  notice: alarm,
+                  isCompleted: 0,
+                  //inviter: inviter,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
                   },
-                  {
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  }
-                )
-                .then((response) => {
-                  // Handle the successful response here
-                  console.log(response.data);
-                })
-                .catch((error) => {
-                  // Handle the error here
-                  console.error(error);
-                });
+                }
+              )
+              .then((response) => {
+                // Handle the successful response here
+                console.log(response.data);
+                // Navigate back to the previous screen
+                navigation.goBack();
+              })
+              .catch((error) => {
+                // Handle the error here
+                console.error(error);
+              });
           })
           .catch((error) => {
             console.error(error);
@@ -101,7 +103,7 @@ const AddScheduleScreen = ({navigation, route}) => {
         <TextInput
           placeholder="숫자를 입력하세요 (단위 : 일)"
           value={Number(repeat * 86400000)}
-          onChangeText={ event => {
+          onChangeText={(event) => {
             const inputValue = event;
             const numericValue = Number(inputValue);
             const calculatedValue = numericValue * 86400000;
@@ -127,7 +129,7 @@ const AddScheduleScreen = ({navigation, route}) => {
         <Text style={styles.title}>알림</Text>
         <View style={styles.inputBox}>
           <Pressable onPress={() => setAlarm((alarm + 1) % 2)}>
-            <Text>{alarm ? "켜짐" : "꺼짐"}</Text>
+            <Text>{alarm ? '켜짐' : '꺼짐'}</Text>
           </Pressable>
         </View>
       </View>

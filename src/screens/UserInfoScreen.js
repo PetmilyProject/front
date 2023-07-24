@@ -7,12 +7,25 @@ import WithdrawalScreen from './CarePet/Schdule/WithdrawalScreen';
 import { AuthContext } from '../navigations/Nest';
 import FirstScreen from './FirstScreen';
 import * as Update from 'expo-updates';
+import * as ImagePicker from 'expo-image-picker';
 
 const UserInfoScreen = () => {
   const [email, setEmail] = useState('');
   const [userName, setUserName] = useState('');
+  const [image, setImage] = useState(null);
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const requestPermission = async () => {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', '카메라 롤에 접근 권한이 필요합니다.');
+      }
+    };
+    requestPermission();
+  }, []);
 
   const [isSignedIn, setIsSignedIn] = useState(false);
 
@@ -56,6 +69,18 @@ const UserInfoScreen = () => {
       });
   }, []);
 
+  const handleImagePress = async () => {
+    try {
+      const imagePickerResult = await ImagePicker.launchImageLibraryAsync();
+
+      if (!imagePickerResult.cancelled) {
+        setImage(imagePickerResult.uri);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // 로그아웃 함수
   const handleLogout = async () => {
     try {
@@ -74,11 +99,22 @@ const UserInfoScreen = () => {
   return (
     <View style={styles.container}>
       {/* 강아지 사진 */}
-      <View style={styles.imageContainer}>
+      {/* <View style={styles.imageContainer}>
         <Image
           style={styles.dogImage}
           source={require('../assets/pet_icon.png')}
-        />
+        /> */}
+      <View style={styles.imageContainer}>
+        <TouchableOpacity onPress={handleImagePress}>
+          {image ? (
+            <Image style={styles.dogImage} source={{ uri: image }} />
+          ) : (
+            <Image
+              style={styles.dogImage}
+              source={require('../assets/pet_icon.png')}
+            />
+          )}
+        </TouchableOpacity>
       </View>
 
       {/* 이메일과 닉네임 */}
