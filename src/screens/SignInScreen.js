@@ -1,4 +1,13 @@
-import { Button, StyleSheet, Text, View } from 'react-native';
+import {
+  Button,
+  Keyboard,
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+
 import Input, {
   InputTypes,
   KeyboardTypes,
@@ -49,34 +58,40 @@ const SignInScreen = () => {
       });
   };
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
   return (
-    <View style={styles.container}>
-      <Input
-        styles={{
-          container: { marginBottom: 20, paddingHorizontal: 20 },
-          input: { borderWidth: 1 },
-        }}
-        value={email}
-        onChangeText={(text) => setEmail(text.trim())}
-        inputType={InputTypes.EMAIL}
-        returnKeyType={ReturnKeyTypes.NEXT}
-      />
-      <Input
-        styles={{
-          container: { marginBottom: 20, paddingHorizontal: 20 },
-          input: { borderWidth: 1 },
-        }}
-        value={password}
-        onChangeText={(text) => setPassword(text.trim())}
-        inputType={InputTypes.PASSWORD}
-        returnKeyType={ReturnKeyTypes.DONE}
-      />
-      <SquareButton
-        colorType={ColorTypes.YELLOW}
-        text="로그인하기"
-        onPress={handleSignIn}
-      />
-    </View>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <Input
+          styles={{
+            container: { marginBottom: 20, paddingHorizontal: 20 },
+            input: { borderWidth: 1 },
+          }}
+          value={email}
+          onChangeText={(text) => setEmail(text.trim())}
+          inputType={InputTypes.EMAIL}
+          returnKeyType={ReturnKeyTypes.NEXT}
+        />
+        <Input
+          styles={{
+            container: { marginBottom: 20, paddingHorizontal: 20 },
+            input: { borderWidth: 1 },
+          }}
+          value={password}
+          onChangeText={(text) => setPassword(text.trim())}
+          inputType={InputTypes.PASSWORD}
+          returnKeyType={ReturnKeyTypes.DONE}
+        />
+        <SquareButton
+          colorType={ColorTypes.YELLOW}
+          text="로그인하기"
+          onPress={handleSignIn}
+        />
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 

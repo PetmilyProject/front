@@ -5,7 +5,6 @@ import axios from 'axios';
 import DatePicker from '../../../components/DatePicker';
 import TimePicker from '../../../components/TimePicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import DateTimePickerModal from "react-native-modal-datetime-picker"
 
 const AddScheduleScreen = ({ navigation, route }) => {
   // route.params -> 이 부분이 이전 데이터 가져오는 부분
@@ -23,6 +22,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
 
   const handleScheduleSubmit = () => {
     console.log(petName, schedule, date, time, repeat, alarm, 'end \n');
+
     AsyncStorage.getItem('email')
       .then((inviter) => {
         AsyncStorage.getItem('token')

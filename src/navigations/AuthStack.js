@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { WHITE } from '../colors';
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
-import UserInfoScreen from '../screens/UserInfoScreen';
+import UserInfoScreen from '../screens/UserInfo/UserInfoScreen';
 import Navigation from './Navigation';
 import { AuthRoutes } from './routes';
 import HomeScreen from '../screens/HomeScreen';

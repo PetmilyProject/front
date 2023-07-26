@@ -1,4 +1,5 @@
 export const AuthRoutes = {
+  FIRST: 'First',
   SIGN_IN: 'SignIn',
   SIGN_UP: 'SignUp',
   NAVIGATION: 'Navigation',
@@ -35,5 +36,6 @@ export const CarePetRoutes = {
 
 export const UserInfoRoutes = {
   MAIN_USER: 'UserInfoScreen',
-  WITHDRAWAL: 'WithdrawalScreen',
+
+  WITHDRAWAL: 'UserWithdrawalScreen',
 };

@@ -8,6 +8,7 @@ import {
   Pressable,
   Image,
 } from 'react-native';
+
 import { useState, useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { RED, GRAY, BLACK } from '../../../colors';
@@ -37,6 +38,7 @@ const DetailPhotoScreen = ({ navigation, route }) => {
   return (
     <View style={{ flex: 1 }}>
       {/* 사진 출력 영역 */}
+
       <Image
         source={{
           uri: `http://43.200.8.47:8080/shared-images/lsyun1234@naver.com/downloadImage/${param.pet.sharedPetId}.jpg`,

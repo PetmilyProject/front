@@ -3,12 +3,17 @@ import { createStackNavigator } from '@react-navigation/stack';
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import { createContext, useState } from 'react';
-import UserInfoScreen from '../screens/UserInfoScreen';
+import UserInfoScreen from '../screens/UserInfo/UserInfoScreen';
 import FirstScreen from '../screens/FirstScreen';
 import AddScheduleScreen from '../screens/CarePet/Schdule/AddScheduleScreen';
 import EmptyPetProfileScreen from '../screens/AddPet/EmptyPetProfileScreen';
 import PetRegisterScreen from '../screens/AddPet/PetRegisterScreen';
-import { AddPetRoutes, CarePetRoutes, UserInfoRoutes } from './routes';
+import {
+  AddPetRoutes,
+  AuthRoutes,
+  CarePetRoutes,
+  UserInfoRoutes,
+} from './routes';
 import PetProfileListScreen from '../screens/AddPet/PetProfileListScreen';
 import PetMainScreen from '../screens/PetMainScreen';
 import EmptySchduleScreen from '../screens/CarePet/Schdule/EmptySchduleScreen';
@@ -19,8 +24,9 @@ import EmptyPhotoSceen from '../screens/CarePet/Photo/EmptyPhotoScreen';
 import ListPhotoScreen from '../screens/CarePet/Photo/ListPhotoScreen';
 import ViewCalender from '../screens/Calender/ViewCalender';
 import { Ionicons } from '@expo/vector-icons';
-import WithdrawalScreen from '../screens/CarePet/Schdule/WithdrawalScreen';
+import WithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
 import DetailPhotoScreen from '../screens/CarePet/Photo/DetailPhotoScreen';
+import UserWithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
 
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
@@ -84,7 +90,6 @@ const AddPetStackScreen = () => {
         options={{ title: '일정등록' }}
         // options={{ headerShown: false }}
       />
-      
       <AddPetStack.Screen name="PetMain" component={UserInfoScreen} />
     </AddPetStack.Navigator>
   );
@@ -114,14 +119,15 @@ const PhotoStackScreen = () => {
         component={ViewPhotoScreen}
         options={{ title: '사진상세' }}
       />
-      <PhotoStack.Screen 
+
+      <PhotoStack.Screen
         name={CarePetRoutes.DETAIL_PHOTO}
         component={DetailPhotoScreen}
         options={{ headerShown: false }}
       />
     </PhotoStack.Navigator>
   );
-}
+};
 
 const UserInfoStackScreen = () => {
   return (
@@ -133,7 +139,7 @@ const UserInfoStackScreen = () => {
       />
       <UserInfoStack.Screen
         name={UserInfoRoutes.WITHDRAWAL}
-        component={WithdrawalScreen}
+        component={UserWithdrawalScreen}
         options={{ title: '계정삭제' }}
       />
     </UserInfoStack.Navigator>
@@ -199,7 +205,7 @@ const TabStackScreen = () => {
           options={{ headerShown: false }}
         />
         <TabStack.Screen name="캘린더" component={ViewCalender} />
-        
+
         <TabStack.Screen
           name="커뮤니티"
           component={PhotoStackScreen}

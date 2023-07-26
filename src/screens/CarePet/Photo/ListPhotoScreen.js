@@ -43,6 +43,7 @@ const ListPhotoScreen = ({ navigation }) => {
             const imageData = await response.blob(); // 응답을 Blob 객체로 변환
             const base64Data = await convertBlobToBase64(imageData); // Blob을 base64로 변환
             // 이미지 정보 말고도 다양한 정보를 추가로 넣을 수 있다
+
             newImageList.push({
               id: sharedPetInfo[i].sharedPetId,
               image: base64Data,
@@ -57,6 +58,7 @@ const ListPhotoScreen = ({ navigation }) => {
           console.log('Error fetching image data:', error);
         }
       }
+
       setImageList(newImageList); // 업데이트된 이미지 목록으로 상태 변수 업데이트
       setIsLoading(false); // 데이터 로딩이 완료되었으므로 로딩 상태 업데이트
     };
@@ -82,7 +84,6 @@ const ListPhotoScreen = ({ navigation }) => {
       reader.readAsDataURL(blob);
     });
   };
-
   const renderItem = ({ item }) => {
     const handlePress = () => {
       const matchedPet = sharedPets.find((pet) => pet.sharedPetId === item.id);
@@ -90,6 +91,7 @@ const ListPhotoScreen = ({ navigation }) => {
         navigation.navigate({
           name: CarePetRoutes.DETAIL_PHOTO,
           params: { pet: matchedPet },
+
           key: 'DetailPhotoScreen',
         });
       }

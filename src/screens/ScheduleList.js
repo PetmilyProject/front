@@ -1,3 +1,5 @@
+// limseohyeon 0726
+
 // import React, { useEffect, useState } from 'react';
 // import axios from 'axios';
 // import {
@@ -8,7 +10,6 @@
 //   TouchableOpacity,
 // } from 'react-native';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { useIsFocused } from '@react-navigation/native';
 
 // function ScheduleList(petName) {
 //   const [responseData, setResponseData] = useState([]);
