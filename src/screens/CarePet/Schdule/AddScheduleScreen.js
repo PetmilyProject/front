@@ -5,6 +5,7 @@ import axios from 'axios';
 import DatePicker from '../../../components/DatePicker';
 import TimePicker from '../../../components/TimePicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// import DateTimePickerModal from "react-native-modal-datetime-picker"
 
 const AddScheduleScreen = ({ navigation, route }) => {
   // route.params -> 이 부분이 이전 데이터 가져오는 부분
@@ -15,6 +16,10 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [repeat, setRepeat] = useState(0);
   const [inviter, setInviter] = useState('');
   const [alarm, setAlarm] = useState(0);
+
+  const handleTimeChange = (selectedTime) => {
+    setTime(selectedTime); // 선택된 시간을 state 변수에 반영
+  };
 
   const handleScheduleSubmit = () => {
     console.log(petName, schedule, date, time, repeat, alarm, 'end \n');
@@ -43,8 +48,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
               .then((response) => {
                 // Handle the successful response here
                 console.log(response.data);
-                // Navigate back to the previous screen
-                navigation.goBack();
               })
               .catch((error) => {
                 // Handle the error here
@@ -77,9 +80,10 @@ const AddScheduleScreen = ({ navigation, route }) => {
       <View style={styles.box}>
         <Text style={styles.title}>시간</Text>
         <View style={styles.inputBox}>
+          {/* TimePicker 컴포넌트에 시간과 시간 변경 핸들러 함수를 전달 */}
           <TimePicker
             selectedTime={time}
-            onTimeChange={setTime}
+            onTimeChange={handleTimeChange}
             style={styles.input}
           />
         </View>
@@ -102,11 +106,11 @@ const AddScheduleScreen = ({ navigation, route }) => {
         <Text style={styles.title}>주기</Text>
         <TextInput
           placeholder="숫자를 입력하세요 (단위 : 일)"
-          value={Number(repeat * 86400000)}
+          value={Number(repeat)}
           onChangeText={(event) => {
             const inputValue = event;
             const numericValue = Number(inputValue);
-            const calculatedValue = numericValue * 86400000;
+            const calculatedValue = numericValue;
             setRepeat(calculatedValue.toString());
           }}
           style={styles.input}
