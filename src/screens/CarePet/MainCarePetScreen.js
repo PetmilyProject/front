@@ -11,6 +11,7 @@ import { CarePetRoutes } from '../../navigations/routes';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
+import { GRAY, WHITE } from '../../colors';
 
 const MainCarePetScreen = ({ navigation, route }) => {
   const petName = route.params;
@@ -97,6 +98,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
         onPhotoPress={onPhotoPress}
         onRearerPress={onRearerPress}
       />
+      <View style={styles.line}></View>
       <View style={styles.container2}>{renderScreen()}</View>
     </View>
   );
@@ -107,6 +109,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: WHITE,
+  },
+  line: {
+    backgroundColor: GRAY.LIGHT,
+    height: 1,
+    width: '95%',
   },
   container2: {
     flex: 3,

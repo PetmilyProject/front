@@ -1,12 +1,8 @@
 import { View, StyleSheet, Text, Image, Pressable } from 'react-native';
-import { WHITE } from '../../../colors';
 import { useState } from 'react';
 import { BLACK } from '../../../colors';
-import { color } from 'react-native-reanimated';
 import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
-import { CarePetRoutes } from '../../../navigations/routes';
-import MainCarePetScreen from '../MainCarePetScreen';
 
 const CarePetList = ({
   petName,
@@ -43,7 +39,7 @@ const CarePetList = ({
       color: schedueltextColor,
     },
   });
-  
+
   return (
     <View style={styles.container}>
       <View style={{ paddingRight: 60 }}>

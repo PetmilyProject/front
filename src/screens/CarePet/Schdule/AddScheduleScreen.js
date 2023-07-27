@@ -5,6 +5,7 @@ import axios from 'axios';
 import DatePicker from '../../../components/DatePicker';
 import TimePicker from '../../../components/TimePicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { WHITE } from '../../../colors';
 
 const AddScheduleScreen = ({ navigation, route }) => {
   // route.params -> 이 부분이 이전 데이터 가져오는 부분
@@ -153,15 +154,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: WHITE,
   },
   box: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 100, // Set borderRadius to half the size of the box
-    width: 300, // Set the desired width of the box
-    height: 200, // Set the desired height of the box
-    marginVertical: 10, // Adjust the vertical margin as needed
+    borderRadius: 100,
+    width: 300,
+    height: 200,
+    marginVertical: 10,
   },
   title: {
     marginRight: 10,

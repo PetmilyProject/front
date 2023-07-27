@@ -6,6 +6,7 @@ export const PRIMARY = {
 };
 
 export const GRAY = {
+  LIGHTER: '#e7e5e4',
   LIGHT: '#d6d3d1',
   DEFAULT: '#a8a29e',
   DARK: '#78716c',
