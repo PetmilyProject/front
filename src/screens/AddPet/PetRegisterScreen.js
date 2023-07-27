@@ -27,7 +27,9 @@ const PetRegisterScreen = ({ navigation, route }) => {
     try {
       const myEmail = await AsyncStorage.getItem('email');
       setEmail(myEmail);
-      const userResponse = await axios.get(`http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`)
+      const userResponse = await axios.get(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`
+      );
       const myId = userResponse.data.userId;
       const userInviter = userResponse.data.inviter;
 
@@ -39,31 +41,30 @@ const PetRegisterScreen = ({ navigation, route }) => {
         age: age,
         character: character,
       };
-      
+
       const addPetUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/add/${myEmail}`;
 
       axios
-      .post(
-        // 이 형식 그대로 안맞춰져서 안되는 거였음
-        addPetUrl,
-        {
-          userId: myId,
-          petName: name,
-          detailInfo: character,
-          petAge: age,
-          inviter: userInviter
-        }
-      )
-      .catch((error) => {
-        console.error('펫 추가 실패:', error);
-      });
+        .post(
+          // 이 형식 그대로 안맞춰져서 안되는 거였음
+          addPetUrl,
+          {
+            userId: myId,
+            petName: name,
+            detailInfo: character,
+            petAge: age,
+            inviter: userInviter,
+          }
+        )
+        .catch((error) => {
+          console.error('펫 추가 실패:', error);
+        });
 
-      setList((prev) => [newPet, ...prev]); 
+      setList((prev) => [newPet, ...prev]);
       navigation.navigate(AddPetRoutes.LIST, { list: list, newPet: newPet });
     } catch (error) {
-      console.error("펫 추가 실패", error);
-    }  
-
+      console.error('펫 추가 실패', error);
+    }
   };
 
   const InsertUrl = (url) => {
@@ -105,13 +106,13 @@ const PetRegisterScreen = ({ navigation, route }) => {
       <View>
         <InputText
           title="성별"
-          placeholder={'예 암컷'}
+          placeholder={'예) 암컷'}
           onChangeText={(text) => setGender(text.trim())}
         />
 
         <InputText
           title="나이"
-          placeholder={'예 8세'}
+          placeholder={'예) 8'}
           onChangeText={(text) => {
             setAge(text.trim());
           }}
@@ -119,12 +120,12 @@ const PetRegisterScreen = ({ navigation, route }) => {
 
         <InputText
           title="구분"
-          placeholder={'예 강아지'}
+          placeholder={'예) 말티즈'}
           onChangeText={(text) => setSpecies(text.trim())}
         />
         <InputText
           title="특징"
-          placeholder={'예 산책을 좋아함'}
+          placeholder={'예) 산책을 좋아함'}
           onChangeText={(text) => setCharater(text.trim())}
         />
       </View>
