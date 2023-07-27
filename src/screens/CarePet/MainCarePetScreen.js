@@ -4,10 +4,8 @@ import EmptySchduleScreen from './Schdule/EmptySchduleScreen';
 import { useEffect, useState } from 'react';
 import EmptyPhotoSceen from './Photo/EmptyPhotoScreen';
 import EmptyRearerScreen from './Rearer/EmptyRearerScreen';
-import EmptyHealthScreen from './Health/EmptyHealthScreen';
 import ScheduleListScreen from './Schdule/ScheduleListScreen';
 import ListPhotoScreen from './Photo/ListPhotoScreen';
-import ListHealthScreen from './Health/ListHealthScreen';
 import ListRearerScreen from './Rearer/ListRearerScreen';
 import { CarePetRoutes } from '../../navigations/routes';
 import axios from 'axios';
@@ -83,8 +81,6 @@ const MainCarePetScreen = ({ navigation, route }) => {
       ) : (
         <ListPhotoScreen onPress={onPress} />
       );
-    } else if (content === '건강') {
-      return health === null ? <EmptyHealthScreen /> : <ListHealthScreen />;
     } else if (content === '양육자') {
       return rearer === null ? <EmptyRearerScreen /> : <ListRearerScreen />;
     } else {

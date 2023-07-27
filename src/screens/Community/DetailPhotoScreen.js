@@ -5,13 +5,12 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
-  Pressable,
   Image,
 } from 'react-native';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { RED, GRAY, BLACK } from '../../../colors';
+import { RED, BLACK } from '../../colors';
 
 const DetailPhotoScreen = ({ navigation, route }) => {
   const [liked, setLiked] = useState(BLACK.DEFAULT);
