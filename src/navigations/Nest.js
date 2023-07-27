@@ -25,7 +25,7 @@ import ListPhotoScreen from '../screens/CarePet/Photo/ListPhotoScreen';
 import ViewCalender from '../screens/Calender/ViewCalender';
 import { Ionicons } from '@expo/vector-icons';
 import WithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
-import DetailPhotoScreen from '../screens/CarePet/Photo/DetailPhotoScreen';
+import DetailPhotoScreen from '../screens/Community/DetailPhotoScreen';
 import UserWithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
 
 const TabStack = createBottomTabNavigator();

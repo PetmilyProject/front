@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ScrollView, StyleSheet, Text, View, Image, RefreshControl } from 'react-native';
+import { ScrollView, StyleSheet, View, RefreshControl } from 'react-native';
 import ComponentAMD2 from '../../components/ComponentAMD2';
 import PetProfile from '../../components/AddPet/PetProfile';
 import { useRoute } from '@react-navigation/native';
 import { AddPetRoutes, CarePetRoutes } from '../../navigations/routes';
-import { nanoid } from 'nanoid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PetRegisterScreen from './PetRegisterScreen';
-import DetailPhotoScreen from '../CarePet/Photo/DetailPhotoScreen';
 
 const PetProfileListScreen = ({ navigation, AddPress }) => {
   const route = useRoute();
@@ -53,7 +50,6 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   };
 
   useEffect(() => {
-
     fetchData();
   }, []);
 
@@ -97,7 +93,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
         <ComponentAMD2 onPress={handleAddPress} onRefresh={handleRefresh} />
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.scroll}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
