@@ -1,7 +1,7 @@
 import { Image, StyleSheet, View } from 'react-native';
 import { AddPetRoutes, AuthRoutes } from '../../navigations/routes';
 import { useState } from 'react';
-import { GRAY } from '../../colors';
+import { GRAY, WHITE } from '../../colors';
 import ImagePickerComponent from '../../components/ImagePicker';
 import SquareButton, { ColorTypes } from '../../components/Button';
 import InputText from '../../components/InputText';
@@ -27,7 +27,9 @@ const PetRegisterScreen = ({ navigation, route }) => {
     try {
       const myEmail = await AsyncStorage.getItem('email');
       setEmail(myEmail);
-      const userResponse = await axios.get(`http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`)
+      const userResponse = await axios.get(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`
+      );
       const myId = userResponse.data.userId;
       const userInviter = userResponse.data.inviter;
 
@@ -39,31 +41,30 @@ const PetRegisterScreen = ({ navigation, route }) => {
         age: age,
         character: character,
       };
-      
+
       const addPetUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/add/${myEmail}`;
 
       axios
-      .post(
-        // 이 형식 그대로 안맞춰져서 안되는 거였음
-        addPetUrl,
-        {
-          userId: myId,
-          petName: name,
-          detailInfo: character,
-          petAge: age,
-          inviter: userInviter
-        }
-      )
-      .catch((error) => {
-        console.error('펫 추가 실패:', error);
-      });
+        .post(
+          // 이 형식 그대로 안맞춰져서 안되는 거였음
+          addPetUrl,
+          {
+            userId: myId,
+            petName: name,
+            detailInfo: character,
+            petAge: age,
+            inviter: userInviter,
+          }
+        )
+        .catch((error) => {
+          console.error('펫 추가 실패:', error);
+        });
 
-      setList((prev) => [newPet, ...prev]); 
+      setList((prev) => [newPet, ...prev]);
       navigation.navigate(AddPetRoutes.LIST, { list: list, newPet: newPet });
     } catch (error) {
-      console.error("펫 추가 실패", error);
-    }  
-
+      console.error('펫 추가 실패', error);
+    }
   };
 
   const InsertUrl = (url) => {
@@ -143,6 +144,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    backgroundColor: WHITE,
   },
   rowContainer: {
     flexDirection: 'row',

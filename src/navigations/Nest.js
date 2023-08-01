@@ -76,7 +76,6 @@ const AddPetStackScreen = () => {
         name={CarePetRoutes.MAIN_CARE_PET}
         component={MainCarePetScreen}
         options={{ headerShown: false }}
-        // options={{ title: '일정등록' }}
       />
       {/* Care Pet - 일정 */}
       <AddPetStack.Screen

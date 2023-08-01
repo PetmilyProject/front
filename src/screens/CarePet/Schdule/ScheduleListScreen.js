@@ -9,11 +9,14 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GRAY, WHITE } from '../../../colors';
+import { GRAY, WHITE, YELLOW, BLACK } from '../../../colors';
+import { AntDesign } from '@expo/vector-icons';
 
 function ScheduleListScreen({ petName }) {
   const [responseData, setResponseData] = useState([]);
   const [executeArray, setExecuteArray] = useState([]);
+  const [executeColor, setExecuteColor] = useState(GRAY.LIGHTER);
+  const [selectedItemIndices, setSelectedItemIndices] = useState([]);
 
   useEffect(() => {
     AsyncStorage.getItem('email')
@@ -46,36 +49,64 @@ function ScheduleListScreen({ petName }) {
       });
   }, []);
 
+  const handleLongPress = (index) => {
+    if (selectedItemIndices.includes(index)) {
+      // If the item is already selected, remove it from the selection
+      setSelectedItemIndices(selectedItemIndices.filter((i) => i !== index));
+    } else {
+      // If the item is not selected, add it to the selection
+      setSelectedItemIndices([...selectedItemIndices, index]);
+    }
+  };
+  const renderItem = ({ item, index }) => {
+    const isSelected = selectedItemIndices.includes(index);
+    const backgroundColor = executeArray[index]
+      ? YELLOW.DEFAULT_LIGHT
+      : GRAY.LIGHTER;
+
+    return (
+      <TouchableOpacity
+        onLongPress={() => handleLongPress(index)}
+        delayLongPress={300}
+        style={[
+          styles.scheduleItem,
+          {
+            opacity: isSelected ? 0.4 : 1,
+            backgroundColor: backgroundColor,
+          },
+        ]}
+      >
+        <TouchableOpacity onPress={() => toggleExecute(index)}>
+          {isSelected ? (
+            <AntDesign name="circledown" size={24} color="#34D399" />
+          ) : executeArray[index] ? (
+            <Image
+              source={require('../../../assets/pet_icon.png')}
+              style={styles.executor_profile}
+            />
+          ) : (
+            <View style={styles.execute}></View>
+          )}
+        </TouchableOpacity>
+
+        <View style={styles.container_detail}>
+          <Text style={styles.details}>{item.schedule}</Text>
+        </View>
+        <View style={styles.container_time}>
+          <Text style={styles.time}>{item.hm}</Text>
+        </View>
+        <View style={styles.container_executor}>
+          <Text style={styles.executor}>수행자</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   const toggleExecute = (index) => {
     const newExecuteArray = [...executeArray];
     newExecuteArray[index] = !newExecuteArray[index];
     setExecuteArray(newExecuteArray);
   };
-
-  const renderItem = ({ item, index }) => (
-    <TouchableOpacity style={styles.scheduleItem}>
-      <TouchableOpacity onPress={() => toggleExecute(index)}>
-        {executeArray[index] ? (
-          <Image
-            source={require('../../../assets/pet_icon.png')}
-            style={styles.executor_profile}
-          />
-        ) : (
-          <View style={styles.execute}></View>
-        )}
-      </TouchableOpacity>
-
-      <View style={styles.container_detail}>
-        <Text style={styles.details}>{item.schedule}</Text>
-      </View>
-      <View style={styles.container_time}>
-        <Text style={styles.time}>{item.hm}</Text>
-      </View>
-      <View style={styles.container_executor}>
-        <Text style={styles.executor}>수행자</Text>
-      </View>
-    </TouchableOpacity>
-  );
 
   return (
     <View style={styles.container}>
@@ -94,7 +125,7 @@ function ScheduleListScreen({ petName }) {
         data={responseData}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-        style={styles.schdule_container}
+        style={styles.schedule_container}
       />
     </View>
   );

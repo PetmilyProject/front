@@ -2,17 +2,24 @@ import { useState, useEffect } from 'react';
 import { Pressable, Text } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
-const DatePicker = () => {
+const DatePicker = ({ selectedDate, onDateChange }) => {
   const [currentDate, setCurrentDate] = useState('');
+  const [selectedDateObj, setSelectedDateObj] = useState(null); // New state variable for selected date in Date object format
 
   useEffect(() => {
     const today = new Date();
     const year = String(today.getFullYear());
-    const month = String(today.getMonth() + 1); // 월은 0부터 시작하므로 1을 더해줍니다.
+    const month = String(today.getMonth() + 1);
     const date = String(today.getDate());
-    const currentDate = `${year}년 ${month}월 ${date}일`;
-    setCurrentDate(currentDate);
-  }, []);
+    const formattedDate = `${year}년 ${month}월 ${date}일`;
+
+    // If selectedDate is not set (null or undefined), set it to the current date
+    if (!selectedDate) {
+      onDateChange(formattedDate);
+    }
+
+    setCurrentDate(formattedDate);
+  }, [selectedDate, onDateChange]);
 
   const [dateVisible, setDateVisible] = useState(false);
 
@@ -27,15 +34,18 @@ const DatePicker = () => {
   const handleDatePicker = (pickerDate) => {
     setDateVisible(false);
     const year = String(pickerDate.getFullYear());
-    const month = String(pickerDate.getMonth() + 1); // 월은 0부터 시작하므로 1을 더해줍니다.
+    const month = String(pickerDate.getMonth() + 1);
     const date = String(pickerDate.getDate());
-    const selectedDate = `${year}년 ${month}월 ${date}일`;
-    setCurrentDate(selectedDate);
+    const formattedDate = `${year}년 ${month}월 ${date}일`;
+
+    setCurrentDate(formattedDate);
+    setSelectedDateObj(pickerDate); // Store the selected date as a Date object
+    onDateChange(formattedDate);
   };
 
   return (
     <Pressable onPress={showDatePicker}>
-      <Text>{currentDate}</Text>
+      <Text>{selectedDate || currentDate}</Text>
       <DateTimePickerModal
         isVisible={dateVisible}
         mode="date"

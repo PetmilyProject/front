@@ -14,6 +14,7 @@ export const GRAY = {
 export const YELLOW = {
   LIGHT: '#fde68a',
   DEFAULT: '#fbbf24',
+  DEFAULT_LIGHT: '#fde047',
   DARK: '#f59e0b',
 };
 export const RED = {
