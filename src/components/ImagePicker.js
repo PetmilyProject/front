@@ -1,11 +1,11 @@
-import { Image, Pressable, TouchableOpacity } from 'react-native';
-import { Text, View, StyleSheet } from 'react-native';
+import { StyleSheet, Pressable, TouchableOpacity, Image } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-
 import { useContext, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { WHITE } from '../colors';
+import axios from 'axios';
+import FormData from 'form-data';
 //import { ImageContext } from '../context/LoginContext';
 
 export const ImagePickerComponent = ({ width, height, InsertUrl }) => {
@@ -34,6 +34,23 @@ export const ImagePickerComponent = ({ width, height, InsertUrl }) => {
       InsertUrl(result.assets[0].uri);
       setUpload(true);
     }
+
+    // 서버에 요청 보내기
+    const localUri = result.uri;
+    const filename = localUri.split('/').pop();
+    const match = /\.(\w+)$/.exec(filename ?? '');
+    const type = match ? `image/${match[1]}` : `image`;
+    const formData = new FormData();
+    formData.append('image', { uri: localUri, name: filename, type });
+
+    await axios({
+      method: 'post',
+      uri: `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/uploadImage/${petid}`,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      data: formData,
+    });
   };
 
   const styles = StyleSheet.create({
@@ -59,6 +76,7 @@ export const ImagePickerComponent = ({ width, height, InsertUrl }) => {
           size={30}
           color="black"
         />
+        <Image source={{ uri: imageUrl }} />
       </TouchableOpacity>
     </Pressable>
   );

@@ -1,8 +1,12 @@
 import { View, StyleSheet, Text, Image, Pressable } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BLACK } from '../../../colors';
 import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
+import PetProfileListScreen from '../../AddPet/PetProfileListScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import PetProfile from '../../../components/AddPet/PetProfile';
 
 const CarePetList = ({
   petName,
@@ -14,6 +18,9 @@ const CarePetList = ({
   const [schedueltextColor, setScheduleTextColor] = useState(YELLOW.DARK);
   const [phototextColor, setPhotoTextColor] = useState(BLACK);
   const [rearertextColor, setRearerTextColor] = useState(BLACK);
+  const [petProfiles, setPetProfiles] = useState([]);
+  var petProfiles2 = [];
+  var petData;
 
   const handleSchedulePress = () => {
     setScheduleTextColor(YELLOW.DARK);
@@ -40,16 +47,65 @@ const CarePetList = ({
     },
   });
 
+  const fetchData = async () => {
+    try {
+      const email = await AsyncStorage.getItem('email');
+      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${email}`;
+
+      const response = await axios.get(url);
+      const userData = response.data;
+
+      petData = userData.pets;
+      //inviter = userData.inviter;
+      setPetProfiles(petData);
+      petData.forEach(function (pet) {
+        petProfiles2.push(pet);
+        getImageUrl(pet.inviter, pet.id);
+      });
+    } catch (error) {
+      console.log('Error fetching pet data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const getImageUrl = async (inviter, id) => {
+    try {
+      const email = await AsyncStorage.getItem('email');
+      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg`;
+      // console.log(url);
+      setPetProfiles((prevProfiles) =>
+        prevProfiles.map((profile) => {
+          if (profile.id === id) {
+            return { ...profile, imgurl: url };
+          }
+          return profile;
+        })
+      );
+    } catch (error) {
+      console.log('Error fetching pet image:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={{ paddingRight: 60 }}>
         <View style={styles.container_row}>
-          <View style={{}}>
-            <Image
-              source={require('../../../assets/pet_icon.png')}
-              style={styles.image}
-            />
-          </View>
+          {/* <View style={{}}>
+            {petProfiles.map((profile) => (
+              <PetProfile
+                key={profile.id}
+                imgurl={profile.imgurl} // 이미지 URL을 전달합니다.
+              />
+            ))} */}
+          {/* </View> */}
+          {petProfiles.map((profile) => (
+            <View key={profile.id} style={styles.image}>
+              <PetProfile imgurl={profile.imgurl} />
+            </View>
+          ))}
           <View style={styles.container_content}>
             <View style={styles.container_name}>
               <Text style={styles.name}>{petName}</Text>
@@ -106,6 +162,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 110,
     height: 110,
+    marginRight: 10,
+  },
+  petContainer: {
     marginRight: 10,
   },
 });
