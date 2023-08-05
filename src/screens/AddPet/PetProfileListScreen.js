@@ -1,15 +1,29 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ScrollView, StyleSheet, View, RefreshControl } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  RefreshControl,
+  Pressable,
+  Text,
+} from 'react-native';
 import ComponentAMD2 from '../../components/ComponentAMD2';
 import PetProfile from '../../components/AddPet/PetProfile';
 import { useRoute } from '@react-navigation/native';
 import { AddPetRoutes, CarePetRoutes } from '../../navigations/routes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GRAY, WHITE, YELLOW } from '../../colors';
+import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import DangerAlert from '../../components/DangerAlert';
 
 const PetProfileListScreen = ({ navigation, AddPress }) => {
   const route = useRoute();
   const [petProfiles, setPetProfiles] = useState([]);
+  const [visible, setVisible] = useState(false);
   var petProfiles2 = [];
   const [select, setSelect] = useState(false);
   var inviter;
@@ -56,6 +70,9 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   const handleAddPress = () => {
     navigation.navigate(AddPetRoutes.REGISTER);
   };
+  const handleInvitePress = () => {
+    setVisible(true);
+  };
 
   const getImageUrl = async (inviter, id) => {
     try {
@@ -88,9 +105,29 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   };
 
   return (
-    <>
-      <View style={styles.container}>
-        <ComponentAMD2 onPress={handleAddPress} onRefresh={handleRefresh} />
+    <View style={styles.container}>
+      {/* 초대 모달 */}
+      <DangerAlert
+        visible={visible}
+        onClose={() => setVisible(false)}
+        leftBtnColor={GRAY.LIGHT}
+        rightBtnColor={YELLOW.DEFAULT}
+        title={'가입 요청하기'}
+        leftText={'취소'}
+        rightText={'요청'}
+        comment={'이미 등록된 펫 계정에 가입하고 함께 펫을 관리해보세요'}
+      />
+
+      <View style={styles.container_list}>
+        <Text style={{ fontSize: 17, paddingRight: 190, paddingTop: 15 }}>
+          등록된 펫
+        </Text>
+        <TouchableOpacity onPress={handleAddPress} onRefresh={handleRefresh}>
+          <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleInvitePress}>
+          <Ionicons name="heart-circle" size={43} color={YELLOW.DEFAULT} />
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -113,17 +150,24 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
           />
         ))}
       </ScrollView>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.2,
+    flex: 1,
+    width: '100%',
+    backgroundColor: WHITE,
+  },
+  container_list: {
+    flex: 0.1,
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     justifyContent: 'flex-end',
-    margin: 15,
+    marginTop: 40,
+    marginRight: 20,
+    backgroundColor: WHITE,
   },
   scroll: {
     flex: 1,

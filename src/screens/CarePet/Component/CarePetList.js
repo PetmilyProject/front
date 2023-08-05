@@ -93,19 +93,17 @@ const CarePetList = ({
     <View style={styles.container}>
       <View style={{ paddingRight: 60 }}>
         <View style={styles.container_row}>
-          {/* <View style={{}}>
-            {petProfiles.map((profile) => (
-              <PetProfile
-                key={profile.id}
-                imgurl={profile.imgurl} // 이미지 URL을 전달합니다.
-              />
-            ))} */}
-          {/* </View> */}
-          {petProfiles.map((profile) => (
+          <View style={{}}>
+            <Image
+              source={require('../../../assets/pet_icon.png')}
+              style={styles.image}
+            />
+          </View>
+          {/* {petProfiles.map((profile) => (
             <View key={profile.id} style={styles.image}>
               <PetProfile imgurl={profile.imgurl} />
             </View>
-          ))}
+          ))} */}
           <View style={styles.container_content}>
             <View style={styles.container_name}>
               <Text style={styles.name}>{petName}</Text>

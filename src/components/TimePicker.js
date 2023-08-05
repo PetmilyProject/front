@@ -1,58 +1,10 @@
-// import { useState } from 'react';
-// import { Text, Pressable } from 'react-native';
-// import DateTimePicker from 'react-native-modal-datetime-picker';
-
-// const TimePicker = () => {
-//   const today = new Date();
-//   var hours = String(today.getHours());
-//   var minute = String(today.getMinutes());
-//   var ampm;
-//   var controlAmPm = () => {
-//     if (hours >= 12) {
-//       ampm = '오후';
-//     } else ampm = '오전';
-//     return ampm;
-//   };
-//   var currentime = `${controlAmPm()} ${hours}시 ${minute}분`;
-//   const [TimeVisible, setTimeVisible] = useState(false);
-//   const [time, setTime] = useState(currentime);
-
-//   const showTimePicker = () => {
-//     setTimeVisible(true);
-//   };
-//   const hideTimePicker = () => {
-//     setTimeVisible(false);
-//   };
-//   const handleTimePicker = (pickertime) => {
-//     setTimeVisible(false);
-//     hours = String(pickertime.getHours());
-//     minute = String(pickertime.getMinutes());
-//     controlAmPm();
-//     setTime(`${ampm} ${hours}시 ${minute}분`);
-//   };
-
-//   return (
-//     <Pressable onPress={showTimePicker}>
-//       <Text>{time}</Text>
-//       <DateTimePicker
-//         isVisible={TimeVisible}
-//         mode="time"
-//         onCancel={hideTimePicker}
-//         onConfirm={handleTimePicker}
-//       />
-//     </Pressable>
-//   );
-// };
-
-// export default TimePicker;
-
 import React, { useState, useEffect } from 'react';
 import { Text, Pressable } from 'react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
 const TimePicker = ({ selectedTime, onTimeChange }) => {
   const [timeVisible, setTimeVisible] = useState(false);
-  const [currentime, setCurrentTime] = useState('');
+  const [currentTime, setCurrentTime] = useState('');
 
   useEffect(() => {
     // 현재 시각을 기본으로 설정
@@ -82,9 +34,19 @@ const TimePicker = ({ selectedTime, onTimeChange }) => {
     onTimeChange(formattedTime);
   };
 
+  // TimePicker를 사용하지 않았을 때 현재 시간을 기본값으로 설정
+  useEffect(() => {
+    if (!selectedTime) {
+      const today = new Date();
+      const hours = String(today.getHours()).padStart(2, '0');
+      const minutes = String(today.getMinutes()).padStart(2, '0');
+      setCurrentTime(`${hours}:${minutes}`);
+    }
+  }, [selectedTime]);
+
   return (
     <Pressable onPress={showTimePicker}>
-      <Text>{selectedTime || currentime}</Text>
+      <Text>{selectedTime || currentTime}</Text>
       <DateTimePicker
         isVisible={timeVisible}
         mode="time"

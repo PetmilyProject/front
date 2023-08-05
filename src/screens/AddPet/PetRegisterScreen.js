@@ -1,9 +1,9 @@
 import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
 import { AddPetRoutes, AuthRoutes } from '../../navigations/routes';
 import { useState } from 'react';
-import { GRAY } from '../../colors';
 // import ImagePickerComponent from '../../components/ImagePicker';
 import * as ImagePicker from 'expo-image-picker';
+import { GRAY, WHITE } from '../../colors';
 import SquareButton, { ColorTypes } from '../../components/Button';
 import InputText from '../../components/InputText';
 import { TextInput } from 'react-native-gesture-handler';
@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    backgroundColor: WHITE,
   },
   rowContainer: {
     flexDirection: 'row',

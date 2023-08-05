@@ -58,12 +58,14 @@ const UserWithdrawalScreen = ({ navigation }) => {
         text="취소"
         onPress={handleCancel}
         color={BLACK}
+        width={'90%'}
       />
       <Button2
         backgrouncolor={RED.DEFAULT}
         text="계정탈퇴"
         onPress={handleWithdrawal}
         color={WHITE}
+        width={'90%'}
       />
     </View>
   );

@@ -59,11 +59,11 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'row',
-    backgroundColor: GRAY.LIGHT,
+    backgroundColor: GRAY.LIGHTER,
     justifyContent: 'center',
     height: 140,
     width: 360,
-    borderRadius: 8,
+    borderRadius: 30,
     padding: 10,
   },
   container2: {
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   },
   nametitle: {
     flexDirection: 'row',
-    borderRadius: 8,
+    borderRadius: 20,
     backgroundColor: YELLOW.DEFAULT,
     width: 220,
     height: 40,
@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: WHITE,
     alignItems: 'center',
+    justifyContent: 'center',
     width: 110,
     height: 110,
     marginRight: 10,

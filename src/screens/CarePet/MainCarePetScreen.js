@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import CarePetList from './Component/CarePetList';
 import EmptySchduleScreen from './Schdule/EmptySchduleScreen';
 import { useEffect, useState } from 'react';
@@ -10,7 +10,6 @@ import ListRearerScreen from './Rearer/ListRearerScreen';
 import { CarePetRoutes } from '../../navigations/routes';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRoute } from '@react-navigation/native';
 import { GRAY, WHITE } from '../../colors';
 
 const MainCarePetScreen = ({ navigation, route }) => {
