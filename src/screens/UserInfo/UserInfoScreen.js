@@ -6,7 +6,9 @@ import axios from 'axios';
 import { UserInfoRoutes } from '../../navigations/routes';
 import { AuthContext } from '../../navigations/Nest';
 import DangerAlert from '../../components/DangerAlert';
-import { GRAY, YELLOW } from '../../colors';
+import { GRAY, WHITE, YELLOW } from '../../colors';
+import SquareButton, { ColorTypes } from '../../components/Button';
+import Button2 from '../../components/Button2';
 
 const UserInfoScreen = () => {
   const [email, setEmail] = useState('');
@@ -96,20 +98,29 @@ const UserInfoScreen = () => {
 
       {/* 로그아웃과 회원탈퇴 버튼 */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button1}>
-          <Text style={styles.buttonText}>양육자 초기화</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button1}
+        <Button2
+          backgrouncolor={YELLOW.DEFAULT}
+          color={WHITE}
+          text={'수정'}
+          width={350}
+        />
+        <Button2
+          backgrouncolor={YELLOW.DEFAULT}
+          color={WHITE}
+          text={'로그아웃'}
           onPress={() => {
             setVisible(true);
           }}
-        >
-          <Text style={styles.buttonText}>로그아웃</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button2} onPress={handleWithdrawal}>
-          <Text style={styles.buttonText}>회원탈퇴</Text>
-        </TouchableOpacity>
+          width={350}
+        />
+
+        <Button2
+          backgrouncolor={GRAY.LIGHT}
+          color={WHITE}
+          text={'계정탈퇴'}
+          onPress={handleWithdrawal}
+          width={350}
+        />
       </View>
     </View>
   );
@@ -119,7 +130,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: WHITE,
     paddingTop: 50,
   },
   modal: {
@@ -158,28 +169,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 50,
-  },
-  button1: {
-    backgroundColor: '#FFCC33',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 50,
-    marginVertical: 10,
-    width: 300,
-    alignItems: 'center',
-  },
-  button2: {
-    backgroundColor: '#999999',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 50,
-    marginVertical: 10,
-    width: 300,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'black',
-    fontSize: 14,
   },
 });
 

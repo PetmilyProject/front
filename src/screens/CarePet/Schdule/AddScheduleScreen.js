@@ -14,7 +14,7 @@ import { BLACK, WHITE, YELLOW } from '../../../colors';
 import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
 import { CarePetRoutes } from '../../../navigations/routes';
-import SelectionList from '../../../components/SelectionList';
+import SelectionListAlert from '../../../components/SelectionListAlert';
 
 const AddScheduleScreen = ({ navigation, route }) => {
   const petName = route.params;
@@ -143,7 +143,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
             onToggleAlarm={setaaa}
           />
           {/* 주기(요일) 선택 리스트*/}
-          <SelectionList
+          <SelectionListAlert
             visible={visible}
             onClose={() => setVisible(false)}
             item={item}
@@ -187,7 +187,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
             onChangeText={setInviter}
           /> */}
           {/* 수행자 선택 리스트*/}
-          <SelectionList
+          <SelectionListAlert
             visible={executorVisible}
             onClose={() => setExecutorVisible(false)}
             item={executor}

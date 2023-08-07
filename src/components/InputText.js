@@ -1,13 +1,20 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { GRAY } from '../colors';
+import PropTypes from 'prop-types';
 
-const InputText = ({ title, placeholder, keyboardType, onChangeText }) => {
+const InputText = ({
+  title,
+  placeholder,
+  keyboardType,
+  onChangeText,
+  width,
+}) => {
   return (
     <View style={styles.nest_container}>
       <Text style={styles.title}>{title}</Text>
       <View style={styles.container2}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { width: width }]}
           placeholder={placeholder}
           keyboardType={keyboardType}
           onChangeText={onChangeText}
@@ -16,17 +23,13 @@ const InputText = ({ title, placeholder, keyboardType, onChangeText }) => {
     </View>
   );
 };
-const Modify_InpuText = ({ title, placeholder }) => {
-  return (
-    <View style={styles.nest_container}>
-      <Text style={styles.title}>{title}</Text>
-      <View style={styles.container2}>
-        <TextInput style={styles.input} placeholder={placeholder}></TextInput>
-      </View>
-    </View>
-  );
+InputText.propTypes = {
+  width: PropTypes.number,
 };
 
+InputText.defaultProps = {
+  width: 350,
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -47,14 +50,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     width: 350,
     padding: 10,
-    borderRadius: 10,
-    borderColor: GRAY.DEFAULT,
-  },
-  modify_input: {
-    borderWidth: 1,
-    width: 350,
-    padding: 10,
-    borderRadius: 10,
+    borderRadius: 20,
     borderColor: GRAY.DEFAULT,
   },
 });

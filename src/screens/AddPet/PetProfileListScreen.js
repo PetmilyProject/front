@@ -18,7 +18,7 @@ import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import DangerAlert from '../../components/DangerAlert';
+import ViewListAlert from '../../components/ViewListAlert';
 
 const PetProfileListScreen = ({ navigation, AddPress }) => {
   const route = useRoute();
@@ -107,15 +107,15 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   return (
     <View style={styles.container}>
       {/* 초대 모달 */}
-      <DangerAlert
+      <ViewListAlert
         visible={visible}
         onClose={() => setVisible(false)}
-        leftBtnColor={GRAY.LIGHT}
-        rightBtnColor={YELLOW.DEFAULT}
-        title={'가입 요청하기'}
-        leftText={'취소'}
-        rightText={'요청'}
-        comment={'이미 등록된 펫 계정에 가입하고 함께 펫을 관리해보세요'}
+        leftBtnColor={YELLOW.DEFAULT}
+        title={'초대 요청'}
+        leftText={'닫기'}
+        comment={'초대를 수락하고 함께 펫을 관리해보세요'}
+        subComment={'한 번 거절한 초대는 취소할 수 없습니다'}
+        scrollViewName={'▶ 받은 초대'}
       />
 
       <View style={styles.container_list}>

@@ -4,7 +4,7 @@ import CustomMultiPicker from 'react-native-multiple-select-list';
 import { WHITE, YELLOW, GRAY } from '../colors';
 import Button2 from './Button2';
 
-const SelectionList = ({
+const SelectionListAlert = ({
   visible,
   onClose,
   item,
@@ -80,4 +80,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectionList;
+export default SelectionListAlert;
