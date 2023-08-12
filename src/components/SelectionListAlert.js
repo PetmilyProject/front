@@ -62,6 +62,7 @@ const SelectionListAlert = ({
             text={buttonText}
             onPress={onClose}
             color={WHITE}
+            width={200}
           />
         </View>
       </View>

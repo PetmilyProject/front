@@ -5,6 +5,7 @@ import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
 
 const CarePetList = ({
+  navigation,
   petName,
   onAddPress,
   onSchedulePress,
@@ -71,7 +72,11 @@ const CarePetList = ({
         </View>
       </View>
       <View style={styles.componentAMD}>
-        <ComponentAMD onAddPress={onAddPress} />
+        <ComponentAMD
+          onAddPress={onAddPress}
+          navigation={navigation}
+          petName={petName}
+        />
       </View>
     </View>
   );

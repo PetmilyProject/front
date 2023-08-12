@@ -5,7 +5,6 @@ import {
   StyleSheet,
   View,
   RefreshControl,
-  Pressable,
   Text,
 } from 'react-native';
 import ComponentAMD2 from '../../components/ComponentAMD2';

@@ -24,14 +24,19 @@ export const AddPetRoutes = {
 };
 export const CarePetRoutes = {
   MAIN_CARE_PET: 'MainCarePetScreen',
+  // 스케줄
   EMPTY_SCHDULE: 'EmptySchduleScreen',
   ADD_SCHDULE: 'AddScheduleScreen',
   LIST_SCHDULE: 'SchduleListScreen',
+  // 사진첩
   EMPTY_PHOTO: 'EmptyPhotoScreen',
   ADD_PHOTO: 'AddPhotoScreen',
   LIST_PHOTO: 'ListPhotoScreen',
   VIEW_PHOTO: 'ViewPhotoScreen',
   DETAIL_PHOTO: 'DetailPhotoScreen',
+  // 양육자
+  // 펫정보
+  VIEW_PET: 'ViewPetInfoScreen',
 };
 
 export const UserInfoRoutes = {
