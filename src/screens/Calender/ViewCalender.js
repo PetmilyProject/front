@@ -1,7 +1,6 @@
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { WHITE, YELLOW } from '../../colors';
-import { color } from 'react-native-reanimated';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';

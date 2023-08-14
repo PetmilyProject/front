@@ -12,9 +12,9 @@ const PetProfile = ({
   handleLongPressed,
   onPress,
   select,
-  imgurl,
   profiles,
   id,
+  imgurl,
 }) => {
   const PetProfileItem = {
     select: { select },

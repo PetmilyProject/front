@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
-  Pressable,
   StyleSheet,
-  TextInput,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
 import { Text, View } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BLACK, WHITE, YELLOW } from '../../../colors';
+import { WHITE, YELLOW } from '../../../colors';
 import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
 import { CarePetRoutes } from '../../../navigations/routes';
@@ -28,6 +26,9 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [visible, setVisible] = useState(false);
   const [executorVisible, setExecutorVisible] = useState(false);
   const [submit, setSubmit] = useState(false);
+  const [selectedDays, setSelectedDays] = useState([]);
+  const [selectedDaysForCycle, setSelectedDaysForCycle] = useState([]); // For 주기
+  const [selectedDaysForExecutor, setSelectedDaysForExecutor] = useState([]); // For 양육자
 
   // 주기(요일) 리스트 아이템
   const item = {
@@ -39,6 +40,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
     5: '금',
     6: '토',
   };
+
   // 수행자 리스트 아이템
   const executor = {
     11: '홍길동',
@@ -49,6 +51,34 @@ const AddScheduleScreen = ({ navigation, route }) => {
   //SelectionList 활성화 여부 함수
   const handleSelection = () => {
     setVisible(true);
+  };
+
+  // 확인 버튼을 눌렀을 때 호출되는 함수
+  const handleConfirmSelection = (selectedDays) => {
+    console.log('선택한 요일:', selectedDays);
+    let cnt = 0;
+
+    for (let i = 0; i < selectedDays.length; i++) {
+      if (selectedDays[i] === '일') {
+        cnt += 1000000;
+      } else if (selectedDays[i] === '월') {
+        cnt += 100000;
+      } else if (selectedDays[i] === '화') {
+        cnt += 10000;
+      } else if (selectedDays[i] === '수') {
+        cnt += 1000;
+      } else if (selectedDays[i] === '목') {
+        cnt += 100;
+      } else if (selectedDays[i] === '금') {
+        cnt += 10;
+      } else if (selectedDays[i] === '토') {
+        cnt += 1;
+      }
+    }
+
+    setRepeat(cnt);
+    // console.log(cnt);
+    setSelectedDays(selectedDays);
   };
   const handleExecutorSelection = () => {
     setExecutorVisible(true);
@@ -62,6 +92,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
     setSubmit(true);
     if (schedule != '') {
       console.log(petName, schedule, date, time, repeat, alarm, 'end \n');
+
       AsyncStorage.getItem('email')
         .then((inviter) => {
           AsyncStorage.getItem('token')
@@ -152,7 +183,8 @@ const AddScheduleScreen = ({ navigation, route }) => {
             marginTop={430}
             marginLeft={140}
             buttonText={'확인'}
-            selected={'일'}
+            selected={selectedDays} // 선택한 요일을 전달합니다.
+            onConfirmSelection={handleConfirmSelection} // 확인 버튼을 눌렀을 때 선택한 요일을 처리하는 함수를 전달합니다.
           />
           {/* 주기(요일) 입력 */}
           <InputText_in
@@ -160,32 +192,9 @@ const AddScheduleScreen = ({ navigation, route }) => {
             titleSize={20}
             type={'free'}
             onPress={handleSelection}
+            selectedDays={selectedDays} // 이 부분 추가
           />
 
-          {/* 주기 입력
-          <View style={styles.box}>
-            <Text style={styles.title}>주기</Text>
-            <TextInput
-              placeholder="숫자를 입력하세요 (단위 : 일)"
-              value={String(repeat)}
-              onChangeText={(event) => {
-                const inputValue = event;
-                const numericValue = Number(inputValue);
-                const calculatedValue = numericValue;
-                setRepeat(calculatedValue.toString());
-              }}
-              style={styles.input}
-            />
-          </View> */}
-
-          {/* 수행자 입력
-          <InputText_in
-            title={'수행자'}
-            titleSize={20}
-            placeholder="ex) 홍길동"
-            value={inviter}
-            onChangeText={setInviter}
-          /> */}
           {/* 수행자 선택 리스트*/}
           <SelectionListAlert
             visible={executorVisible}
@@ -204,6 +213,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
             titleSize={20}
             type={'free'}
             onPress={handleExecutorSelection}
+            selectedDays={selectedDaysForExecutor}
           />
 
           <InputText_in
@@ -213,36 +223,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
             alarm={alarm}
             onToggleAlarm={setAlarm}
           />
-
-          {/* 알림 설정
-          <View style={styles.box}>
-            <Text style={styles.title}>알림</Text>
-            <View style={styles.inputBox}>
-              <Pressable onPress={() => setAlarm((alarm + 1) % 2)}>
-                <Text>{alarm ? '켜짐' : '꺼짐'}</Text>
-              </Pressable>
-            </View>
-          </View> */}
-
-          {/* <CustomMultiPicker
-            style={{ backgroundColor: BLACK }}
-            options={userList}
-            search={false} // should show search bar?
-            multiple={true} //
-            returnValue={'label'} // label or value
-            callback={(res) => {
-              console.log(res);
-            }} // callback, array of selected items
-            rowBackgroundColor={WHITE}
-            rowHeight={43}
-            rowRadius={5}
-            iconColor={YELLOW.DEFAULT}
-            iconSize={30}
-            selectedIconName={'ios-checkmark-circle-outline'}
-            unselectedIconName={'ios-radio-button-off-outline'}
-            scrollViewHeight={130}
-            selected={'일'} // list of options which are selected by default
-          /> */}
 
           {/* 등록 버튼 */}
           <View style={{ marginTop: 50 }}>

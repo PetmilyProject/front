@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { BLACK, GRAY, YELLOW } from '../colors';
+import { GRAY, YELLOW } from '../colors';
 import DatePicker from './DatePicker';
 import TimePicker from './TimePicker';
 import ToggleSwitch from 'toggle-switch-react-native';
@@ -20,6 +20,11 @@ const InputText_in = ({
   alarm,
   onToggleAlarm,
   onPress,
+  selectedDays,
+  selectedDaysForCycle,
+  onCycleDayChange,
+  selectedDaysForExecutor,
+  onExecutorDayChange,
 }) => {
   const [toggle, setToggle] = useState(false);
 
@@ -28,9 +33,12 @@ const InputText_in = ({
     onToggleAlarm(toggle ? 0 : 1);
   };
 
-  const handleFreePress = () => {
-    // Add your logic for handling the press event for the 'free' type here
-    console.log('Free type pressed!');
+  // type이 'free'인 경우, 선택한 요일을 표시하는 함수
+  const displaySelectedDays = () => {
+    if (type === 'free') {
+      return selectedDays.join(', '); // 선택한 요일을 콤마로 구분하여 문자열로 반환합니다.
+    }
+    return '';
   };
 
   return (
@@ -72,7 +80,9 @@ const InputText_in = ({
                 width: 250,
                 height: 20,
               }}
-            ></View>
+            >
+              <Text>{displaySelectedDays()}</Text>
+            </View>
           </Pressable>
         ) : null}
       </View>

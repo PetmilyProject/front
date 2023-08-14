@@ -24,6 +24,7 @@
     "expo-image-picker": "~14.1.1",
     "expo-status-bar": "~1.4.4",
     "expo-updates": "~0.16.4",
+    "form-data": "^4.0.0",
     "moment": "^2.29.4",
     "nanoid": "^4.0.2",
     "prop-types": "^15.8.1",

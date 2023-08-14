@@ -1,8 +1,10 @@
-import React from 'react';
-import { View, StyleSheet, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Modal, TouchableOpacity, Text } from 'react-native';
 import CustomMultiPicker from 'react-native-multiple-select-list';
 import { WHITE, YELLOW, GRAY } from '../colors';
 import Button2 from './Button2';
+
+const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
 const SelectionListAlert = ({
   visible,
@@ -16,7 +18,27 @@ const SelectionListAlert = ({
   margintBottom,
   selected,
   buttonText,
+  onConfirmSelection,
 }) => {
+  const [selectedItems, setSelectedItems] = useState(selected);
+
+  // 주기(요일) 선택 순서를 정렬하는 함수
+  const sortSelectedItems = (selectedItems) => {
+    return selectedItems.sort(
+      (a, b) => daysOfWeek.indexOf(a) - daysOfWeek.indexOf(b)
+    );
+  };
+
+  const handleConfirm = () => {
+    const orderedSelectedItems = sortSelectedItems(selectedItems);
+    onConfirmSelection(orderedSelectedItems);
+    onClose();
+  };
+
+  useEffect(() => {
+    setSelectedItems(selected);
+  }, [selected]);
+
   return (
     <Modal
       style={styles.container}
@@ -43,9 +65,7 @@ const SelectionListAlert = ({
           search={false}
           multiple={true}
           returnValue={'label'}
-          callback={(res) => {
-            console.log(res);
-          }}
+          callback={(res) => setSelectedItems(res)}
           rowBackgroundColor={WHITE}
           rowHeight={43}
           rowRadius={5}
@@ -60,7 +80,7 @@ const SelectionListAlert = ({
           <Button2
             backgrouncolor={YELLOW.DEFAULT}
             text={buttonText}
-            onPress={onClose}
+            onPress={handleConfirm}
             color={WHITE}
             width={200}
           />

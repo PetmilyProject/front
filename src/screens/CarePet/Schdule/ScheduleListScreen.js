@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GRAY, WHITE, YELLOW, BLACK } from '../../../colors';
+import { GRAY, WHITE, YELLOW } from '../../../colors';
 import { AntDesign } from '@expo/vector-icons';
 
 function ScheduleListScreen({ petName }) {
@@ -17,6 +17,8 @@ function ScheduleListScreen({ petName }) {
   const [executeArray, setExecuteArray] = useState([]);
   const [executeColor, setExecuteColor] = useState(GRAY.LIGHTER);
   const [selectedItemIndices, setSelectedItemIndices] = useState([]);
+  const [currentDate, setCurrentDate] = useState('2022-08-13'); // 초기에 보여줄 날짜로 대체하세요.
+  const [selectedScheduleIds, setSelectedScheduleIds] = useState([]);
 
   useEffect(() => {
     AsyncStorage.getItem('email')
@@ -59,7 +61,7 @@ function ScheduleListScreen({ petName }) {
     }
   };
   const renderItem = ({ item, index }) => {
-    const isSelected = selectedItemIndices.includes(index);
+    const isSelected = selectedItemIndices.includes(index.id);
     const backgroundColor = executeArray[index]
       ? YELLOW.DEFAULT_LIGHT
       : GRAY.LIGHTER;
@@ -108,16 +110,28 @@ function ScheduleListScreen({ petName }) {
     setExecuteArray(newExecuteArray);
   };
 
+  const handleLeftArrowPress = () => {
+    const currentDateObj = new Date(currentDate);
+    currentDateObj.setDate(currentDateObj.getDate() - 1);
+    setCurrentDate(currentDateObj.toISOString().split('T')[0]); // 다시 'YYYY-MM-DD' 형식으로 변환합니다.
+  };
+
+  const handleRightArrowPress = () => {
+    const currentDateObj = new Date(currentDate);
+    currentDateObj.setDate(currentDateObj.getDate() + 1);
+    setCurrentDate(currentDateObj.toISOString().split('T')[0]); // 다시 'YYYY-MM-DD' 형식으로 변환합니다.
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.container_row}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleLeftArrowPress}>
           <Text style={styles.select_date}>◀ </Text>
         </TouchableOpacity>
         <TouchableOpacity>
-          <Text style={styles.date}>2022-05-05</Text>
+          <Text style={styles.date}>{currentDate}</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleRightArrowPress}>
           <Text style={styles.select_date}> ▶</Text>
         </TouchableOpacity>
       </View>
@@ -177,7 +191,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '20%',
     alignItems: 'flex-end',
-    //backgroundColor: BLACK,
     marginRight: 5,
   },
   time: {
@@ -189,7 +202,6 @@ const styles = StyleSheet.create({
     width: '10%',
     alignItems: 'flex-start',
     margin: 5,
-    //backgroundColor: BLACK,
   },
   executor: {
     fontSize: 15,
@@ -205,6 +217,17 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 25,
     backgroundColor: WHITE,
+  },
+  deleteButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

@@ -1,4 +1,4 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import CarePetList from './Component/CarePetList';
 import EmptySchduleScreen from './Schdule/EmptySchduleScreen';
 import { useEffect, useState } from 'react';
@@ -19,6 +19,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
   const [health, setHealth] = useState(null);
   const [photo, setPhoto] = useState(true);
   const [rearer, setRearer] = useState(null);
+  const [selectedScheduleIds, setSelectedScheduleIds] = useState([]); // 선택한 일정의 ID를 저장하는 상태
 
   const onSchedulePress = () => {
     setContent('일정');
@@ -38,6 +39,24 @@ const MainCarePetScreen = ({ navigation, route }) => {
     } else if (content === '사진첩') {
       navigation.navigate(CarePetRoutes.ADD_PHOTO);
     }
+  };
+
+  const onDeletePress = () => {
+    Alert.alert(
+      '삭제하시겠습니까?',
+      null,
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '확인',
+          onPress: () => {},
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const onPress = () => {
@@ -96,6 +115,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
         onSchedulePress={onSchedulePress}
         onPhotoPress={onPhotoPress}
         onRearerPress={onRearerPress}
+        onDeletePress={onDeletePress}
         navigation={navigation}
       />
       <View style={styles.line}></View>

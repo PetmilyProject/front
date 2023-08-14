@@ -1,8 +1,10 @@
-import { View, StyleSheet, Text, Image, Pressable } from 'react-native';
-import { useState } from 'react';
+import { View, StyleSheet, Text, Image, Pressable, Alert } from 'react-native';
+import { useState, useEffect } from 'react';
 import { BLACK } from '../../../colors';
 import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const CarePetList = ({
   navigation,
@@ -11,10 +13,15 @@ const CarePetList = ({
   onSchedulePress,
   onPhotoPress,
   onRearerPress,
+  onDeletePress,
 }) => {
   const [schedueltextColor, setScheduleTextColor] = useState(YELLOW.DARK);
   const [phototextColor, setPhotoTextColor] = useState(BLACK);
   const [rearertextColor, setRearerTextColor] = useState(BLACK);
+  const [petProfiles, setPetProfiles] = useState([]);
+  const [responseData, setResponseData] = useState([]);
+  var petProfiles2 = [];
+  var petData;
 
   const handleSchedulePress = () => {
     setScheduleTextColor(YELLOW.DARK);
@@ -35,11 +42,54 @@ const CarePetList = ({
     setRearerTextColor(YELLOW.DARK);
     onRearerPress();
   };
+
   const textStyle = StyleSheet.create({
     schdule: {
       color: schedueltextColor,
     },
   });
+
+  const fetchData = async () => {
+    try {
+      const email = await AsyncStorage.getItem('email');
+      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${email}`;
+
+      const response = await axios.get(url);
+      const userData = response.data;
+
+      petData = userData.pets;
+      //inviter = userData.inviter;
+      setPetProfiles(petData);
+      petData.forEach(function (pet) {
+        petProfiles2.push(pet);
+        getImageUrl(pet.inviter, pet.id);
+      });
+    } catch (error) {
+      console.log('Error fetching pet data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const getImageUrl = async (inviter, id) => {
+    try {
+      const email = await AsyncStorage.getItem('email');
+      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg`;
+      // console.log(url);
+      setPetProfiles((prevProfiles) =>
+        prevProfiles.map((profile) => {
+          if (profile.id === id) {
+            return { ...profile, imgurl: url };
+          }
+          return profile;
+        })
+      );
+    } catch (error) {
+      console.log('Error fetching pet image:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -74,6 +124,7 @@ const CarePetList = ({
       <View style={styles.componentAMD}>
         <ComponentAMD
           onAddPress={onAddPress}
+          onDeletePress={onDeletePress}
           navigation={navigation}
           petName={petName}
         />
@@ -111,6 +162,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 110,
     height: 110,
+    marginRight: 10,
+  },
+  petContainer: {
     marginRight: 10,
   },
 });
