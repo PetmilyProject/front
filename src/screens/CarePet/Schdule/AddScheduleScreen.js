@@ -58,6 +58,29 @@ const AddScheduleScreen = ({ navigation, route }) => {
   // 확인 버튼을 눌렀을 때 호출되는 함수
   const handleConfirmSelection = (selectedDays) => {
     console.log('선택한 요일:', selectedDays);
+    let cnt = 0;
+
+    for (let i = 0; i < selectedDays.length; i++) {
+      if (selectedDays[i] === '일') {
+        cnt += 1000000;
+      } else if (selectedDays[i] === '월') {
+        cnt += 100000;
+      } else if (selectedDays[i] === '화') {
+        cnt += 10000;
+      } else if (selectedDays[i] === '수') {
+        cnt += 1000;
+      } else if (selectedDays[i] === '목') {
+        cnt += 100;
+      } else if (selectedDays[i] === '금') {
+        cnt += 10;
+      } else if (selectedDays[i] === '토') {
+        cnt += 1;
+      }
+    }
+
+    setRepeat(cnt);
+    // console.log(cnt);
+    // console.log(selectedDays);
     setSelectedDays(selectedDays);
   };
   const handleExecutorSelection = () => {
