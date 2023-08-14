@@ -25,7 +25,7 @@ const DangerAlert = ({
     >
       <View style={styles.container}>
         <Pressable onPress={onClose} style={styles.background}></Pressable>
-        <View style={styles.alert}>
+        <View style={[styles.alert, { height: visible ? 'auto' : 0 }]}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.comment}>{comment}</Text>
           <View style={styles.container_row}>
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 17,
     marginTop: 25,
+    textAlign: 'center',
   },
   comment: {
     color: GRAY.DEFAULT,
@@ -85,8 +86,8 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     marginTop: -200,
     width: '70%',
-    height: '15%',
-    borderRadius: 8,
+    borderRadius: 20,
+    overflow: 'hidden', // 자식 컨텐츠가 넘치는 경우를 처리하기 위해 오버플로우 제어
   },
   background: {
     ...StyleSheet.absoluteFillObject,

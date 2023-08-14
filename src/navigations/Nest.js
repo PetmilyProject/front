@@ -6,7 +6,6 @@ import { createContext, useState } from 'react';
 import UserInfoScreen from '../screens/UserInfo/UserInfoScreen';
 import FirstScreen from '../screens/FirstScreen';
 import AddScheduleScreen from '../screens/CarePet/Schdule/AddScheduleScreen';
-import EmptyPetProfileScreen from '../screens/AddPet/EmptyPetProfileScreen';
 import PetRegisterScreen from '../screens/AddPet/PetRegisterScreen';
 import {
   AddPetRoutes,
@@ -27,6 +26,7 @@ import { Ionicons } from '@expo/vector-icons';
 import WithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
 import DetailPhotoScreen from '../screens/Community/DetailPhotoScreen';
 import UserWithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
+import ViewPetInfoScreen from '../screens/CarePet/ViewPetInfoScreen';
 
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
@@ -55,29 +55,29 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
+// 메인-(일정,사진첩,양육자)
 const AddPetStackScreen = () => {
   return (
     <AddPetStack.Navigator>
-      {/* AddPet */}
+      {/* 펫 목록 */}
       <AddPetStack.Screen
         name={AddPetRoutes.LIST}
         component={PetProfileListScreen}
         options={{ title: '메인' }}
       />
-      {/* RegisterPet */}
+      {/* 펫 추가 */}
       <AddPetStack.Screen
         name={AddPetRoutes.REGISTER}
         component={PetRegisterScreen}
         options={{ title: '펫정보' }}
       />
-      {/* Care Pet */}
+      {/* Care Pet 입장 */}
       <AddPetStack.Screen
         name={CarePetRoutes.MAIN_CARE_PET}
         component={MainCarePetScreen}
         options={{ headerShown: false }}
       />
-      {/* Care Pet - 일정 */}
+      {/* Care Pet - 빈 일정 */}
       <AddPetStack.Screen
         name={CarePetRoutes.EMPTY_SCHDULE}
         component={EmptySchduleScreen}
@@ -90,10 +90,17 @@ const AddPetStackScreen = () => {
         // options={{ headerShown: false }}
       />
       <AddPetStack.Screen name="PetMain" component={UserInfoScreen} />
+      {/* 펫정보 */}
+      <AddPetStack.Screen
+        name={CarePetRoutes.VIEW_PET}
+        component={ViewPetInfoScreen}
+        options={{ title: '펫정보' }}
+      />
     </AddPetStack.Navigator>
   );
 };
 
+//커뮤니티
 const PhotoStackScreen = () => {
   return (
     <PhotoStack.Navigator>
@@ -127,7 +134,7 @@ const PhotoStackScreen = () => {
     </PhotoStack.Navigator>
   );
 };
-
+// 내정보
 const UserInfoStackScreen = () => {
   return (
     <UserInfoStack.Navigator>

@@ -6,7 +6,7 @@ import Button2 from './Button2';
 
 const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
 
-const SelectionList = ({
+const SelectionListAlert = ({
   visible,
   onClose,
   item,
@@ -82,6 +82,7 @@ const SelectionList = ({
             text={buttonText}
             onPress={handleConfirm}
             color={WHITE}
+            width={200}
           />
         </View>
       </View>
@@ -100,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectionList;
+export default SelectionListAlert;

@@ -14,7 +14,7 @@ import { WHITE, YELLOW } from '../../../colors';
 import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
 import { CarePetRoutes } from '../../../navigations/routes';
-import SelectionList from '../../../components/SelectionList';
+import SelectionListAlert from '../../../components/SelectionListAlert';
 
 const AddScheduleScreen = ({ navigation, route }) => {
   const petName = route.params;
@@ -58,6 +58,29 @@ const AddScheduleScreen = ({ navigation, route }) => {
   // 확인 버튼을 눌렀을 때 호출되는 함수
   const handleConfirmSelection = (selectedDays) => {
     console.log('선택한 요일:', selectedDays);
+    let cnt = 0;
+
+    for (let i = 0; i < selectedDays.length; i++) {
+      if (selectedDays[i] === '일') {
+        cnt += 1000000;
+      } else if (selectedDays[i] === '월') {
+        cnt += 100000;
+      } else if (selectedDays[i] === '화') {
+        cnt += 10000;
+      } else if (selectedDays[i] === '수') {
+        cnt += 1000;
+      } else if (selectedDays[i] === '목') {
+        cnt += 100;
+      } else if (selectedDays[i] === '금') {
+        cnt += 10;
+      } else if (selectedDays[i] === '토') {
+        cnt += 1;
+      }
+    }
+
+    setRepeat(cnt);
+    // console.log(cnt);
+    // console.log(selectedDays);
     setSelectedDays(selectedDays);
   };
   const handleExecutorSelection = () => {
@@ -154,7 +177,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
             onToggleAlarm={setaaa}
           />
           {/* 주기(요일) 선택 리스트*/}
-          <SelectionList
+          <SelectionListAlert
             visible={visible}
             onClose={() => setVisible(false)}
             item={item}
@@ -184,7 +207,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
             onChangeText={setInviter}
           /> */}
           {/* 수행자 선택 리스트*/}
-          <SelectionList
+          <SelectionListAlert
             visible={executorVisible}
             onClose={() => setExecutorVisible(false)}
             item={executor}

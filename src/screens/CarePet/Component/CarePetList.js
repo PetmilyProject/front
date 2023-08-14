@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 const CarePetList = ({
+  navigation,
   petName,
   onAddPress,
   onSchedulePress,
@@ -121,7 +122,12 @@ const CarePetList = ({
         </View>
       </View>
       <View style={styles.componentAMD}>
-        <ComponentAMD onAddPress={onAddPress} onDeletePress={onDeletePress} />
+        <ComponentAMD
+          onAddPress={onAddPress}
+          onDeletePress={onDeletePress}
+          navigation={navigation}
+          petName={petName}
+        />
       </View>
     </View>
   );
