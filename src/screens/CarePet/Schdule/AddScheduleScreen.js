@@ -10,7 +10,7 @@ import {
 import { Text, View } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BLACK, WHITE, YELLOW } from '../../../colors';
+import { WHITE, YELLOW } from '../../../colors';
 import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
 import { CarePetRoutes } from '../../../navigations/routes';
