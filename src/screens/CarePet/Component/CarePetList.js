@@ -1,12 +1,10 @@
-import { View, StyleSheet, Text, Image, Pressable } from 'react-native';
+import { View, StyleSheet, Text, Image, Pressable, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
 import { BLACK } from '../../../colors';
 import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
-import PetProfileListScreen from '../../AddPet/PetProfileListScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import PetProfile from '../../../components/AddPet/PetProfile';
 
 const CarePetList = ({
   petName,
@@ -14,11 +12,13 @@ const CarePetList = ({
   onSchedulePress,
   onPhotoPress,
   onRearerPress,
+  onDeletePress,
 }) => {
   const [schedueltextColor, setScheduleTextColor] = useState(YELLOW.DARK);
   const [phototextColor, setPhotoTextColor] = useState(BLACK);
   const [rearertextColor, setRearerTextColor] = useState(BLACK);
   const [petProfiles, setPetProfiles] = useState([]);
+  const [responseData, setResponseData] = useState([]);
   var petProfiles2 = [];
   var petData;
 
@@ -41,6 +41,7 @@ const CarePetList = ({
     setRearerTextColor(YELLOW.DARK);
     onRearerPress();
   };
+
   const textStyle = StyleSheet.create({
     schdule: {
       color: schedueltextColor,
@@ -99,11 +100,6 @@ const CarePetList = ({
               style={styles.image}
             />
           </View>
-          {/* {petProfiles.map((profile) => (
-            <View key={profile.id} style={styles.image}>
-              <PetProfile imgurl={profile.imgurl} />
-            </View>
-          ))} */}
           <View style={styles.container_content}>
             <View style={styles.container_name}>
               <Text style={styles.name}>{petName}</Text>
@@ -125,7 +121,7 @@ const CarePetList = ({
         </View>
       </View>
       <View style={styles.componentAMD}>
-        <ComponentAMD onAddPress={onAddPress} />
+        <ComponentAMD onAddPress={onAddPress} onDeletePress={onDeletePress} />
       </View>
     </View>
   );

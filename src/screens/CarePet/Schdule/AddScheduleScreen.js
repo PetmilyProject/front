@@ -28,6 +28,9 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [visible, setVisible] = useState(false);
   const [executorVisible, setExecutorVisible] = useState(false);
   const [submit, setSubmit] = useState(false);
+  const [selectedDays, setSelectedDays] = useState([]);
+  const [selectedDaysForCycle, setSelectedDaysForCycle] = useState([]); // For 주기
+  const [selectedDaysForExecutor, setSelectedDaysForExecutor] = useState([]); // For 양육자
 
   // 주기(요일) 리스트 아이템
   const item = {
@@ -39,6 +42,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
     5: '금',
     6: '토',
   };
+
   // 수행자 리스트 아이템
   const executor = {
     11: '홍길동',
@@ -49,6 +53,12 @@ const AddScheduleScreen = ({ navigation, route }) => {
   //SelectionList 활성화 여부 함수
   const handleSelection = () => {
     setVisible(true);
+  };
+
+  // 확인 버튼을 눌렀을 때 호출되는 함수
+  const handleConfirmSelection = (selectedDays) => {
+    console.log('선택한 요일:', selectedDays);
+    setSelectedDays(selectedDays);
   };
   const handleExecutorSelection = () => {
     setExecutorVisible(true);
@@ -62,6 +72,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
     setSubmit(true);
     if (schedule != '') {
       console.log(petName, schedule, date, time, repeat, alarm, 'end \n');
+
       AsyncStorage.getItem('email')
         .then((inviter) => {
           AsyncStorage.getItem('token')
@@ -152,7 +163,8 @@ const AddScheduleScreen = ({ navigation, route }) => {
             marginTop={430}
             marginLeft={140}
             buttonText={'확인'}
-            selected={'일'}
+            selected={selectedDays} // 선택한 요일을 전달합니다.
+            onConfirmSelection={handleConfirmSelection} // 확인 버튼을 눌렀을 때 선택한 요일을 처리하는 함수를 전달합니다.
           />
           {/* 주기(요일) 입력 */}
           <InputText_in
@@ -160,23 +172,8 @@ const AddScheduleScreen = ({ navigation, route }) => {
             titleSize={20}
             type={'free'}
             onPress={handleSelection}
+            selectedDays={selectedDays} // 이 부분 추가
           />
-
-          {/* 주기 입력
-          <View style={styles.box}>
-            <Text style={styles.title}>주기</Text>
-            <TextInput
-              placeholder="숫자를 입력하세요 (단위 : 일)"
-              value={String(repeat)}
-              onChangeText={(event) => {
-                const inputValue = event;
-                const numericValue = Number(inputValue);
-                const calculatedValue = numericValue;
-                setRepeat(calculatedValue.toString());
-              }}
-              style={styles.input}
-            />
-          </View> */}
 
           {/* 수행자 입력
           <InputText_in
@@ -204,6 +201,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
             titleSize={20}
             type={'free'}
             onPress={handleExecutorSelection}
+            selectedDays={selectedDaysForExecutor}
           />
 
           <InputText_in
