@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
-  Pressable,
   StyleSheet,
-  TextInput,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
@@ -80,7 +78,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
 
     setRepeat(cnt);
     // console.log(cnt);
-    // console.log(selectedDays);
     setSelectedDays(selectedDays);
   };
   const handleExecutorSelection = () => {
@@ -198,14 +195,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
             selectedDays={selectedDays} // 이 부분 추가
           />
 
-          {/* 수행자 입력
-          <InputText_in
-            title={'수행자'}
-            titleSize={20}
-            placeholder="ex) 홍길동"
-            value={inviter}
-            onChangeText={setInviter}
-          /> */}
           {/* 수행자 선택 리스트*/}
           <SelectionListAlert
             visible={executorVisible}
@@ -234,36 +223,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
             alarm={alarm}
             onToggleAlarm={setAlarm}
           />
-
-          {/* 알림 설정
-          <View style={styles.box}>
-            <Text style={styles.title}>알림</Text>
-            <View style={styles.inputBox}>
-              <Pressable onPress={() => setAlarm((alarm + 1) % 2)}>
-                <Text>{alarm ? '켜짐' : '꺼짐'}</Text>
-              </Pressable>
-            </View>
-          </View> */}
-
-          {/* <CustomMultiPicker
-            style={{ backgroundColor: BLACK }}
-            options={userList}
-            search={false} // should show search bar?
-            multiple={true} //
-            returnValue={'label'} // label or value
-            callback={(res) => {
-              console.log(res);
-            }} // callback, array of selected items
-            rowBackgroundColor={WHITE}
-            rowHeight={43}
-            rowRadius={5}
-            iconColor={YELLOW.DEFAULT}
-            iconSize={30}
-            selectedIconName={'ios-checkmark-circle-outline'}
-            unselectedIconName={'ios-radio-button-off-outline'}
-            scrollViewHeight={130}
-            selected={'일'} // list of options which are selected by default
-          /> */}
 
           {/* 등록 버튼 */}
           <View style={{ marginTop: 50 }}>

@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { BLACK, GRAY, YELLOW } from '../colors';
+import { GRAY, YELLOW } from '../colors';
 import DatePicker from './DatePicker';
 import TimePicker from './TimePicker';
 import ToggleSwitch from 'toggle-switch-react-native';

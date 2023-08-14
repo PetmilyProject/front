@@ -1,12 +1,6 @@
-import {
-  Pressable,
-  StyleSheet,
-  View,
-  Alert,
-  TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
-import { WHITE, YELLOW } from '../colors';
+import { YELLOW } from '../colors';
 import { CarePetRoutes } from '../navigations/routes';
 
 //등록 수정 삭제 아이콘

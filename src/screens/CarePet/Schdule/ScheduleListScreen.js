@@ -6,11 +6,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GRAY, WHITE, YELLOW, BLACK } from '../../../colors';
+import { GRAY, WHITE, YELLOW } from '../../../colors';
 import { AntDesign } from '@expo/vector-icons';
 
 function ScheduleListScreen({ petName }) {
@@ -112,18 +111,12 @@ function ScheduleListScreen({ petName }) {
   };
 
   const handleLeftArrowPress = () => {
-    // 현재 날짜를 하루 전으로 변경하는 로직을 구현합니다.
-    // 예를 들어, 날짜가 'YYYY-MM-DD' 형식이라면 다음과 같이 사용할 수 있습니다.
-    // currentDate가 'YYYY-MM-DD' 형식이라고 가정합니다.
     const currentDateObj = new Date(currentDate);
     currentDateObj.setDate(currentDateObj.getDate() - 1);
     setCurrentDate(currentDateObj.toISOString().split('T')[0]); // 다시 'YYYY-MM-DD' 형식으로 변환합니다.
   };
 
   const handleRightArrowPress = () => {
-    // 현재 날짜를 하루 후로 변경하는 로직을 구현합니다.
-    // 예를 들어, 날짜가 'YYYY-MM-DD' 형식이라면 다음과 같이 사용할 수 있습니다.
-    // currentDate가 'YYYY-MM-DD' 형식이라고 가정합니다.
     const currentDateObj = new Date(currentDate);
     currentDateObj.setDate(currentDateObj.getDate() + 1);
     setCurrentDate(currentDateObj.toISOString().split('T')[0]); // 다시 'YYYY-MM-DD' 형식으로 변환합니다.
@@ -198,7 +191,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '20%',
     alignItems: 'flex-end',
-    //backgroundColor: BLACK,
     marginRight: 5,
   },
   time: {
@@ -210,7 +202,6 @@ const styles = StyleSheet.create({
     width: '10%',
     alignItems: 'flex-start',
     margin: 5,
-    //backgroundColor: BLACK,
   },
   executor: {
     fontSize: 15,
@@ -228,14 +219,14 @@ const styles = StyleSheet.create({
     backgroundColor: WHITE,
   },
   deleteButton: {
-    backgroundColor: 'red', // 버튼 색상을 원하는 색으로 수정하세요
+    backgroundColor: 'red',
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
     alignItems: 'center',
   },
   deleteButtonText: {
-    color: 'white', // 버튼 텍스트 색상을 원하는 색으로 수정하세요
+    color: 'white',
     fontWeight: 'bold',
   },
 });

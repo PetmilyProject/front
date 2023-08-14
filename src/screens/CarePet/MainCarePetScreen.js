@@ -1,4 +1,4 @@
-import { View, StyleSheet, Alert, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import CarePetList from './Component/CarePetList';
 import EmptySchduleScreen from './Schdule/EmptySchduleScreen';
 import { useEffect, useState } from 'react';
