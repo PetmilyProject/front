@@ -9,13 +9,17 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { CarePetRoutes } from '../../../navigations/routes';
+import { useNavigation, useNavigationState } from '@react-navigation/native';
+//import { CarePetRoutes } from '../../../navigations/routes';
+import MyPetPhotoScreen from './MyPetPhotoScreen';
 
-const ListPhotoScreen = ({ navigation }) => {
+const ListPhotoScreen = () => {
   const [imageList, setImageList] = useState([]); // 이미지 목록을 저장할 상태 변수
   const [email, setEmail] = useState(''); // 이메일을 저장할 상태 변수
   const [isLoading, setIsLoading] = useState(true); // 데이터 로딩 상태를 저장할 상태 변수
   const [sharedPets, setSharedPets] = useState([]);
+  
+  const navigation = useNavigation();
 
   useEffect(() => {
     const getPhotoImage = async () => {
@@ -87,11 +91,11 @@ const ListPhotoScreen = ({ navigation }) => {
     const handlePress = () => {
       const matchedPet = sharedPets.find((pet) => pet.sharedPetId === item.id);
       if (matchedPet) {
-        navigation.navigate({
-          name: CarePetRoutes.DETAIL_PHOTO,
-          params: { pet: matchedPet },
-
-          key: 'DetailPhotoScreen',
+        navigation.navigate('MyPetPhotoScreen', {
+          petInfo: { 
+            pet: matchedPet,
+            key: 'DetailPhotoScreen',
+          },
         });
       }
     };

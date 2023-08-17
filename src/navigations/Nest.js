@@ -27,6 +27,7 @@ import WithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
 import DetailPhotoScreen from '../screens/Community/DetailPhotoScreen';
 import UserWithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
 import ViewPetInfoScreen from '../screens/CarePet/ViewPetInfoScreen';
+import MyPetPhotoScreen from '../screens/CarePet/Photo/MyPetPhotoScreen';
 
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
@@ -95,6 +96,12 @@ const AddPetStackScreen = () => {
         name={CarePetRoutes.VIEW_PET}
         component={ViewPetInfoScreen}
         options={{ title: '펫정보' }}
+      />
+      {/* 사진첩 상세 */}
+      <AddPetStack.Screen 
+        name='MyPetPhotoScreen'
+        component={MyPetPhotoScreen}
+        options={{ headerShown: false }}
       />
     </AddPetStack.Navigator>
   );

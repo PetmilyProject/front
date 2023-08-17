@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, PermissionsAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import axios from 'axios';
@@ -9,12 +9,14 @@ import DangerAlert from '../../components/DangerAlert';
 import { GRAY, WHITE, YELLOW } from '../../colors';
 import SquareButton, { ColorTypes } from '../../components/Button';
 import Button2 from '../../components/Button2';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 
 const UserInfoScreen = () => {
   const [email, setEmail] = useState('');
   const [userName, setUserName] = useState('');
   const [visible, setVisible] = useState(false);
-  const [logout, setLogout] = useState(false);
+  const [image, setImage] = useState(null);
 
   const navigation = useNavigation();
 
@@ -80,10 +82,31 @@ const UserInfoScreen = () => {
       />
       {/* 강아지 사진 */}
       <View style={styles.imageContainer}>
-        <Image
-          style={styles.dogImage}
-          source={require('../../assets/pet_icon.png')}
-        />
+        <TouchableOpacity
+          onPress={async () => {
+            let result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.All,
+              allowsEditing: true,
+              aspect: [3, 3],
+              quality: 1
+            });
+
+            console.log(result);
+
+            if (!result.canceled) {
+              setImage(result.assets[0].uri);
+            }
+          }}
+        >
+          {image ? (
+            <Image source={{ uri: image }} style={styles.dogImage} />
+          ) : (
+            <Image
+              style={styles.dogImage}
+              source={require('../../assets/pet_icon.png')}
+            />
+          )}
+        </TouchableOpacity>
       </View>
 
       {/* 이메일과 닉네임 */}
