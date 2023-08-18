@@ -11,7 +11,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 //import { CarePetRoutes } from '../../../navigations/routes';
-import MyPetPhotoScreen from './MyPetPhotoScreen';
 
 const ListPhotoScreen = () => {
   const [imageList, setImageList] = useState([]); // 이미지 목록을 저장할 상태 변수
@@ -91,10 +90,9 @@ const ListPhotoScreen = () => {
     const handlePress = () => {
       const matchedPet = sharedPets.find((pet) => pet.sharedPetId === item.id);
       if (matchedPet) {
-        navigation.navigate('MyPetPhotoScreen', {
+        navigation.navigate('DetailPhotoScreen', {
           petInfo: { 
-            pet: matchedPet,
-            key: 'DetailPhotoScreen',
+            pet: matchedPet
           },
         });
       }

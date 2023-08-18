@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, TextInput, Button, Image } from 'react-native';
 import ImagePickerComponent from '../../../components/ImagePicker';
 import { CarePetRoutes } from '../../../navigations/routes';
-import DatePicker from '../../../components/DatePicker';
+import DatePicker from 'react-native-datepicker';
 import TimePicker from '../../../components/TimePicker';
 import InputText from '../../../components/InputText';
 import { GRAY } from '../../../colors';

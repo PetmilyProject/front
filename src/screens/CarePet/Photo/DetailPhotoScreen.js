@@ -10,14 +10,15 @@ import {
 
 import { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { RED, BLACK } from '../../colors';
+import { RED, BLACK } from '../../../colors';
 
-const DetailPhotoScreen = ({ navigation, route }) => {
+const DetailPhotoScreen = ({ route }) => {
   const [liked, setLiked] = useState(BLACK.DEFAULT);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const param = route.params;
-
+  //console.log(param)
+  
   // 댓글 작성 핸들러
   const handleComment = () => {
     if (comment !== '') {
@@ -40,7 +41,7 @@ const DetailPhotoScreen = ({ navigation, route }) => {
 
       <Image
         source={{
-          uri: `http://43.200.8.47:8080/shared-images/lsyun1234@naver.com/downloadImage/${param.pet.sharedPetId}.jpg`,
+          uri: `http://43.200.8.47:8080/shared-images/lsyun1234@naver.com/downloadImage/${param.petInfo.pet.sharedPetId}.jpg`,
         }}
         style={{ width: '100%', height: 300 }}
       />
