@@ -7,11 +7,13 @@ import {
   Pressable,
   ActivityIndicator,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
+import { MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
+import { YELLOW } from '../../colors';
 
 const CommunityPhotoScreen = () => {
   let token;
@@ -52,34 +54,53 @@ const CommunityPhotoScreen = () => {
 
   const gotoDetail = (index) => {
     //console.log(myPhotoUrl[index]);
-    navigation.navigate('CommunityDetailPhotoScreen', { 
-      detailUrl: myPhotoUrl[index] 
+    navigation.navigate('CommunityDetailPhotoScreen', {
+      detailUrl: myPhotoUrl[index]
     });
   }
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <FlatList
-          data={myPhotoUrl}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity onPress={() => gotoDetail(index)}>
-              <Image
-                source={{ uri: item }}
-                style={styles.photoItem}
-              />
-            </TouchableOpacity>
-          )}
-          numColumns={3}
-        />
-
+    <View style={styles.background}>
+      <View style={styles.icon_style}>
+        <TouchableOpacity>
+          <Entypo 
+            name="circle-with-plus" 
+            size={40} 
+            color={YELLOW.DEFAULT} 
+          />
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+      <ScrollView>
+        <View style={styles.container}>
+          <FlatList
+            data={myPhotoUrl}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity onPress={() => gotoDetail(index)}>
+                <Image
+                  source={{ uri: item }}
+                  style={styles.photoItem}
+                />
+              </TouchableOpacity>
+            )}
+            numColumns={3}
+          />
+
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  background: {
+    backgroundColor: 'white',
+    height: '100%'
+  },
+  icon_style: {
+    alignItems: 'flex-end',
+    marginRight: 20
+  },
   container: {
     flex: 1,
     padding: 10,

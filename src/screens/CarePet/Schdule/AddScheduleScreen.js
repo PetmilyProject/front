@@ -11,8 +11,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WHITE, YELLOW } from '../../../colors';
 import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
-import { CarePetRoutes } from '../../../navigations/routes';
+import { CarePetRoutes, ContentRoutes } from '../../../navigations/routes';
 import SelectionListAlert from '../../../components/SelectionListAlert';
+import ScheduleListScreen from './ScheduleListScreen';
 
 const AddScheduleScreen = ({ navigation, route }) => {
   const petName = route.params;
@@ -131,7 +132,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
     } else {
       return 1;
     }
-    navigation.navigate(CarePetRoutes.MAIN_CARE_PET);
+    navigation.goBack();
   };
 
   return (

@@ -110,7 +110,7 @@ const ViewCalender = () => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor:'white'}}>
       <View style={styles.container}>
         <Calendar
           style={styles.calendar}
@@ -162,7 +162,7 @@ const ViewCalender = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginBottom: 20,
+    marginBottom: 0,
     backgroundColor: WHITE,
   },
   calendar: {

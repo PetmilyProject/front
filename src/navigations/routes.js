@@ -27,7 +27,7 @@ export const CarePetRoutes = {
   // 스케줄
   EMPTY_SCHDULE: 'EmptySchduleScreen',
   ADD_SCHDULE: 'AddScheduleScreen',
-  LIST_SCHDULE: 'SchduleListScreen',
+  LIST_SCHEDULE: 'ScheduleListScreen',
   // 사진첩
   EMPTY_PHOTO: 'EmptyPhotoScreen',
   ADD_PHOTO: 'AddPhotoScreen',

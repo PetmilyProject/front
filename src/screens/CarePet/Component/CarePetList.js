@@ -1,10 +1,12 @@
-import { View, StyleSheet, Text, Image, Pressable, Alert } from 'react-native';
+import { View, StyleSheet, Text, Image, Pressable, Alert, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
 import { BLACK } from '../../../colors';
 import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { CarePetRoutes } from '../../../navigations/routes';
 
 const CarePetList = ({
   navigation,
@@ -41,6 +43,13 @@ const CarePetList = ({
     setPhotoTextColor(BLACK);
     setRearerTextColor(YELLOW.DARK);
     onRearerPress();
+  };
+  // update 버튼 누를 시 작동. 추후 수정 바람.
+  const onUpdatePress = () => {
+
+  };
+  const onPetPress = () => {
+    navigation.navigate(CarePetRoutes.VIEW_PET, petName);
   };
 
   const textStyle = StyleSheet.create({
@@ -102,8 +111,13 @@ const CarePetList = ({
             />
           </View>
           <View style={styles.container_content}>
-            <View style={styles.container_name}>
-              <Text style={styles.name}>{petName}</Text>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={styles.container_name}>
+                <Text style={styles.name}>{petName}</Text>
+              </View>
+              <TouchableOpacity onPress={onPetPress}>
+          <Ionicons name="heart-circle" style={{ paddingLeft: 30 }} size={40} color={YELLOW.DEFAULT} />
+        </TouchableOpacity>
             </View>
             <View style={styles.container_row}>
               <Pressable onPress={handleSchedulePress}>
