@@ -11,13 +11,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { GRAY, WHITE, YELLOW } from '../../../colors';
 import { AntDesign } from '@expo/vector-icons';
+import { getYoil } from '../../../components/Calendar/CalendarTools';
 
 function ScheduleListScreen({ petName }) {
   const [responseData, setResponseData] = useState([]);
   const [executeArray, setExecuteArray] = useState([]);
   const [executeColor, setExecuteColor] = useState(GRAY.LIGHTER);
   const [selectedItemIndices, setSelectedItemIndices] = useState([]);
-  const [currentDate, setCurrentDate] = useState('2022-08-13'); // 초기에 보여줄 날짜로 대체하세요.
+  const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]);
+  const [currentDay, setCurrentDay] = useState(new Date().getDay())
   const [selectedScheduleIds, setSelectedScheduleIds] = useState([]);
 
   useEffect(() => {
@@ -35,7 +37,19 @@ function ScheduleListScreen({ petName }) {
                 }
               )
               .then((response) => {
-                setResponseData(response.data);
+                // setResponseData(response.data);
+                // setExecuteArray(Array(response.data.length).fill(false));
+                const newResponseData = [];
+
+                for (let i = 0; i < response.data.length; i++) {
+                  const zegopsu = Math.pow(10, 6 - new Date(currentDate).getDay());
+
+                  if (Math.floor(parseInt(response.data[i].period) / zegopsu) % 10 === 1) {
+                    newResponseData.push(response.data[i]);
+                  }
+                }
+
+                setResponseData(newResponseData);
                 setExecuteArray(Array(response.data.length).fill(false));
               })
               .catch((error) => {
@@ -49,7 +63,7 @@ function ScheduleListScreen({ petName }) {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [currentDate]);
 
   const handleLongPress = (index) => {
     if (selectedItemIndices.includes(index)) {
@@ -113,12 +127,14 @@ function ScheduleListScreen({ petName }) {
   const handleLeftArrowPress = () => {
     const currentDateObj = new Date(currentDate);
     currentDateObj.setDate(currentDateObj.getDate() - 1);
+    setCurrentDay(currentDateObj.getDay());
     setCurrentDate(currentDateObj.toISOString().split('T')[0]); // 다시 'YYYY-MM-DD' 형식으로 변환합니다.
   };
 
   const handleRightArrowPress = () => {
     const currentDateObj = new Date(currentDate);
     currentDateObj.setDate(currentDateObj.getDate() + 1);
+    setCurrentDay(currentDateObj.getDay());
     setCurrentDate(currentDateObj.toISOString().split('T')[0]); // 다시 'YYYY-MM-DD' 형식으로 변환합니다.
   };
 

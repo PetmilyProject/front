@@ -22,13 +22,16 @@ import ViewPhotoScreen from '../screens/CarePet/Photo/ViewPhotoScreen';
 import EmptyPhotoSceen from '../screens/CarePet/Photo/EmptyPhotoScreen';
 import ListPhotoScreen from '../screens/CarePet/Photo/ListPhotoScreen';
 import ViewCalender from '../screens/Calender/ViewCalender';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import WithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
 import DetailPhotoScreen from '../screens/CarePet/Photo/DetailPhotoScreen';
 import UserWithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
 import ViewPetInfoScreen from '../screens/CarePet/ViewPetInfoScreen';
 import CommunityPhotoScreen from '../screens/Community/CommunityPhotoScreen';
 import CommunityDetailPhotoScreen from '../screens/Community/CommunityDetailPhotoScreen';
+import ScheduleListScreen from '../screens/CarePet/Schdule/ScheduleListScreen';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { YELLOW } from '../colors';
 
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
@@ -97,6 +100,12 @@ const AddPetStackScreen = () => {
         name={CarePetRoutes.VIEW_PET}
         component={ViewPetInfoScreen}
         options={{ title: '펫정보' }}
+      />
+      {/* 스케줄 리스트 */}
+      <AddPetStack.Screen
+        name={'ScheduleListScreen'}
+        component={ScheduleListScreen}
+        options={{ headerShown: false }} 
       />
       {/* 사진 목록 */}
       <AddPetStack.Screen
