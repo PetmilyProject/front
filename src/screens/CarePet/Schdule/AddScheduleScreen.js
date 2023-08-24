@@ -11,9 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WHITE, YELLOW } from '../../../colors';
 import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
-import { CarePetRoutes, ContentRoutes } from '../../../navigations/routes';
 import SelectionListAlert from '../../../components/SelectionListAlert';
-import ScheduleListScreen from './ScheduleListScreen';
 
 const AddScheduleScreen = ({ navigation, route }) => {
   const petName = route.params;
@@ -28,8 +26,8 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [executorVisible, setExecutorVisible] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
-  const [selectedDaysForCycle, setSelectedDaysForCycle] = useState([]); // For 주기
-  const [selectedDaysForExecutor, setSelectedDaysForExecutor] = useState([]); // For 양육자
+  const [selectedDaysForCycle, setSelectedDaysForCycle] = useState([]);
+  const [selectedDaysForExecutor, setSelectedDaysForExecutor] = useState([]);
 
   // 주기(요일) 리스트 아이템
   const item = {

@@ -11,15 +11,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { GRAY, WHITE, YELLOW } from '../../../colors';
 import { AntDesign } from '@expo/vector-icons';
-import { getYoil } from '../../../components/Calendar/CalendarTools';
 
 function ScheduleListScreen({ petName }) {
   const [responseData, setResponseData] = useState([]);
   const [executeArray, setExecuteArray] = useState([]);
   const [executeColor, setExecuteColor] = useState(GRAY.LIGHTER);
   const [selectedItemIndices, setSelectedItemIndices] = useState([]);
-  const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]);
-  const [currentDay, setCurrentDay] = useState(new Date().getDay())
+  const [currentDate, setCurrentDate] = useState(
+    new Date().toISOString().split('T')[0]
+  );
+  const [currentDay, setCurrentDay] = useState(new Date().getDay());
   const [selectedScheduleIds, setSelectedScheduleIds] = useState([]);
 
   useEffect(() => {
@@ -42,9 +43,16 @@ function ScheduleListScreen({ petName }) {
                 const newResponseData = [];
 
                 for (let i = 0; i < response.data.length; i++) {
-                  const zegopsu = Math.pow(10, 6 - new Date(currentDate).getDay());
+                  const zegopsu = Math.pow(
+                    10,
+                    6 - new Date(currentDate).getDay()
+                  );
 
-                  if (Math.floor(parseInt(response.data[i].period) / zegopsu) % 10 === 1) {
+                  if (
+                    Math.floor(parseInt(response.data[i].period) / zegopsu) %
+                      10 ===
+                    1
+                  ) {
                     newResponseData.push(response.data[i]);
                   }
                 }

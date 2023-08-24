@@ -1,21 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  PermissionsAndroid,
-} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useNavigationState } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { UserInfoRoutes } from '../../navigations/routes';
 import { AuthContext } from '../../navigations/Nest';
 import DangerAlert from '../../components/DangerAlert';
 import { GRAY, WHITE, YELLOW } from '../../colors';
 import Button2 from '../../components/Button2';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 
 const UserInfoScreen = () => {
