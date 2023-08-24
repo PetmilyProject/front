@@ -6,6 +6,7 @@ import ComponentAMD from '../../../components/ComponentAMD';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { CarePetRoutes } from '../../../navigations/routes';
 
 const CarePetList = ({
   navigation,
