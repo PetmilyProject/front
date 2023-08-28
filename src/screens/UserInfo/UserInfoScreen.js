@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-<<<<<<< HEAD
 import {
   View,
   Text,
@@ -8,9 +7,6 @@ import {
   TouchableOpacity,
   PermissionsAndroid,
 } from 'react-native';
-=======
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
->>>>>>> 97b6685c4cff2a9dd161799f40dfec95fea62051
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
