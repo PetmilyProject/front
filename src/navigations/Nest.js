@@ -30,6 +30,7 @@ import ViewPetInfoScreen from '../screens/CarePet/ViewPetInfoScreen';
 import CommunityPhotoScreen from '../screens/Community/CommunityPhotoScreen';
 import CommunityDetailPhotoScreen from '../screens/Community/CommunityDetailPhotoScreen';
 import ScheduleListScreen from '../screens/CarePet/Schdule/ScheduleListScreen';
+import ScheduleModificationScreen from '../screens/CarePet/Schdule/ScheduleModificationScreen';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { YELLOW } from '../colors';
 
@@ -105,7 +106,13 @@ const AddPetStackScreen = () => {
       <AddPetStack.Screen
         name={'ScheduleListScreen'}
         component={ScheduleListScreen}
-        options={{ headerShown: false }} 
+        options={{ headerShown: false }}
+      />
+      {/*스케줄 수정 및 삭제 */}
+      <AddPetStack.Screen
+        name={CarePetRoutes.VIEW_ScheduleModification}
+        component={ScheduleModificationScreen}
+        options={{ title: '일정수정' }}
       />
       {/* 사진 목록 */}
       <AddPetStack.Screen
@@ -119,12 +126,6 @@ const AddPetStackScreen = () => {
         component={AddphotoScreen}
         options={{ title: '사진등록' }}
       />
-      {/* ViewPhotoScreen은 이전 더미 데이터인듯 함 */}
-      {/* <AddPetStack.Screen
-        name={'ViewPhotoScreen'}
-        component={ViewPhotoScreen}
-        options={{ title: '사진상세' }}
-      /> */}
       <AddPetStack.Screen
         name={CarePetRoutes.DETAIL_PHOTO}
         component={DetailPhotoScreen}

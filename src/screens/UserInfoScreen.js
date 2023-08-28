@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, Alert } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import WithdrawalScreen from './CarePet/Schdule/WithdrawalScreen';
-import { AuthContext } from '../navigations/Nest';
-import FirstScreen from './FirstScreen';
-import * as Update from 'expo-updates';
 import * as ImagePicker from 'expo-image-picker';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const UserInfoScreen = () => {
   const [email, setEmail] = useState('');
@@ -98,12 +95,6 @@ const UserInfoScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* 강아지 사진 */}
-      {/* <View style={styles.imageContainer}>
-        <Image
-          style={styles.dogImage}
-          source={require('../assets/pet_icon.png')}
-        /> */}
       <View style={styles.imageContainer}>
         <TouchableOpacity onPress={handleImagePress}>
           {image ? (
@@ -114,6 +105,14 @@ const UserInfoScreen = () => {
               source={require('../assets/pet_icon.png')}
             />
           )}
+          <View style={styles.editIconContainer}>
+            <MaterialIcons
+              name="edit"
+              size={24}
+              color="black"
+              onPress={handleImagePress}
+            />
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -204,6 +203,14 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'black',
     fontSize: 14,
+  },
+  editIconContainer: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    backgroundColor: '#FFCC33',
+    borderRadius: 50,
+    padding: 5,
   },
 });
 

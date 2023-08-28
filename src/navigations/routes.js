@@ -37,6 +37,7 @@ export const CarePetRoutes = {
   // 양육자
   // 펫정보
   VIEW_PET: 'ViewPetInfoScreen',
+  VIEW_ScheduleModification: 'ScheduleModificationScreen',
 };
 
 export const UserInfoRoutes = {

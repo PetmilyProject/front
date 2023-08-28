@@ -9,6 +9,7 @@ import DangerAlert from '../../components/DangerAlert';
 import { GRAY, WHITE, YELLOW } from '../../colors';
 import Button2 from '../../components/Button2';
 import * as ImagePicker from 'expo-image-picker';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const UserInfoScreen = () => {
   const [email, setEmail] = useState('');
@@ -104,6 +105,9 @@ const UserInfoScreen = () => {
               source={require('../../assets/pet_icon.png')}
             />
           )}
+          <View style={styles.editIconContainer}>
+            <MaterialIcons name="edit" size={24} color="black" />
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -190,6 +194,14 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 50,
+  },
+  editIconContainer: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    backgroundColor: '#FFCC33',
+    borderRadius: 50,
+    padding: 5,
   },
 });
 

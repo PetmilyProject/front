@@ -11,8 +11,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { GRAY, WHITE, YELLOW } from '../../../colors';
 import { AntDesign } from '@expo/vector-icons';
+import { CarePetRoutes } from '../../../navigations/routes';
+import { useNavigation } from '@react-navigation/native';
 
-function ScheduleListScreen({ petName }) {
+const ScheduleListScreen = ({ petName }) => {
   const [responseData, setResponseData] = useState([]);
   const [executeArray, setExecuteArray] = useState([]);
   const [executeColor, setExecuteColor] = useState(GRAY.LIGHTER);
@@ -22,6 +24,13 @@ function ScheduleListScreen({ petName }) {
   );
   const [currentDay, setCurrentDay] = useState(new Date().getDay());
   const [selectedScheduleIds, setSelectedScheduleIds] = useState([]);
+
+  const navigation = useNavigation();
+
+  const onSchedulePress = (id) => {
+    console.log('일정번호 : ', id);
+    navigation.navigate(CarePetRoutes.VIEW_ScheduleModification, id);
+  };
 
   useEffect(() => {
     AsyncStorage.getItem('email')
@@ -38,8 +47,6 @@ function ScheduleListScreen({ petName }) {
                 }
               )
               .then((response) => {
-                // setResponseData(response.data);
-                // setExecuteArray(Array(response.data.length).fill(false));
                 const newResponseData = [];
 
                 for (let i = 0; i < response.data.length; i++) {
@@ -90,6 +97,7 @@ function ScheduleListScreen({ petName }) {
 
     return (
       <TouchableOpacity
+        onPress={() => onSchedulePress(item.id)}
         onLongPress={() => handleLongPress(index)}
         delayLongPress={300}
         style={[
@@ -143,7 +151,7 @@ function ScheduleListScreen({ petName }) {
     const currentDateObj = new Date(currentDate);
     currentDateObj.setDate(currentDateObj.getDate() + 1);
     setCurrentDay(currentDateObj.getDay());
-    setCurrentDate(currentDateObj.toISOString().split('T')[0]); // 다시 'YYYY-MM-DD' 형식으로 변환합니다.
+    setCurrentDate(currentDateObj.toISOString().split('T')[0]); // 다시 'YYYY-MM-DD' x형식으로 변환합니다.
   };
 
   return (
@@ -167,7 +175,7 @@ function ScheduleListScreen({ petName }) {
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
