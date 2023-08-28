@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from 'react-native';
 import { Text, View } from 'react-native';
 import axios from 'axios';
@@ -14,8 +15,8 @@ import Button2 from '../../../components/Button2';
 import SelectionListAlert from '../../../components/SelectionListAlert';
 import ScheduleListScreen from './ScheduleListScreen';
 
-const ScheduleModificationScreen = ({ navigation, route }) => {
-  const petName = route.params;
+const ScheduleModificationScreen = ({ route }) => {
+  const params = route.params;
   const scheduleId = route.params.scheduleId;
   const [schedule, setSchedule] = useState('');
   const [time, setTime] = useState('');
@@ -34,6 +35,8 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
   const [inviter, setInviter] = useState('');
   const [id, setId] = useState('');
   const [petname, setPetname] = useState('');
+
+  console.log('asd :', params);
 
   // 주기(요일) 리스트 아이템
   const item = {
@@ -95,26 +98,28 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
 
   // 일정 정보 호출
   useEffect(() => {
-    AsyncStorage.getItem('email').then((inviter) => {
+    AsyncStorage.getItem('email').then((myEmail) => {
       AsyncStorage.getItem('token').then((token) => {
-        axios
-          .get(
-            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${inviter}/${petName}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          )
-          .then((response) => {
-            const responseData = response.data;
-            console.log(response.data);
-            setPetname(responseData.petname);
-          })
-          .catch((error) => {
-            // console.log('펫이름 : ', petName);
-            console.error(error);
-          });
+        AsyncStorage.getItem('petName').then((petName) => {
+          axios
+            .get(
+              `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/${petName}/${id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            )
+            .then((response) => {
+              const responseData = response.data;
+              console.log(response.data);
+              setPetname(responseData.petname);
+            })
+            .catch((error) => {
+              // console.log('펫이름 : ', petName);
+              console.error(error);
+            });
+        });
       });
     });
   });
@@ -144,6 +149,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
               })
               .catch((error) => {
                 console.error(error);
+                // console.log('id : ', id);
               });
           })
           .catch((error) => {
@@ -156,7 +162,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
   };
 
   // 일정 삭제
-  const scheduleDelete = () => {
+  const performScheduleDelete = () => {
     AsyncStorage.getItem('email')
       .then((myEmail) => {
         AsyncStorage.getItem('token')
@@ -188,6 +194,26 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
         console.error(error);
       });
     // navigation.navigate('scheduleListScreen');
+  };
+
+  // 일정 삭제 알람
+  const scheduleDelete = () => {
+    Alert.alert(
+      '삭제 확인',
+      '일정을 삭제하시겠습니까?',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '삭제',
+          onPress: performScheduleDelete,
+          style: 'destructive',
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   return (
