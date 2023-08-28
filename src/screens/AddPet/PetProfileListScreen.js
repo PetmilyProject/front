@@ -33,7 +33,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
 
   //petcare 이동
   const onPress = (petName) => {
-    //console.log("너의 이름은 : ", petName);
+    // console.log('너의 이름은 : ', petName);
     navigation.navigate(CarePetRoutes.MAIN_CARE_PET, petName);
   };
 
