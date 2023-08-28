@@ -1,95 +1,65 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  TextInput,
-  Image,
-} from 'react-native';
-
+import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { RED, BLACK } from '../../../colors';
+import { RED, BLACK, WHITE, GRAY } from '../../../colors';
 
-const DetailPhotoScreen = ({ route }) => {
+const DetailPhotoScreen = ({ Navigation, route }) => {
+  //좋아요
   const [liked, setLiked] = useState(BLACK.DEFAULT);
-  const [comment, setComment] = useState('');
-  const [comments, setComments] = useState([]);
   const param = route.params;
-  //console.log(param)
-  
-  // 댓글 작성 핸들러
-  const handleComment = () => {
-    if (comment !== '') {
-      setComments([...comments, comment]);
-      setComment('');
-    }
-  };
-
+  //좋아요 개수
+  const [likedCounter, setLikedCounter] = useState(param.petInfo.likes);
+  //좋아요 핸들러
   const LikeHandle = () => {
     if (liked === BLACK.DEFAULT) {
       setLiked(RED.DEFAULT);
+      setLikedCounter(likedCounter + 1);
     } else if (liked === RED.DEFAULT) {
       setLiked(BLACK.DEFAULT);
+      setLikedCounter(likedCounter - 1);
     }
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      {/* 사진 출력 영역 */}
-
-      <Image
-        source={{
-          uri: `http://43.200.8.47:8080/shared-images/lsyun1234@naver.com/downloadImage/${param.petInfo.pet.sharedPetId}.jpg`,
-        }}
-        style={{ width: '100%', height: 300 }}
-      />
-
-      {/* 좋아요 버튼 */}
-      <TouchableOpacity
-        onPress={LikeHandle}
-        style={{ flexDirection: 'row', padding: 10 }}
-      >
-        <MaterialCommunityIcons name="cards-heart" size={36} color={liked} />
-        <Text style={{ fontSize: 25, lineHeight: 36 }}> {0}</Text>
-      </TouchableOpacity>
-
-      {/* 댓글 입력 */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 10,
-        }}
-      >
-        <TextInput
-          placeholder="댓글 작성"
-          value={comment}
-          onChangeText={(text) => setComment(text)}
-          style={{
-            flex: 1,
-            marginRight: 10,
-            borderWidth: 1,
-            borderRadius: 5,
-            padding: 5,
-          }}
+    <View style={styles.container}>
+      {/* 작성자 */}
+      <View style={styles.profile_container}>
+        <Image
+          source={require('../../../assets/pet_icon.png')}
+          style={styles.profile}
         />
-        <TouchableOpacity onPress={handleComment}>
-          <Text>게시</Text>
-        </TouchableOpacity>
+        <Text style={{ marginLeft: 10, fontSize: 16 }}>그로밋</Text>
+      </View>
+      {/* 사진 출력 영역 */}
+      <View style={styles.photo_container}>
+        <Image
+          source={{
+            uri: `http://43.200.8.47:8080/shared-images/lsyun1234@naver.com/downloadImage/${param.petInfo.pet.sharedPetId}.jpg`,
+          }}
+          style={{ width: '100%', height: 300 }}
+        />
       </View>
 
-      {/* 댓글 목록 */}
-      <FlatList
-        data={comments}
-        renderItem={({ item }) => (
-          <View style={{ paddingHorizontal: 10, paddingVertical: 5 }}>
-            <Text>{item}</Text>
-          </View>
-        )}
-        keyExtractor={(item, index) => index.toString()}
-      />
+      {/* 좋아요 버튼 */}
+      <View style={styles.container2}>
+        <View style={styles.like_container}>
+          <TouchableOpacity onPress={LikeHandle}>
+            <MaterialCommunityIcons
+              name="cards-heart"
+              size={25}
+              color={liked}
+            />
+          </TouchableOpacity>
+          <Text style={{ fontSize: 13, textAlignVertical: 'bottom' }}>
+            {' '}
+            좋아요 {likedCounter}개
+          </Text>
+        </View>
+        <View style={styles.comment_container}>
+          <Text style={styles.content}>{param.petInfo.memo}</Text>
+          <Text style={styles.date}>{param.petInfo.date}</Text>
+        </View>
+      </View>
     </View>
   );
 };
@@ -97,48 +67,47 @@ const DetailPhotoScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    justifyContent: 'center',
+    alignContent: 'center',
+    backgroundColor: WHITE,
   },
-  header: {
+  profile_container: {
+    flexDirection: 'row',
+    flex: 0.22,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginHorizontal: 20,
+  },
+  profile: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    overflow: 'hidden',
+  },
+  photo_container: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  container2: {
+    flex: 1,
+    marginHorizontal: 20,
+    marginTop: 30,
+  },
+  like_container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
   },
-  profileImage: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    marginRight: 8,
+  comment_container: { marginTop: 10 },
+  title: {
+    fontSize: 18,
+    fontWeight: 600,
+    marginBottom: 5,
   },
-  username: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  content: {
+    fontSize: 17,
+    marginBottom: 3,
   },
-  postImage: {
-    width: '100%',
-    height: 300,
-    marginBottom: 8,
-  },
-  actions: {
-    flexDirection: 'row',
-    marginBottom: 8,
-  },
-  likeButton: {
-    marginRight: 16,
-  },
-  commentButton: {},
-  likesCount: {
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  captionContainer: {
-    flexDirection: 'row',
-  },
-  captionUsername: {
-    fontWeight: 'bold',
-    marginRight: 4,
-  },
-  caption: {},
+  date: { color: GRAY.DEFAULT },
 });
 
 export default DetailPhotoScreen;

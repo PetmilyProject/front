@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -6,18 +6,21 @@ import {
   Image,
   Pressable,
   ActivityIndicator,
+  Text,
+  Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
+import { CarePetRoutes } from '../../../navigations/routes';
+import { GRAY, RED } from '../../../colors';
 //import { CarePetRoutes } from '../../../navigations/routes';
 
-const ListPhotoScreen = () => {
+const ListPhotoScreen = ({ Navigation, petName }) => {
   const [imageList, setImageList] = useState([]); // 이미지 목록을 저장할 상태 변수
   const [email, setEmail] = useState(''); // 이메일을 저장할 상태 변수
   const [isLoading, setIsLoading] = useState(true); // 데이터 로딩 상태를 저장할 상태 변수
   const [sharedPets, setSharedPets] = useState([]);
-  
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -46,10 +49,13 @@ const ListPhotoScreen = () => {
             const base64Data = await convertBlobToBase64(imageData); // Blob을 base64로 변환
             // 이미지 정보 말고도 다양한 정보를 추가로 넣을 수 있다
 
-            newImageList.push({
-              id: sharedPetInfo[i].sharedPetId,
-              image: base64Data,
-            }); // 새로운 이미지를 업데이트된 이미지 목록에 추가
+            //펫 네임이 동일한 경우에만 이미지 추가
+            if (petName === sharedPetInfo[i].petName) {
+              newImageList.push({
+                id: sharedPetInfo[i].sharedPetId,
+                image: base64Data,
+              }); // 새로운 이미지를 업데이트된 이미지 목록에 추가
+            }
           } else {
             console.log(
               'Error fetching image data. Response status:',
@@ -86,21 +92,50 @@ const ListPhotoScreen = () => {
       reader.readAsDataURL(blob);
     });
   };
+
+  // 생성되는 이미지
   const renderItem = ({ item }) => {
+    //이미지 상세보기
     const handlePress = () => {
       const matchedPet = sharedPets.find((pet) => pet.sharedPetId === item.id);
       if (matchedPet) {
-        navigation.navigate('DetailPhotoScreen', {
-          petInfo: { 
-            pet: matchedPet
+        navigation.navigate(CarePetRoutes.DETAIL_PHOTO, {
+          petInfo: {
+            pet: matchedPet,
+            likes: matchedPet.likes,
+            date: matchedPet.date,
+            memo: matchedPet.memo,
           },
         });
       }
     };
+    //수정, 삭제
+    const handleLongPress = () => {
+      Alert.alert(
+        '작업 선택',
+        '이미지를 수정하거나 삭제하시겠습니까?',
+        [
+          {
+            text: '수정',
+            onPress: () => {},
+          },
+          {
+            text: '삭제',
+            onPress: () => {},
+          },
+          {
+            text: '취소',
+            style: 'cancel',
+          },
+        ],
+        { cancelable: true }
+      );
+    };
 
     return (
-      <Pressable onPress={handlePress}>
+      <Pressable onPress={handlePress} onLongPress={handleLongPress}>
         <Image source={{ uri: item.image }} style={styles.image} />
+        <Text>{item.id}</Text>
       </Pressable>
     );
   };
@@ -122,7 +157,7 @@ const ListPhotoScreen = () => {
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         numColumns={3}
-      />
+      ></FlatList>
     </View>
   );
 };
@@ -130,9 +165,11 @@ const ListPhotoScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
+    marginTop: 20,
     marginBottom: 20,
+    width: 380,
   },
   image: {
     width: 125,

@@ -1,6 +1,14 @@
-import { View, StyleSheet, Text, Image, Pressable, Alert, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  Pressable,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import { useState, useEffect } from 'react';
-import { BLACK } from '../../../colors';
+import { BLACK, GRAY } from '../../../colors';
 import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -45,9 +53,7 @@ const CarePetList = ({
     onRearerPress();
   };
   // update 버튼 누를 시 작동. 추후 수정 바람.
-  const onUpdatePress = () => {
-
-  };
+  const onUpdatePress = () => {};
   const onPetPress = () => {
     navigation.navigate(CarePetRoutes.VIEW_PET, petName);
   };
@@ -102,23 +108,22 @@ const CarePetList = ({
 
   return (
     <View style={styles.container}>
-      <View style={{ paddingRight: 60 }}>
-        <View style={styles.container_row}>
-          <View style={{}}>
+      <View style={{ flex: 1 }}>
+        <View style={styles.container_main}>
+          {/* 이미지 */}
+          <TouchableOpacity onPress={onPetPress}>
             <Image
               source={require('../../../assets/pet_icon.png')}
               style={styles.image}
             />
-          </View>
+          </TouchableOpacity>
+          {/* 이름,케어 목록 */}
           <View style={styles.container_content}>
-            <View style={{ flexDirection: 'row' }}>
-              <View style={styles.container_name}>
-                <Text style={styles.name}>{petName}</Text>
-              </View>
-              <TouchableOpacity onPress={onPetPress}>
-          <Ionicons name="heart-circle" style={{ paddingLeft: 30 }} size={40} color={YELLOW.DEFAULT} />
-        </TouchableOpacity>
+            {/* 펫 이름 */}
+            <View style={styles.container_name}>
+              <Text style={styles.name}>{petName}</Text>
             </View>
+            {/* 케어 목록 */}
             <View style={styles.container_row}>
               <Pressable onPress={handleSchedulePress}>
                 <Text style={textStyle.schdule}>일 정 </Text>
@@ -134,14 +139,15 @@ const CarePetList = ({
             </View>
           </View>
         </View>
-      </View>
-      <View style={styles.componentAMD}>
-        <ComponentAMD
-          onAddPress={onAddPress}
-          onDeletePress={onDeletePress}
-          navigation={navigation}
-          petName={petName}
-        />
+
+        <View style={styles.componentAMD}>
+          <ComponentAMD
+            onAddPress={onAddPress}
+            onDeletePress={onDeletePress}
+            navigation={navigation}
+            petName={petName}
+          />
+        </View>
       </View>
     </View>
   );
@@ -152,33 +158,29 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
-    marginTop: 60,
-    marginLeft: 10,
+    marginTop: 70,
   },
   container_row: {
     flexDirection: 'row',
   },
-  componentAMD: {
-    width: '100%',
-    justifyContent: 'flex-end',
-    marginRight: 30,
+  container_main: {
+    flexDirection: 'row',
+    marginRight: 50,
   },
-  container_content: { padding: 10, marginTop: 15 },
+  componentAMD: { marginTop: -30 },
+  container_content: { justifyContent: 'center', marginLeft: 10 },
   container_name: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   name: {
     fontSize: 30,
+    fontWeight: 600,
   },
   image: {
     borderRadius: 100,
     alignItems: 'center',
     width: 110,
     height: 110,
-    marginRight: 10,
-  },
-  petContainer: {
     marginRight: 10,
   },
 });

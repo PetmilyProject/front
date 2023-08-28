@@ -28,6 +28,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   var inviter;
   var id;
   var petData;
+  var userName;
   var cnt = 0;
   const [refreshing, setRefreshing] = useState(false);
 
@@ -51,6 +52,9 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
       const userData = response.data;
 
       petData = userData.pets;
+      userName = userData.userName;
+      await AsyncStorage.setItem('userName', userName);
+
       //inviter = userData.inviter;
       setPetProfiles(petData);
       petData.forEach(function (pet) {
@@ -64,6 +68,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
 
   useEffect(() => {
     fetchData();
+    // AsyncStorage.setItem('userName', userName);
   }, []);
 
   const handleAddPress = () => {

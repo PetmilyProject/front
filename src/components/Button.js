@@ -38,10 +38,10 @@ SquareButton.prototype = {
 
 const btnStyle = StyleSheet.create({
   yellow: {
-    width: 350,
+    width: 360,
     alignItems: 'center',
     paddingVertical: 17,
-    borderRadius: 10,
+    borderRadius: 30,
     margin: 15,
   },
   yellow_text: {

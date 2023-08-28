@@ -15,17 +15,16 @@ const ComponentAMD = ({
     navigation.navigate(CarePetRoutes.VIEW_PET, petName);
   };
   return (
-    <>
-      <View style={styles.container}>
-        {/* 펫정보 버튼 */}
-        {/* <TouchableOpacity onPress={onPetPress}>
+    <View style={styles.container}>
+      {/* 펫정보 버튼 */}
+      {/* <TouchableOpacity onPress={onPetPress}>
           <Ionicons name="heart-circle" size={40} color={YELLOW.DEFAULT} />
         </TouchableOpacity> */}
-        {/* 입력 버튼 */}
-        <TouchableOpacity onPress={onAddPress}>
-          <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
-        </TouchableOpacity>
-        {/* 수정 버튼 */}
+      {/* 입력 버튼 */}
+      <TouchableOpacity onPress={onAddPress}>
+        <Entypo name="circle-with-plus" size={45} color={YELLOW.DEFAULT} />
+      </TouchableOpacity>
+      {/*수정 버튼
         <TouchableOpacity onPress={onUpdatePress}>
           <MaterialCommunityIcons
             name="pencil-circle"
@@ -34,15 +33,14 @@ const ComponentAMD = ({
           />
         </TouchableOpacity>
         {/* 삭제 버튼 */}
-        <TouchableOpacity onPress={onDeletePress}>
+      {/* <TouchableOpacity onPress={onDeletePress}>
           <MaterialCommunityIcons
             name="delete-circle"
             size={40}
             color={YELLOW.DEFAULT}
           />
-        </TouchableOpacity>
-      </View>
-    </>
+        </TouchableOpacity> */}
+    </View>
   );
 };
 

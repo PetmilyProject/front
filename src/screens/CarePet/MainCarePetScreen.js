@@ -37,7 +37,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
       //console.log("펫 : " + petName)
       navigation.navigate(CarePetRoutes.ADD_SCHDULE, petName);
     } else if (content === '사진첩') {
-      navigation.navigate(CarePetRoutes.ADD_PHOTO);
+      navigation.navigate(CarePetRoutes.ADD_PHOTO, petName);
     }
   };
 
@@ -57,10 +57,6 @@ const MainCarePetScreen = ({ navigation, route }) => {
       ],
       { cancelable: true }
     );
-  };
-
-  const onPress = () => {
-    navigation.navigate(CarePetRoutes.VIEW_PHOTO);
   };
 
   useEffect(() => {
@@ -98,10 +94,14 @@ const MainCarePetScreen = ({ navigation, route }) => {
       return photo === null ? (
         <EmptyPhotoSceen />
       ) : (
-        <ListPhotoScreen onPress={onPress} />
+        <ListPhotoScreen petName={petName} />
       );
     } else if (content === '양육자') {
-      return rearer === null ? <EmptyRearerScreen /> : <ListRearerScreen />;
+      return rearer === null ? (
+        <EmptyRearerScreen />
+      ) : (
+        <ListRearerScreen petName={petName} />
+      );
     } else {
       return null; // Return null or another default screen/component if needed
     }
@@ -137,8 +137,7 @@ const styles = StyleSheet.create({
     width: '95%',
   },
   container2: {
-    flex: 3,
-    width: '100%',
+    flex: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },

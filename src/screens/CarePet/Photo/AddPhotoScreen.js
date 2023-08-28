@@ -1,46 +1,160 @@
-import { Text, View, StyleSheet, TextInput, Button, Image } from 'react-native';
+import { Text, View, StyleSheet, Image, Keyboard } from 'react-native';
 import ImagePickerComponent from '../../../components/ImagePicker';
-import { CarePetRoutes } from '../../../navigations/routes';
-import DatePicker from 'react-native-datepicker';
-import TimePicker from '../../../components/TimePicker';
-import InputText from '../../../components/InputText';
-import { GRAY } from '../../../colors';
+
+import { GRAY, WHITE, YELLOW } from '../../../colors';
 import { useState } from 'react';
 import SquareButton, { ColorTypes } from '../../../components/Button';
+import {
+  TextInput,
+  TouchableWithoutFeedback,
+} from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
 
 const AddphotoScreen = ({ navigation, route }) => {
   const [imgUrl, setImgUrl] = useState(null);
+  const [userName, setUserName] = useState('');
+  const [contents, setContents] = useState('');
+  const [title, setTitle] = useState('');
+  //등록일
+  const [date, setDate] = useState('');
+  // 난수생성
+  const generateSharedPetId = () => {
+    const randomId = Math.floor(Math.random() * 100000); // 랜덤한 숫자 생성
+    return randomId;
+  };
+  const [sharedPetId, setSharedPetId] = useState(generateSharedPetId());
+
+  useEffect(() => {
+    // AsyncStorage에서 userName 가져오기
+    AsyncStorage.getItem('userName')
+      .then((storedUserName) => {
+        if (storedUserName) {
+          setUserName(storedUserName);
+        }
+      })
+      .catch((error) => {
+        console.log('Error fetching userName:', error);
+      });
+  }, []);
+
+  // 이미지 업로드
+  const handleImageUpload = async () => {
+    if (!imgUrl) {
+      console.log('이미지 없음');
+      return;
+    }
+    const email = await AsyncStorage.getItem('email');
+    const apiUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080`; // 백엔드 API와 일치하도록 이 URL을 업데이트하세요
+
+    const formData = new FormData();
+    formData.append('file', {
+      uri: imgUrl,
+      type: 'image/jpeg', // 필요한 경우 이미지 유형 변경
+      name: 'image.jpg', // 필요한 경우 이름 변경
+    });
+
+    try {
+      const response = await fetch(
+        `${apiUrl}/shared-images/${email}/uploadImage/${sharedPetId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'multipart/form-data' },
+          body: formData,
+        }
+      );
+
+      if (response.ok) {
+        console.log('사진 등록 성공');
+        navigation.goBack(); // 업로드 성공 후 뒤로 이동
+      } else {
+        console.log('사진 등록 실패');
+      }
+    } catch (error) {
+      console.log('사진 등록 요청 실패' + error);
+    }
+  };
 
   const InsertUrl = (url) => {
     setImgUrl(url);
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.container3}>
-        {imgUrl === null ? (
-          <View style={styles.photoBox}></View>
-        ) : (
-          <Image source={{ uri: imgUrl }} style={styles.image} />
-        )}
-        <View style={{ marginTop: -28, marginLeft: 300 }}>
-          <ImagePickerComponent width={50} height={50} InsertUrl={InsertUrl} />
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+      >
+        {/* 작성자 */}
+        <View style={styles.profile_container}>
+          <Image
+            source={require('../../../assets/pet_icon.png')}
+            style={styles.profile}
+          />
+          <Text style={{ marginLeft: 10, fontSize: 16 }}>{userName}</Text>
         </View>
-        <View>
-          <Text style={styles.title}>날짜</Text>
-          <View style={styles.box}>
-            <DatePicker />
+        {/* 사진 */}
+        <View style={styles.photo_container}>
+          {imgUrl === null ? (
+            <View style={styles.photoBox}></View>
+          ) : (
+            <Image source={{ uri: imgUrl }} style={styles.image} />
+          )}
+          <View style={{ marginTop: -28, marginLeft: 300 }}>
+            <ImagePickerComponent
+              width={45}
+              height={45}
+              InsertUrl={InsertUrl}
+            />
           </View>
         </View>
-        <InputText
-          title="메모"
-          placeholder={'선택사항'}
-          onChangeText={(text) => setCharater(text.trim())}
-        />
-        <View style={styles.containerRow}>
-          <SquareButton colorType={ColorTypes.YELLOW} text="등록하기" />
+        {/* 입력 */}
+        <View style={styles.content_container}>
+          <TextInput
+            onChangeText={(text) => setTitle(text)}
+            placeholder="제목"
+            style={{
+              fontSize: 19,
+              marginHorizontal: 15,
+              width: 380,
+              padding: 10,
+            }}
+          ></TextInput>
+          <View
+            style={{
+              backgroundColor: GRAY.LIGHT,
+              height: 1,
+              width: '100%',
+            }}
+          ></View>
+          <TextInput
+            onChangeText={(text) => setContents(text)}
+            placeholder="내용을 입력해주세요"
+            multiline={true}
+            style={{
+              textAlignVertical: 'top',
+              height: 100,
+              width: 380,
+              marginHorizontal: 15,
+              paddingHorizontal: 10,
+              paddingTop: 15,
+            }}
+          ></TextInput>
+
+          <View style={styles.containerRow}>
+            <SquareButton
+              colorType={ColorTypes.YELLOW}
+              text="등록하기"
+              onPress={handleImageUpload}
+            />
+          </View>
         </View>
-      </View>
-    </View>
+      </TouchableWithoutFeedback>
+    </ScrollView>
   );
 };
 
@@ -49,19 +163,29 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
-    marginTop: 20,
+    backgroundColor: WHITE,
   },
-  container2: {
+  profile_container: {
+    flexDirection: 'row',
+    flex: 0.22,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginHorizontal: 20,
+    //backgroundColor: YELLOW.DARK,
+  },
+  profile: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    overflow: 'hidden',
+  },
+  photo_container: {
     flex: 1,
-    paddingTop: 50,
     alignItems: 'center',
-    width: '100%',
   },
-  container3: {
-    flex: 3,
-    width: '100%',
-    alignItems: 'center',
+  content_container: {
+    flex: 1,
+    marginTop: 10,
   },
   containerRow: {
     flexDirection: 'row',
@@ -69,33 +193,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   photoBox: {
-    width: 350,
-    height: 200,
-    padding: 10,
-    backgroundColor: GRAY.LIGHT,
+    width: 390,
+    height: 270,
+    backgroundColor: GRAY.LIGHTER,
   },
   image: {
-    width: 350,
-    height: 200,
-    padding: 10,
-  },
-  box: {
-    borderWidth: 1,
-    width: 350,
-    padding: 10,
-    borderRadius: 10,
-    borderColor: GRAY.DEFAULT,
-  },
-
-  memobox: {
-    backgroundColor: '#d1d5db',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '80%',
-    height: '10%',
-    marginTop: 10,
-    padding: 10,
+    width: 390,
+    height: 270,
   },
   title: {
     alignItems: 'flex-start',

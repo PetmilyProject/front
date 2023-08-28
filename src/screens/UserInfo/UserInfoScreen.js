@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, PermissionsAndroid } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  PermissionsAndroid,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import axios from 'axios';
@@ -23,34 +30,31 @@ const UserInfoScreen = () => {
   const { signOut, isSignedIn } = useContext(AuthContext);
   // AsyncStorage에서 토큰과 이메일을 가져옵니다.
   useEffect(() => {
-    AsyncStorage.getItem('email')
-      .then((myEmail) => {
-        AsyncStorage.getItem('token')
-          .then((token) => {
-            axios
-              .get(
-                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              )
-              .then((response) => {
-                setEmail(response.data.email);
-                setUserName(response.data.userName);
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    // AsyncStorage에서 사용자 데이터와 userName 가져오기
+    const fetchData = async () => {
+      try {
+        const storedEmail = await AsyncStorage.getItem('email');
+        const storedUserName = await AsyncStorage.getItem('userName');
+        const token = await AsyncStorage.getItem('token');
+
+        if (storedEmail && storedUserName && token) {
+          const response = await axios.get(
+            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${storedEmail}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setEmail(response.data.email);
+          setUserName(storedUserName);
+        }
+      } catch (error) {
+        console.error('사용자 데이터 가져오기 오류:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   // 로그아웃 함수
@@ -88,7 +92,7 @@ const UserInfoScreen = () => {
               mediaTypes: ImagePicker.MediaTypeOptions.All,
               allowsEditing: true,
               aspect: [3, 3],
-              quality: 1
+              quality: 1,
             });
 
             console.log(result);
