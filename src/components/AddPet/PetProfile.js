@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { GRAY, WHITE, YELLOW } from '../../colors';
 import { useState } from 'react';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons'
 
 const PetProfile = ({
   key,
