@@ -21,6 +21,10 @@ const ListPhotoScreen = ({ Navigation, petName }) => {
   const [email, setEmail] = useState(''); // 이메일을 저장할 상태 변수
   const [isLoading, setIsLoading] = useState(true); // 데이터 로딩 상태를 저장할 상태 변수
   const [sharedPets, setSharedPets] = useState([]);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 97b6685c4cff2a9dd161799f40dfec95fea62051
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -98,13 +102,20 @@ const ListPhotoScreen = ({ Navigation, petName }) => {
     //이미지 상세보기
     const handlePress = () => {
       const matchedPet = sharedPets.find((pet) => pet.sharedPetId === item.id);
+
       if (matchedPet) {
+<<<<<<< HEAD
         navigation.navigate(CarePetRoutes.DETAIL_PHOTO, {
           petInfo: {
             pet: matchedPet,
             likes: matchedPet.likes,
             date: matchedPet.date,
             memo: matchedPet.memo,
+=======
+        navigation.navigate('DetailPhotoScreen', {
+          petInfo: {
+            pet: matchedPet,
+>>>>>>> 97b6685c4cff2a9dd161799f40dfec95fea62051
           },
         });
       }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -12,9 +12,11 @@ import { WHITE, YELLOW } from '../../../colors';
 import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
 import SelectionListAlert from '../../../components/SelectionListAlert';
+import ScheduleListScreen from './ScheduleListScreen';
 
-const AddScheduleScreen = ({ navigation, route }) => {
+const ScheduleModificationScreen = ({ navigation, route }) => {
   const petName = route.params;
+  const scheduleId = route.params.scheduleId;
   const [schedule, setSchedule] = useState('');
   const [time, setTime] = useState('');
   const [date, setDate] = useState('');
@@ -22,12 +24,16 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [alarm, setAlarm] = useState(0);
   const [aaa, setaaa] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [executor, setExecutor] = useState('');
   const [executorVisible, setExecutorVisible] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
   const [selectedDaysForCycle, setSelectedDaysForCycle] = useState([]);
   const [selectedDaysForExecutor, setSelectedDaysForExecutor] = useState([]);
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [inviter, setInviter] = useState('');
+  const [id, setId] = useState('');
+  const [petname, setPetname] = useState('');
 
   // 주기(요일) 리스트 아이템
   const item = {
@@ -41,7 +47,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
   };
 
   // 수행자 리스트 아이템
-  const executor = {
+  const executor1 = {
     11: '홍길동',
     12: '김김김',
     13: '이이이',
@@ -87,51 +93,101 @@ const AddScheduleScreen = ({ navigation, route }) => {
     setTime(selectedTime);
   };
 
-  const handleScheduleSubmit = () => {
-    setSubmit(true);
-    if (schedule != '') {
-      console.log(petName, schedule, date, time, repeat, alarm, 'end \n');
+  // 일정 정보 호출
+  useEffect(() => {
+    AsyncStorage.getItem('email').then((inviter) => {
+      AsyncStorage.getItem('token').then((token) => {
+        axios
+          .get(
+            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${inviter}/${petName}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .then((response) => {
+            const responseData = response.data;
+            console.log(response.data);
+            setPetname(responseData.petname);
+          })
+          .catch((error) => {
+            // console.log('펫이름 : ', petName);
+            console.error(error);
+          });
+      });
+    });
+  });
 
-      AsyncStorage.getItem('email')
-        .then((myEmail) => {
-          AsyncStorage.getItem('token')
-            .then((token) => {
-              axios
-                .post(
-                  `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/${petName}`,
-                  {
-                    schedule: schedule,
-                    date: date,
-                    hm: time,
-                    period: repeat,
-                    notice: alarm,
-                    isCompleted: 0,
-                    pet_name: name,
+  // 일정 수정
+  const Modification = () => {
+    AsyncStorage.getItem('email')
+      .then((myEmail) => {
+        AsyncStorage.getItem('id')
+          .then((token) => {
+            axios
+              .put(
+                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/${petName}/${id}`,
+                {
+                  schedule: schedule,
+                  hm: time,
+                  date: date,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
                   },
-                  {
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  }
-                )
-                .then((response) => {
-                  console.log(response.data);
-                })
-                .catch((error) => {
-                  console.error(error);
-                });
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    } else {
-      return 1;
-    }
-    navigation.goBack();
+                }
+              )
+              .then((response) => {
+                console.log(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  // 일정 삭제
+  const scheduleDelete = () => {
+    AsyncStorage.getItem('email')
+      .then((myEmail) => {
+        AsyncStorage.getItem('token')
+          .then((token) => {
+            axios
+              .delete(
+                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/${petName}/${id}`,
+                {
+                  id: scheduleId,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              )
+              .then((response) => {
+                console.log(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    // navigation.navigate('scheduleListScreen');
   };
 
   return (
@@ -199,7 +255,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
           <SelectionListAlert
             visible={executorVisible}
             onClose={() => setExecutorVisible(false)}
-            item={executor}
+            item={executor1}
             width={220}
             scrollViewHeight={150}
             marginTop={500}
@@ -224,19 +280,27 @@ const AddScheduleScreen = ({ navigation, route }) => {
             onToggleAlarm={setAlarm}
           />
 
-          {/* 등록 버튼 */}
-          <View style={{ marginTop: 50 }}>
-            <Button2
-              backgrouncolor={YELLOW.DEFAULT}
-              color={WHITE}
-              text={'등록하기'}
-              onPress={handleScheduleSubmit}
-              width={'100%'}
-            />
+          {/* 수정 및 삭제 버튼 */}
+          <View style={styles.buttonContainer}>
+            <View style={styles.buttonWrapper}>
+              <Button2
+                backgrouncolor={YELLOW.DEFAULT}
+                color={WHITE}
+                text={'확인'}
+                onPress={Modification}
+                width={'100%'}
+              />
+            </View>
+            <View style={styles.buttonWrapper}>
+              <Button2
+                backgrouncolor={'red'}
+                color={WHITE}
+                text={'삭제'}
+                onPress={scheduleDelete}
+                width={'100%'}
+              />
+            </View>
           </View>
-          {submit === true && schedule === '' ? (
-            <Text>일정명을 등록해주세요</Text>
-          ) : null}
         </View>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
@@ -252,6 +316,16 @@ const styles = StyleSheet.create({
     backgroundColor: WHITE,
   },
   container2: {},
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 50,
+    paddingHorizontal: 20,
+  },
+  buttonWrapper: {
+    flex: 1,
+    marginRight: 10,
+  },
 });
 
-export default AddScheduleScreen;
+export default ScheduleModificationScreen;

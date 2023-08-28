@@ -4,7 +4,10 @@ import {
   Text,
   Image,
   Pressable,
+<<<<<<< HEAD
   Alert,
+=======
+>>>>>>> 97b6685c4cff2a9dd161799f40dfec95fea62051
   TouchableOpacity,
 } from 'react-native';
 import { useState, useEffect } from 'react';
@@ -13,7 +16,7 @@ import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { CarePetRoutes } from '../../../navigations/routes';
 
 const CarePetList = ({
@@ -119,9 +122,24 @@ const CarePetList = ({
           </TouchableOpacity>
           {/* 이름,케어 목록 */}
           <View style={styles.container_content}>
+<<<<<<< HEAD
             {/* 펫 이름 */}
             <View style={styles.container_name}>
               <Text style={styles.name}>{petName}</Text>
+=======
+            <View style={{ flexDirection: 'row' }}>
+              <View style={styles.container_name}>
+                <Text style={styles.name}>{petName}</Text>
+              </View>
+              <TouchableOpacity onPress={onPetPress}>
+                <Ionicons
+                  name="heart-circle"
+                  style={{ paddingLeft: 30 }}
+                  size={40}
+                  color={YELLOW.DEFAULT}
+                />
+              </TouchableOpacity>
+>>>>>>> 97b6685c4cff2a9dd161799f40dfec95fea62051
             </View>
             {/* 케어 목록 */}
             <View style={styles.container_row}>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+<<<<<<< HEAD
 import {
   View,
   Text,
@@ -7,17 +8,19 @@ import {
   TouchableOpacity,
   PermissionsAndroid,
 } from 'react-native';
+=======
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+>>>>>>> 97b6685c4cff2a9dd161799f40dfec95fea62051
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, useNavigationState } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { UserInfoRoutes } from '../../navigations/routes';
 import { AuthContext } from '../../navigations/Nest';
 import DangerAlert from '../../components/DangerAlert';
 import { GRAY, WHITE, YELLOW } from '../../colors';
-import SquareButton, { ColorTypes } from '../../components/Button';
 import Button2 from '../../components/Button2';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const UserInfoScreen = () => {
   const [email, setEmail] = useState('');
@@ -110,6 +113,9 @@ const UserInfoScreen = () => {
               source={require('../../assets/pet_icon.png')}
             />
           )}
+          <View style={styles.editIconContainer}>
+            <MaterialIcons name="edit" size={24} color="black" />
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -196,6 +202,14 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 50,
+  },
+  editIconContainer: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    backgroundColor: '#FFCC33',
+    borderRadius: 50,
+    padding: 5,
   },
 });
 
