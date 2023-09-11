@@ -24,14 +24,15 @@ const ScheduleListScreen = ({ petName }) => {
   );
   const [currentDay, setCurrentDay] = useState(new Date().getDay());
   const [selectedScheduleIds, setSelectedScheduleIds] = useState([]);
+  const [time, setTime] = useState('');
 
   const navigation = useNavigation();
 
   const onSchedulePress = (id) => {
-    console.log('일정번호 : ', id);
+    // console.log('일정번호 : ', id);
     navigation.navigate(CarePetRoutes.VIEW_ScheduleModification, {
-      id: id,
       petName: petName,
+      id: id,
     });
   };
 

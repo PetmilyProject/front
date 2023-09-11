@@ -48,7 +48,13 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
       const email = await AsyncStorage.getItem('email');
       const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${email}`;
 
-      const response = await axios.get(url);
+      const token = await AsyncStorage.getItem('token');
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const userData = response.data;
 
       petData = userData.pets;

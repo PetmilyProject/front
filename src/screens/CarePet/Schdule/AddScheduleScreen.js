@@ -22,11 +22,10 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [alarm, setAlarm] = useState(0);
   const [aaa, setaaa] = useState(0);
   const [visible, setVisible] = useState(false);
-  const [executorVisible, setExecutorVisible] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
-  const [selectedDaysForCycle, setSelectedDaysForCycle] = useState([]);
-  const [selectedDaysForExecutor, setSelectedDaysForExecutor] = useState([]);
+  const [executorVisible, setExecutorVisible] = useState(false);
+  const [selectedExecutor, setSelectedExecutor] = useState([]);
   const [name, setName] = useState('');
 
   // 주기(요일) 리스트 아이템
@@ -42,17 +41,23 @@ const AddScheduleScreen = ({ navigation, route }) => {
 
   // 수행자 리스트 아이템
   const executor = {
-    11: '홍길동',
-    12: '김김김',
-    13: '이이이',
-    14: '박박박',
+    11: '나',
+    12: '아빠',
+    13: '엄마',
+    14: '형',
   };
   //SelectionList 활성화 여부 함수
   const handleSelection = () => {
     setVisible(true);
   };
 
-  // 확인 버튼을 눌렀을 때 호출되는 함수
+  //SelectionList 활성화 여부 함수
+  const handleExecutorSelection = (selectedItems) => {
+    setSelectedExecutor(selectedItems);
+    setExecutorVisible(false);
+  };
+
+  // 주기 리스트 확인 버튼을 눌렀을 때 호출되는 함수
   const handleConfirmSelection = (selectedDays) => {
     console.log('선택한 요일:', selectedDays);
     let cnt = 0;
@@ -79,9 +84,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
     // console.log(cnt);
     setSelectedDays(selectedDays);
   };
-  const handleExecutorSelection = () => {
-    setExecutorVisible(true);
-  };
 
   const handleTimeChange = (selectedTime) => {
     setTime(selectedTime);
@@ -106,7 +108,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
                     period: repeat,
                     notice: alarm,
                     isCompleted: 0,
-                    pet_name: name,
                   },
                   {
                     headers: {
@@ -205,15 +206,16 @@ const AddScheduleScreen = ({ navigation, route }) => {
             marginTop={500}
             marginLeft={140}
             buttonText={'확인'}
-            selected={'홍길동'}
+            selected={selectedExecutor}
+            onConfirmSelection={handleExecutorSelection}
           />
           {/* 수행자 입력 */}
           <InputText_in
             title={'수행자'}
             titleSize={20}
             type={'free'}
-            onPress={handleExecutorSelection}
-            selectedDays={selectedDaysForExecutor}
+            onPress={() => setExecutorVisible(true)}
+            selectedDays={selectedExecutor}
           />
 
           <InputText_in
