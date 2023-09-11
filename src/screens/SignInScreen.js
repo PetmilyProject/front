@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SquareButton, { ColorTypes } from '../components/Button';
 import { useContext } from 'react';
 import { AuthContext } from '../navigations/Nest';
+import { WHITE } from '../colors';
 
 const SignInScreen = () => {
   const [email, setEmail] = useState('');
@@ -101,6 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: WHITE,
   },
 });
 
