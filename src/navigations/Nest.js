@@ -196,12 +196,15 @@ const TabStackScreen = () => {
           <SignInStack.Screen
             name="SignIn"
             component={SignInScreen}
-            options={{ title: '로그인' }}
+            options={{
+              title: '로그인',
+              headerBackTitle: ' ',
+            }}
           />
           <SignInStack.Screen
             name="SignUp"
             component={SignUpScreen}
-            options={{ title: '회원가입' }}
+            options={{ title: '회원가입', headerBackTitle: ' ' }}
           />
         </SignInStack.Navigator>
       </AuthContext.Provider>

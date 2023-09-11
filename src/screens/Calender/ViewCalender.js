@@ -110,12 +110,18 @@ const ViewCalender = () => {
   };
 
   return (
-    <ScrollView style={{backgroundColor:'white'}}>
+    <ScrollView style={{ backgroundColor: 'white' }}>
       <View style={styles.container}>
         <Calendar
           style={styles.calendar}
           onDayPress={handleDayPress}
           markedDates={markedDates}
+          theme={{
+            selectedDayBackgroundColor: YELLOW.DARK,
+            arrowColor: YELLOW.DARK,
+            dotColor: 'green',
+            todayTextColor: YELLOW.DARK,
+          }}
         />
         <View>
           {/*selectedDate && <Text>Selected Date : {selectedDate}</Text>*/}

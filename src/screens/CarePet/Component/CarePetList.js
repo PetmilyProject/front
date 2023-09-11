@@ -4,15 +4,16 @@ import {
   Text,
   Image,
   Pressable,
+  Alert,
   TouchableOpacity,
 } from 'react-native';
 import { useState, useEffect } from 'react';
-import { BLACK, GRAY } from '../../../colors';
+import { BLACK, GRAY, WHITE } from '../../../colors';
 import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { CarePetRoutes } from '../../../navigations/routes';
 
 const CarePetList = ({
@@ -115,12 +116,16 @@ const CarePetList = ({
               source={require('../../../assets/pet_icon.png')}
               style={styles.image}
             />
+            <View style={styles.editIconContainer}>
+              <MaterialIcons name="edit" size={24} color="black" />
+            </View>
           </TouchableOpacity>
           {/* 이름,케어 목록 */}
           <View style={styles.container_content}>
-            {/* 펫 이름 */}
-            <View style={styles.container_name}>
-              <Text style={styles.name}>{petName}</Text>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={styles.container_name}>
+                <Text style={styles.name}>{petName}</Text>
+              </View>
             </View>
             {/* 케어 목록 */}
             <View style={styles.container_row}>
@@ -181,6 +186,15 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     marginRight: 10,
+  },
+  editIconContainer: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    borderWidth: 0.2,
+    backgroundColor: WHITE,
+    borderRadius: 50,
+    padding: 5,
   },
 });
 

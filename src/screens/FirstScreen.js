@@ -40,15 +40,6 @@ const FirstScreen = ({ navigation, route }) => {
             로그인
           </Text>
         </TouchableOpacity>
-        <View style={styles.find_container}>
-          <TouchableOpacity>
-            <Text style={styles.find}>아이디찾기</Text>
-          </TouchableOpacity>
-          <Text style={styles.find}>|</Text>
-          <TouchableOpacity>
-            <Text style={styles.find}>비밀번호찾기</Text>
-          </TouchableOpacity>
-        </View>
       </View>
     </View>
   );
