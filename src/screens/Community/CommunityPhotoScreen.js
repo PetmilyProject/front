@@ -76,14 +76,17 @@ const CommunityPhotoScreen = () => {
             data={myPhotoUrl}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => (
-              <TouchableOpacity onPress={() => gotoDetail(index)}>
+              <TouchableOpacity 
+                onPress={() => gotoDetail(index)}
+                style={styles.photoList}
+              >
                 <Image
                   source={{ uri: item }}
                   style={styles.photoItem}
                 />
               </TouchableOpacity>
             )}
-            numColumns={3}
+            numColumns={2}
           />
 
         </View>
@@ -102,13 +105,18 @@ const styles = StyleSheet.create({
     marginRight: 20
   },
   container: {
-    flex: 1,
-    padding: 10,
+    width: '100%',
+    alignItems: 'center',
+    //padding: '5%',
+  },
+  photoList: {
+    width: '47%',
+    marginTop: '2%',
+    marginLeft: '2%'
   },
   photoItem: {
-    width: 100,
-    height: 100,
-    margin: 5,
+    width: '100%',
+    height: 150,
   },
 });
 
