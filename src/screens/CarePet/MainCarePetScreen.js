@@ -34,7 +34,6 @@ const MainCarePetScreen = ({ navigation, route }) => {
 
   const onAddPress = () => {
     if (content === '일정') {
-      //console.log("펫 : " + petName)
       navigation.navigate(CarePetRoutes.ADD_SCHDULE, petName);
     } else if (content === '사진첩') {
       navigation.navigate(CarePetRoutes.ADD_PHOTO, petName);
@@ -65,7 +64,13 @@ const MainCarePetScreen = ({ navigation, route }) => {
         const email = await AsyncStorage.getItem('email');
         const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${email}/${petName}`;
 
-        const response = await axios.get(url);
+        const token = await AsyncStorage.getItem('token');
+
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const responseData = response.data;
 
         // Update the state based on the response data

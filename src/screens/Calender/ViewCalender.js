@@ -21,7 +21,14 @@ const ViewCalender = () => {
       try {
         const email = await AsyncStorage.getItem('email');
         const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/get-all/${email}`;
-        const response = await axios.get(url);
+
+        const token = await AsyncStorage.getItem('token');
+
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         petData = response.data;
         const updatedMyPets = [];
@@ -39,7 +46,14 @@ const ViewCalender = () => {
 
         // 페이지로 현재 펫 정함. 문제 생길 시 고칠 수 있음
         const scheduleUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${email}/${myPets[currentPetIndex]}`;
-        const scheduleResponse = await axios.get(scheduleUrl);
+
+        // const token1 = await AsyncStorage.getItem('token');
+
+        const scheduleResponse = await axios.get(scheduleUrl, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const scheduledata = scheduleResponse.data;
 
         for (let i = 0; i < scheduledata.length; i++) {

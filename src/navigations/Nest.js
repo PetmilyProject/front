@@ -14,16 +14,12 @@ import {
   UserInfoRoutes,
 } from './routes';
 import PetProfileListScreen from '../screens/AddPet/PetProfileListScreen';
-import PetMainScreen from '../screens/PetMainScreen';
 import EmptySchduleScreen from '../screens/CarePet/Schdule/EmptySchduleScreen';
 import MainCarePetScreen from '../screens/CarePet/MainCarePetScreen';
 import AddphotoScreen from '../screens/CarePet/Photo/AddPhotoScreen';
-import ViewPhotoScreen from '../screens/CarePet/Photo/ViewPhotoScreen';
-import EmptyPhotoSceen from '../screens/CarePet/Photo/EmptyPhotoScreen';
 import ListPhotoScreen from '../screens/CarePet/Photo/ListPhotoScreen';
 import ViewCalender from '../screens/Calender/ViewCalender';
 import { MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
-import WithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
 import DetailPhotoScreen from '../screens/CarePet/Photo/DetailPhotoScreen';
 import UserWithdrawalScreen from '../screens/UserInfo/UserWithdrawalScreen';
 import ViewPetInfoScreen from '../screens/CarePet/ViewPetInfoScreen';
@@ -31,8 +27,6 @@ import CommunityPhotoScreen from '../screens/Community/CommunityPhotoScreen';
 import CommunityDetailPhotoScreen from '../screens/Community/CommunityDetailPhotoScreen';
 import ScheduleListScreen from '../screens/CarePet/Schdule/ScheduleListScreen';
 import ScheduleModificationScreen from '../screens/CarePet/Schdule/ScheduleModificationScreen';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { YELLOW } from '../colors';
 
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();

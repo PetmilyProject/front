@@ -29,7 +29,6 @@ const ScheduleListScreen = ({ petName }) => {
   const navigation = useNavigation();
 
   const onSchedulePress = (id) => {
-    // console.log('일정번호 : ', id);
     navigation.navigate(CarePetRoutes.VIEW_ScheduleModification, {
       petName: petName,
       id: id,
