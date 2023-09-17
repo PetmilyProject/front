@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SquareButton, { ColorTypes } from '../components/Button';
 import { useContext } from 'react';
 import { AuthContext } from '../navigations/Nest';
+import { WHITE } from '../colors';
 
 const SignInScreen = () => {
   const [email, setEmail] = useState('');
@@ -47,7 +48,7 @@ const SignInScreen = () => {
             console.log('로그인 토큰 저장 완료:', token);
 
             // 다음 화면으로 이동
-            signIn();
+            // signIn();
           })
           .catch((error) => {
             console.error('로그인 토큰 저장 실패:', error);
@@ -56,6 +57,7 @@ const SignInScreen = () => {
       .catch((error) => {
         console.error('로그인 실패:', error);
       });
+    signIn();
   };
 
   const dismissKeyboard = () => {
@@ -100,6 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: WHITE,
   },
 });
 

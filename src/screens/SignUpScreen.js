@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -6,14 +6,13 @@ import {
   Alert,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
-import SquareButton, { ColorTypes } from '../components/Button';
-import InputText from '../components/InputText';
 import axios from 'axios';
-import { useState } from 'react';
-import Input, { InputTypes, ReturnKeyTypes } from '../components/Input';
-import Navigation from '../navigations/Navigation';
-import FirstScreen from './FirstScreen';
+import Button2 from '../components/Button2';
+import InputText from '../components/InputText';
+import { YELLOW, WHITE } from '../colors';
 
 const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -34,7 +33,6 @@ const SignUpScreen = ({ navigation }) => {
         }
       )
       .then((response) => {
-        //console.log(response);
         setInviter(email);
         navigation.goBack();
       })
@@ -42,39 +40,73 @@ const SignUpScreen = ({ navigation }) => {
         console.error('회원가입 실패:', error);
         Alert.alert('회원가입 실패', '다시 시도해주세요.');
       });
+
+    // 키보드를 닫습니다.
+    Keyboard.dismiss();
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-        placeholder="이메일"
-      />
-      <TextInput
-        style={styles.input}
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-        placeholder="비밀번호"
-        secureTextEntry={true}
-      />
-      <TextInput
-        style={styles.input}
-        value={userName}
-        onChangeText={(text) => setUserName(text)}
-        placeholder="닉네임"
-      />
-      <TextInput
-        style={styles.input}
-        value={phoneNumber}
-        onChangeText={(text) => setPhoneNumber(text)}
-        placeholder="전화번호"
-      />
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
-        <Text style={styles.buttonText}>회원가입</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <View style={{ flex: 1.1, marginTop: 100 }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'flex-end',
+              justifyContent: 'center',
+            }}
+          >
+            <View style={{ marginRight: 5 }}>
+              <InputText
+                title={'이메일'}
+                placeholder={'이메일'}
+                keyboardType={'email-address'}
+                onChangeText={(text) => setEmail(text)}
+                width={243}
+              />
+            </View>
+            <Button2
+              backgrouncolor={YELLOW.DEFAULT}
+              color={WHITE}
+              text={'중복확인'}
+              onPress={handleSignup}
+              width={100}
+              fontSize={15}
+            />
+          </View>
+          <InputText
+            title={'비밀번호'}
+            placeholder={'비밀번호'}
+            keyboardType={'visible-password'}
+            onChangeText={(text) => setPassword(text)}
+            width={350}
+          />
+          <InputText
+            title={'닉네임'}
+            placeholder={'닉네임'}
+            keyboardType={'default'}
+            onChangeText={(text) => setUserName(text)}
+            width={350}
+          />
+          <InputText
+            title={'전화번호'}
+            placeholder={'전화번호'}
+            keyboardType={'numeric'}
+            onChangeText={(text) => setPhoneNumber(text)}
+            width={350}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Button2
+            backgrouncolor={YELLOW.DEFAULT}
+            color={WHITE}
+            text={'회원가입'}
+            onPress={handleSignup}
+            width={350}
+          />
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -83,6 +115,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: WHITE,
   },
   input: {
     width: '80%',

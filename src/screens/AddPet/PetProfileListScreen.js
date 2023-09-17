@@ -34,7 +34,6 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
 
   //petcare 이동
   const onPress = (petName) => {
-    // console.log('너의 이름은 : ', petName);
     navigation.navigate(CarePetRoutes.MAIN_CARE_PET, petName);
   };
 
@@ -48,7 +47,13 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
       const email = await AsyncStorage.getItem('email');
       const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${email}`;
 
-      const response = await axios.get(url);
+      const token = await AsyncStorage.getItem('token');
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const userData = response.data;
 
       petData = userData.pets;
@@ -81,12 +86,19 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   const getImageUrl = async (inviter, id) => {
     try {
       const email = await AsyncStorage.getItem('email');
+      const token = await AsyncStorage.getItem('token');
       const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg`;
-      // console.log(url);
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       setPetProfiles((prevProfiles) =>
         prevProfiles.map((profile) => {
           if (profile.id === id) {
-            return { ...profile, imgurl: url };
+            return { ...profile, imgurl: response.data.imageUrl };
           }
           return profile;
         })

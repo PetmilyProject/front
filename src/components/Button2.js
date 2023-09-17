@@ -10,6 +10,7 @@ const Button2 = ({
   width,
   fontSize,
   paddingVertical,
+  height,
 }) => {
   return (
     <Pressable onPress={onPress}>
