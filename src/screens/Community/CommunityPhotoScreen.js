@@ -17,7 +17,7 @@ import { MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import { YELLOW } from '../../colors';
 import { CommunityRoutes } from '../../navigations/routes';
 
-const CommunityPhotoScreen = () => {
+const CommunityPhotoScreen = () => { 
   let token;
   let email;
   const [myPhotoUrl, setMyPhotoUrl] = useState([]);
@@ -76,6 +76,7 @@ const CommunityPhotoScreen = () => {
               </TouchableOpacity>
             )}
             numColumns={2} // 2개의 열로 변경
+
           />
         </View>
       </ScrollView>
@@ -93,13 +94,20 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   container: {
-    flex: 1,
-    padding: 10,
+    width: '100%',
+    alignItems: 'center',
+    //padding: '5%',
+  },
+  photoList: {
+    width: '47%',
+    marginTop: '2%',
+    marginLeft: '2%'
   },
   photoItem: {
     width: '60%',
     aspectRatio: 1,
     margin: 5,
+
   },
 });
 
