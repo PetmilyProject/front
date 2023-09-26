@@ -26,15 +26,16 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   var petProfiles2 = [];
   const [select, setSelect] = useState(false);
   var inviter;
-  var id;
   var petData;
   var userName;
+  var id;
   var cnt = 0;
   const [refreshing, setRefreshing] = useState(false);
 
   //petcare 이동
-  const onPress = (petName) => {
-    navigation.navigate(CarePetRoutes.MAIN_CARE_PET, petName);
+  const onPress = (petName, id) => {
+    const params = [petName, id];
+    navigation.navigate(CarePetRoutes.MAIN_CARE_PET, params);
   };
 
   //펫 계정 수정 삭제
@@ -86,19 +87,11 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   const getImageUrl = async (inviter, id) => {
     try {
       const email = await AsyncStorage.getItem('email');
-      const token = await AsyncStorage.getItem('token');
       const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg`;
-
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
       setPetProfiles((prevProfiles) =>
         prevProfiles.map((profile) => {
           if (profile.id === id) {
-            return { ...profile, imgurl: response.data.imageUrl };
+            return { ...profile, imgurl: url };
           }
           return profile;
         })
@@ -160,7 +153,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
             species={profile.detailInfo}
             imgurl={profile.imgurl}
             handleLongPressed={handleLongPressed}
-            onPress={() => onPress(profile.petName)}
+            onPress={() => onPress(profile.petName, profile.id)}
             select={select}
             id={profile.id}
           />

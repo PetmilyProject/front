@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import InputText from '../../../components/InputText';
 import { BLACK, GRAY, WHITE, YELLOW } from '../../../colors';
@@ -15,6 +15,7 @@ import Button2 from '../../../components/Button2';
 import DangerAlert from '../../../components/DangerAlert';
 import { Image } from 'react-native';
 import { block } from 'react-native-reanimated';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //양육자 프로필 생성
 const renderRearer = (name) => {
@@ -60,15 +61,17 @@ const ListRearerScreen = () => {
           leftText={'취소'}
           rightText={'초대'}
           onClose={() => setVisible(false)}
-          onRight={() => { }}
+          onRight={() => {}}
           leftBtnColor={GRAY.LIGHT}
           rightBtnColor={YELLOW.DEFAULT}
         />
         <View>
-          <Text style={{ fontSize: 15, margin: 10, marginBottom: 5, flex: 1 }}>초대하기</Text>
+          <Text style={{ fontSize: 15, margin: 10, marginBottom: 5, flex: 1 }}>
+            초대하기
+          </Text>
         </View>
         <View style={styles.container_invite}>
-          <View style={{flex: 0.7}}>
+          <View style={{ flex: 0.7 }}>
             <TextInput
               borderRadius={15}
               style={{
@@ -76,25 +79,26 @@ const ListRearerScreen = () => {
                 marginRight: 10,
                 height: 40,
                 borderWidth: 1,
-                borderColor: 'gray'
+                borderColor: 'gray',
               }}
               onChangeText={(text) => setInviteName(text)}
               keyboardType="email-address"
             />
           </View>
           <View
-            borderRadius={15} 
+            borderRadius={15}
             style={{
-              flex: 0.25, 
+              flex: 0.25,
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: YELLOW.DEFAULT,
               height: 40,
-            }}>
+            }}
+          >
             <TouchableOpacity
               style={{
                 fontSize: 17,
-                color: WHITE
+                color: WHITE,
               }}
               onPress={() => {
                 setVisible(true);
@@ -105,7 +109,6 @@ const ListRearerScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-
 
         <View style={styles.container_rearer}>
           <Text style={{ fontSize: 16, marginBottom: 10 }}>등록된 양육자</Text>
@@ -123,7 +126,7 @@ const ListRearerScreen = () => {
           </ScrollView>
         </View>
       </View>
-    </ScrollView> 
+    </ScrollView>
   );
 };
 
@@ -138,7 +141,7 @@ const styles = StyleSheet.create({
   container_invite: {
     flexDirection: 'row',
     marginBottom: 15,
-    flex: 1
+    flex: 1,
   },
   container_rearer: {
     flex: 1,

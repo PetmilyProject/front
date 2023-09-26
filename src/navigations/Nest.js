@@ -27,6 +27,7 @@ import CommunityPhotoScreen from '../screens/Community/CommunityPhotoScreen';
 import CommunityDetailPhotoScreen from '../screens/Community/CommunityDetailPhotoScreen';
 import ScheduleListScreen from '../screens/CarePet/Schdule/ScheduleListScreen';
 import ScheduleModificationScreen from '../screens/CarePet/Schdule/ScheduleModificationScreen';
+import AddCommunityScreen from '../screens/Community/AddCommunityScreen';
 
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
@@ -147,6 +148,11 @@ const PhotoStackScreen = () => {
       <PhotoStack.Screen
         name={'CommunityDetailPhotoScreen'}
         component={CommunityDetailPhotoScreen}
+        options={{ headerShown: false }}
+      />
+      <PhotoStack.Screen
+        name={'AddCommunityScreen'}
+        component={AddCommunityScreen}
         options={{ headerShown: false }}
       />
     </PhotoStack.Navigator>
