@@ -8,12 +8,14 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import { YELLOW } from '../../colors';
+import { CommunityRoutes } from '../../navigations/routes';
 
 const CommunityPhotoScreen = () => {
   let token;
@@ -26,48 +28,41 @@ const CommunityPhotoScreen = () => {
     email = await AsyncStorage.getItem('email');
 
     const photos = [
-      'https://i.ibb.co/fdyq1Qt/Screenshot-20230818-135718-Gallery.jpg',
-      'https://i.ibb.co/yBMVMVG/Screenshot-20230818-135819-Gallery.jpg',
-      'https://i.ibb.co/7WmvXKJ/20230816-153852.jpg',
-      'https://i.ibb.co/6nkfSnw/Screenshot-20230818-150944-Gallery.jpg',
-      'https://i.ibb.co/GF71qkv/Screenshot-20230818-151000-Gallery.jpg',
-      'https://i.ibb.co/rMvRtG4/Screenshot-20230818-151024-Gallery.jpg',
-      'https://i.ibb.co/WzNgbtY/Screenshot-20230818-151030-Gallery.jpg',
-      'https://i.ibb.co/ZMDpfmx/Screenshot-20230818-151041-Gallery.jpg',
-      'https://i.ibb.co/SdFzcC7/Screenshot-20230818-151046-Gallery.jpg'
+      'http://43.200.8.47:8080/communityImage/lsyun1234@naver.com/1000.jpg',
+      'http://43.200.8.47:8080/communityImage/lsyun1234@naver.com/1001.jpg',
+      'http://43.200.8.47:8080/communityImage/lsyun1234@naver.com/1002.jpg',
+      'http://43.200.8.47:8080/communityImage/lsyun1234@naver.com/1003.jpg',
+      'http://43.200.8.47:8080/communityImage/lsyun1234@naver.com/1004.jpg',
+      'http://43.200.8.47:8080/communityImage/lsyun1234@naver.com/1005.jpg',
+      'http://43.200.8.47:8080/communityImage/lsyun1234@naver.com/1006.jpg',
+      'http://43.200.8.47:8080/communityImage/lsyun1234@naver.com/1007.jpg',
     ];
     setMyPhotoUrl(photos);
-  }
+  };
 
   useEffect(() => {
     getDataFunc();
   }, []);
 
   const renderItem = ({ item }) => {
-    return (
-      <Image
-        source={{ uri: item }}
-        style={styles.photoItem}
-      />
-    );
+    return <Image source={{ uri: item }} style={styles.photoItem} />;
   };
 
   const gotoDetail = (index) => {
-    //console.log(myPhotoUrl[index]);
     navigation.navigate('CommunityDetailPhotoScreen', {
-      detailUrl: myPhotoUrl[index]
+      detailUrl: myPhotoUrl[index],
     });
-  }
+  };
+
+  const AddCommunityScreen = () => {
+    navigation.navigate(CommunityRoutes.ADD_COMMUNITY);
+  };
 
   return (
     <View style={styles.background}>
       <View style={styles.icon_style}>
-        <TouchableOpacity>
-          <Entypo 
-            name="circle-with-plus" 
-            size={40} 
-            color={YELLOW.DEFAULT} 
-          />
+        <TouchableOpacity onPress={AddCommunityScreen}>
+          <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
         </TouchableOpacity>
       </View>
       <ScrollView>
@@ -77,15 +72,11 @@ const CommunityPhotoScreen = () => {
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => (
               <TouchableOpacity onPress={() => gotoDetail(index)}>
-                <Image
-                  source={{ uri: item }}
-                  style={styles.photoItem}
-                />
+                <Image source={{ uri: item }} style={styles.photoItem} />
               </TouchableOpacity>
             )}
-            numColumns={3}
+            numColumns={2} // 2개의 열로 변경
           />
-
         </View>
       </ScrollView>
     </View>
@@ -95,19 +86,19 @@ const CommunityPhotoScreen = () => {
 const styles = StyleSheet.create({
   background: {
     backgroundColor: 'white',
-    height: '100%'
+    height: '100%',
   },
   icon_style: {
     alignItems: 'flex-end',
-    marginRight: 20
+    marginRight: 20,
   },
   container: {
     flex: 1,
     padding: 10,
   },
   photoItem: {
-    width: 100,
-    height: 100,
+    width: '60%',
+    aspectRatio: 1,
     margin: 5,
   },
 });
