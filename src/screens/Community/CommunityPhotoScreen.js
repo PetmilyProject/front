@@ -17,7 +17,7 @@ import { MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
 import { YELLOW } from '../../colors';
 import { CommunityRoutes } from '../../navigations/routes';
 
-const CommunityPhotoScreen = () => {
+const CommunityPhotoScreen = () => { 
   let token;
   let email;
   const [myPhotoUrl, setMyPhotoUrl] = useState([]);
