@@ -6,6 +6,7 @@ import {
   View,
   RefreshControl,
   Text,
+  TouchableOpacity
 } from 'react-native';
 import ComponentAMD2 from '../../components/ComponentAMD2';
 import PetProfile from '../../components/AddPet/PetProfile';
@@ -16,7 +17,6 @@ import { GRAY, WHITE, YELLOW } from '../../colors';
 import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import ViewListAlert from '../../components/ViewListAlert';
 
 const PetProfileListScreen = ({ navigation, AddPress }) => {
@@ -26,15 +26,16 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   var petProfiles2 = [];
   const [select, setSelect] = useState(false);
   var inviter;
-  var id;
   var petData;
   var userName;
+  var id;
   var cnt = 0;
   const [refreshing, setRefreshing] = useState(false);
 
   //petcare 이동
-  const onPress = (petName) => {
-    navigation.navigate(CarePetRoutes.MAIN_CARE_PET, petName);
+  const onPress = (petName, id) => {
+    const params = [petName, id];
+    navigation.navigate(CarePetRoutes.MAIN_CARE_PET, params);
   };
 
   //펫 계정 수정 삭제
@@ -86,19 +87,11 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   const getImageUrl = async (inviter, id) => {
     try {
       const email = await AsyncStorage.getItem('email');
-      const token = await AsyncStorage.getItem('token');
       const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg`;
-
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
       setPetProfiles((prevProfiles) =>
         prevProfiles.map((profile) => {
           if (profile.id === id) {
-            return { ...profile, imgurl: response.data.imageUrl };
+            return { ...profile, imgurl: url };
           }
           return profile;
         })
@@ -132,6 +125,8 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
         comment={'초대를 수락하고 함께 펫을 관리해보세요'}
         subComment={'한 번 거절한 초대는 취소할 수 없습니다'}
         scrollViewName={'▶ 받은 초대'}
+        startInvitation={'▶ 초대하기'}
+        petProfilesAndSchedules={petProfiles}
       />
 
       <View style={styles.container_list}>
@@ -142,7 +137,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
           <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleInvitePress}>
-          <Ionicons name="heart-circle" size={43} color={YELLOW.DEFAULT} />
+          <Ionicons name="navigate-circle" size={43} color={YELLOW.DEFAULT} />
         </TouchableOpacity>
       </View>
 
@@ -160,7 +155,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
             species={profile.detailInfo}
             imgurl={profile.imgurl}
             handleLongPressed={handleLongPressed}
-            onPress={() => onPress(profile.petName)}
+            onPress={() => onPress(profile.petName, profile.id)}
             select={select}
             id={profile.id}
           />

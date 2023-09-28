@@ -27,18 +27,24 @@ const UserInfoScreen = () => {
   const navigation = useNavigation();
 
   const { signOut, isSignedIn } = useContext(AuthContext);
-  // AsyncStorage에서 토큰과 이메일을 가져옵니다.
+
   useEffect(() => {
-    // AsyncStorage에서 사용자 데이터와 userName 가져오기
+    const getImage = () => {
+      const myProfile = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${email}/${email}.jpg`;
+
+      setImage(myProfile);
+    };
+
     const fetchData = async () => {
       try {
-        const storedEmail = await AsyncStorage.getItem('email');
-        const storedUserName = await AsyncStorage.getItem('userName');
+        const myEmail = await AsyncStorage.getItem('email');
+        const myUserName = await AsyncStorage.getItem('userName');
         const token = await AsyncStorage.getItem('token');
+        setImage(`http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${myEmail}/${myEmail}.jpg`);
 
-        if (storedEmail && storedUserName && token) {
+        if (myEmail && myUserName && token) {
           const response = await axios.get(
-            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${storedEmail}`,
+            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -46,15 +52,56 @@ const UserInfoScreen = () => {
             }
           );
           setEmail(response.data.email);
-          setUserName(storedUserName);
+          setUserName(myUserName);
         }
       } catch (error) {
         console.error('사용자 데이터 가져오기 오류:', error);
       }
     };
 
+    getImage();
     fetchData();
   }, []);
+
+  // 이미지 업로드 함수
+  const uploadImage = async (uri) => {
+    try {
+      const formData = new FormData();
+
+      const myEmail = await AsyncStorage.getItem('email');
+      const token = await AsyncStorage.getItem('token');
+      const tmpProfile = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${email}/${email}.jpg`;
+      setImage(tmpProfile);
+
+      formData.append('file', {
+        uri: `${image}`,
+        type: 'multipart/form-data',
+        name: `${myEmail}.jpg`,
+        // type: 'image/jpg',
+      });
+
+      console.log('uri : ', uri);
+
+      const response = await axios.post(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/post/${myEmail}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // 업로드 성공 시 서버에서 이미지 URL을 반환하는 것을 가정합니다.
+      if (response.data && response.data.imageUrl) {
+        setImage(response.data.imageUrl);
+        console.log('성공 : ', response.data.imageUrl);
+      }
+    } catch (error) {
+      console.error('이미지 업로드 오류:', error);
+    }
+  };
 
   // 로그아웃 함수
   const handleLogout = async () => {
@@ -85,7 +132,7 @@ const UserInfoScreen = () => {
       />
       {/* 강아지 사진 */}
       <View style={styles.imageContainer}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={async () => {
             let result = await ImagePicker.launchImageLibraryAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -98,6 +145,24 @@ const UserInfoScreen = () => {
 
             if (!result.canceled) {
               setImage(result.assets[0].uri);
+            }
+          }}
+        >
+         */}
+        <TouchableOpacity
+          onPress={async () => {
+            let result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.All,
+              allowsEditing: true,
+              aspect: [3, 3],
+              quality: 1,
+            });
+
+            console.log(result);
+
+            if (!result.cancelled) {
+              // 이미지 업로드 함수 호출
+              uploadImage(result.uri);
             }
           }}
         >
@@ -142,7 +207,6 @@ const UserInfoScreen = () => {
           }}
           width={350}
         />
-
         <Button2
           backgrouncolor={GRAY.LIGHT}
           color={WHITE}

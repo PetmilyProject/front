@@ -113,6 +113,16 @@ const PetRegisterScreen = ({ navigation, route }) => {
       },
       data: formData,
     });
+
+    // petlink 추가
+    await axios({
+      method: 'post',
+      uri: `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/post/${myEmail}/${inviter}/${petid}`,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      data: formData,
+    });
   };
 
   return (

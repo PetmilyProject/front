@@ -26,7 +26,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [selectedDays, setSelectedDays] = useState([]);
   const [executorVisible, setExecutorVisible] = useState(false);
   const [selectedExecutor, setSelectedExecutor] = useState([]);
-  const [name, setName] = useState('');
 
   // 주기(요일) 리스트 아이템
   const item = {
