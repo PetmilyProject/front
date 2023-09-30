@@ -13,8 +13,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { CarePetRoutes } from '../../../navigations/routes';
-import { GRAY, RED } from '../../../colors';
-//import { CarePetRoutes } from '../../../navigations/routes';
 
 const ListPhotoScreen = ({ Navigation, petName }) => {
   const [imageList, setImageList] = useState([]); // 이미지 목록을 저장할 상태 변수

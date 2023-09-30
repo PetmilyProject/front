@@ -40,6 +40,10 @@ export const CarePetRoutes = {
   VIEW_ScheduleModification: 'ScheduleModificationScreen',
 };
 
+export const CommunityRoutes = {
+  ADD_COMMUNITY: 'AddCommunityScreen',
+};
+
 export const UserInfoRoutes = {
   MAIN_USER: 'UserInfoScreen',
 

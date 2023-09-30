@@ -11,18 +11,18 @@ import { CarePetRoutes } from '../../navigations/routes';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GRAY, WHITE } from '../../colors';
-import Long from 'long';
 
-const MainCarePetScreen = ({ route, navigation }) => {
-  const { petName, petId } = route.params;
-  // console.log('petName : ' + petName + 'petId : ' + petId);
-
+const MainCarePetScreen = ({ navigation, route }) => {
+  const petName = route.params[0];
+  const petId = route.params[1];
   const [content, setContent] = useState('일정');
   const [schdule, setSchdule] = useState('');
   const [health, setHealth] = useState(null);
   const [photo, setPhoto] = useState(true);
   const [rearer, setRearer] = useState(null);
   const [selectedScheduleIds, setSelectedScheduleIds] = useState([]); // 선택한 일정의 ID를 저장하는 상태
+
+  // console.log('zz : ', petId);
 
   const onSchedulePress = () => {
     setContent('일정');
@@ -37,7 +37,6 @@ const MainCarePetScreen = ({ route, navigation }) => {
 
   const onAddPress = () => {
     if (content === '일정') {
-      //console.log("펫 : " + petName)
       navigation.navigate(CarePetRoutes.ADD_SCHDULE, petName);
     } else if (content === '사진첩') {
       navigation.navigate(CarePetRoutes.ADD_PHOTO, petName);
@@ -63,14 +62,22 @@ const MainCarePetScreen = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    console.log();
     const fetchData = async () => {
       try {
         const email = await AsyncStorage.getItem('email');
-        const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${email}/${petName}`;
+        const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${email}/get-all/${petId}`;
+        // const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/get/${email}/${petId}`;
 
-        const response = await axios.get(url);
-        const responseData = response.data;
+        const token = await AsyncStorage.getItem('token');
+
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const responseData = response.data[0];
+
+        console.log('data  : ', responseData);
 
         // Update the state based on the response data
         setSchdule(responseData.schedule);

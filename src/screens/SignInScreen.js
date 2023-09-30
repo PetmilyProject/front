@@ -57,6 +57,7 @@ const SignInScreen = () => {
       .catch((error) => {
         console.error('로그인 실패:', error);
       });
+    //signIn();
   };
 
   const dismissKeyboard = () => {

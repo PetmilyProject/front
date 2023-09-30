@@ -1,9 +1,21 @@
-import { View, StyleSheet, Modal, Pressable, Text } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Modal,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import { BLACK, GRAY, WHITE, YELLOW } from '../colors';
-import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import React, { useState } from 'react'; // Import React and useState
 import { Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { useEffect } from 'react';
+import { TextInput } from 'react-native-gesture-handler';
+import { Button } from 'react-native-elements';
 
 const ViewListAlert = ({
   visible,
@@ -14,13 +26,76 @@ const ViewListAlert = ({
   onClose,
   leftBtnColor,
   scrollViewName,
+  // 230927 추가
+  startInvitation,
+  petProfilesAndSchedules,
 }) => {
   const [items, setItems] = useState([]);
+  const [invitation, setInvitation] = useState([]);
+  const [email, setEmail] = useState('');
+  const [myPets, setMyPets] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const addItem = () => {
-    // Function to add a new item to the list
-    const newItem = `Item ${items.length + 1}`;
-    setItems([...items, newItem]);
+  const findPet = async () => {
+    const tmpEmail = await AsyncStorage.getItem('email');
+
+    setEmail(tmpEmail);
+
+    const token = await AsyncStorage.getItem('token');
+    const getPets = await axios.get(
+      `http://43.200.8.47:8080/pet/get-all/${email}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    setMyPets(getPets.data);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await findPet();
+    };
+
+    fetchData();
+  }, [email]);
+
+  const InvitationCard = (params) => {
+    //console.log(`http://43.200.8.47:8080/pet/${email}/downloadImage/${params.item.petId}.jpg`);
+    //console.log(params);
+    return (
+      <View style={styles.container_Item}>
+        <Image
+          source={{
+            uri: `http://43.200.8.47:8080/pet/${email}/downloadImage/${params.item.id}.jpg`,
+          }}
+          style={styles.user_profile}
+        />
+        <Text style={styles.user_name}>{params.item.petName}</Text>
+        <TextInput
+          style={{
+            height: 40,
+            borderColor: 'gray',
+            borderWidth: 1,
+            paddingHorizontal: 10,
+            borderRadius: 10,
+            width: 120,
+          }}
+          placeholder="초대할 이메일"
+        ></TextInput>
+        <Button
+          title="초대" 
+          //onPress={} // 버튼 클릭 시 실행될 함수
+          containerStyle={{ margin: 10 }} // 버튼 스타일 설정
+          buttonStyle={{ 
+            backgroundColor: 'black',
+            borderRadius: 10,
+          }} // 버튼 배경색 설정
+          titleStyle={{ color: 'white' }} // 버튼 텍스트 스타일 설정
+        />
+      </View>
+    );
   };
 
   const Item = () => {
@@ -65,6 +140,12 @@ const ViewListAlert = ({
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.comment}>{comment}</Text>
           <Text style={styles.comment2}>{subComment}</Text>
+          <Text style={styles.scrollViewName}>{startInvitation}</Text>
+          <ScrollView style={styles.ScrollView}>
+            {myPets.map((item) => (
+              <InvitationCard item={item} />
+            ))}
+          </ScrollView>
           <Text style={styles.scrollViewName}>{scrollViewName}</Text>
           <ScrollView style={styles.ScrollView}>
             {items.map((item, index) => (
@@ -107,9 +188,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingBottom: 20,
-    marginTop: -200,
+    marginTop: 0,
     width: 330,
-    height: 400,
+    height: 650,
     borderRadius: 20,
   },
   container_row: {
@@ -192,7 +273,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   user_name: {
-    width: 60,
+    width: 40
   },
 });
 

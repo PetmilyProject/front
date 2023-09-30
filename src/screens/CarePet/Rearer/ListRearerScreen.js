@@ -51,24 +51,21 @@ const ListRearerScreen = ({ petName, petId }) => {
     try {
       // owner 이메일
       const email = await AsyncStorage.getItem('email');
-      setOwner(email);
+      const response = await axios.get(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/get/${email}/${petId}`
+      );
+      const userResponse = await axios.get(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${email}`
+      );
 
-      // 펫 링크와 사용자 정보를 병렬로 가져오기
-      const [response, userResponse] = await Promise.all([
-        axios.get(
-          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/get/${owner}/${petId}`
-        ),
-        axios.get(
-          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${owner}`
-        ),
-      ]);
-
-      if (response.status === 200 && userResponse.status === 200) {
+      if (response.status === 200) {
         setPetLink(response.data);
+        setOwner(email);
+        setInviter(petLink.inviter);
         setUser(userResponse.data);
 
-        // console.log(response.data);
-
+        console.log('owner : ' + owner);
+        console.log('inviter : ' + inviter);
         handleRearer();
       } else {
         console.error('펫 링크를 가져오는 데 실패했습니다');
@@ -83,7 +80,7 @@ const ListRearerScreen = ({ petName, petId }) => {
   }, [petId]);
 
   const handleRearer = () => {
-    if (owner === petLink.inviter) {
+    if (owner === inviter) {
       console.log('해당 사용자는 메인 양육자 입니다.');
       setMainRearer(user.userName);
     } else {
