@@ -14,7 +14,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { CarePetRoutes } from '../../../navigations/routes';
 import { useNavigation } from '@react-navigation/native';
 
-const ScheduleListScreen = ({ petName }) => {
+const ScheduleListScreen = ({ petName, petId }) => {
   const [responseData, setResponseData] = useState([]);
   const [executeArray, setExecuteArray] = useState([]);
   const [executeColor, setExecuteColor] = useState(GRAY.LIGHTER);
@@ -24,14 +24,14 @@ const ScheduleListScreen = ({ petName }) => {
   );
   const [currentDay, setCurrentDay] = useState(new Date().getDay());
   const [selectedScheduleIds, setSelectedScheduleIds] = useState([]);
+  const [time, setTime] = useState('');
 
   const navigation = useNavigation();
 
   const onSchedulePress = (id) => {
-    console.log('일정번호 : ', id);
     navigation.navigate(CarePetRoutes.VIEW_ScheduleModification, {
-      id: id,
       petName: petName,
+      id: id,
     });
   };
 
@@ -42,7 +42,7 @@ const ScheduleListScreen = ({ petName }) => {
           .then((token) => {
             axios
               .get(
-                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/${petName}`,
+                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/get-all/${petId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,

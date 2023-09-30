@@ -23,6 +23,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   const route = useRoute();
   const [petProfiles, setPetProfiles] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [petId, setPetId] = useState(null);
   var petProfiles2 = [];
   const [select, setSelect] = useState(false);
   var inviter;
@@ -33,14 +34,9 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   //petcare 이동
-  const onPress = (petName) => {
-    // console.log('너의 이름은 : ', petName);
-    navigation.navigate(CarePetRoutes.MAIN_CARE_PET, petName);
-  };
-
-  //펫 계정 수정 삭제
-  const handleLongPressed = () => {
-    console.log('길게누르기');
+  const onPress = (petName, petId) => {
+    console.log(petName, petId);
+    navigation.navigate(CarePetRoutes.MAIN_CARE_PET, { petName, petId });
   };
 
   const fetchData = async () => {
@@ -140,6 +136,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
+        {/* 펫 프로필 */}
         {petProfiles.map((profile) => (
           <PetProfile
             key={profile.id}
@@ -147,8 +144,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
             age={profile.petAge}
             species={profile.detailInfo}
             imgurl={profile.imgurl}
-            handleLongPressed={handleLongPressed}
-            onPress={() => onPress(profile.petName)}
+            onPress={() => onPress(profile.petName, profile.id)}
             select={select}
             id={profile.id}
           />

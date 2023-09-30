@@ -11,9 +11,12 @@ import { CarePetRoutes } from '../../navigations/routes';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GRAY, WHITE } from '../../colors';
+import Long from 'long';
 
-const MainCarePetScreen = ({ navigation, route }) => {
-  const petName = route.params;
+const MainCarePetScreen = ({ route, navigation }) => {
+  const { petName, petId } = route.params;
+  // console.log('petName : ' + petName + 'petId : ' + petId);
+
   const [content, setContent] = useState('일정');
   const [schdule, setSchdule] = useState('');
   const [health, setHealth] = useState(null);
@@ -60,6 +63,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+    console.log();
     const fetchData = async () => {
       try {
         const email = await AsyncStorage.getItem('email');
@@ -87,7 +91,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
         <EmptySchduleScreen />
       ) : (
         <View>
-          <ScheduleListScreen petName={petName} />
+          <ScheduleListScreen petName={petName} petId={petId} />
         </View>
       );
     } else if (content === '사진첩') {
@@ -97,11 +101,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
         <ListPhotoScreen petName={petName} />
       );
     } else if (content === '양육자') {
-      return rearer === null ? (
-        <EmptyRearerScreen />
-      ) : (
-        <ListRearerScreen petName={petName} />
-      );
+      return <ListRearerScreen petName={petName} petId={petId} />;
     } else {
       return null; // Return null or another default screen/component if needed
     }
