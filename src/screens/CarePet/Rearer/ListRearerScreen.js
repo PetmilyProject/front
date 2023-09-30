@@ -92,7 +92,7 @@ const ListRearerScreen = ({ petName, petId }) => {
     { id: 1, name: '부양육자 1' },
     { id: 2, name: '부양육자 2' },
     { id: 3, name: '부양육자 3' },
-    { id: 4, name: '부양육자 4' },
+    { id: 4, name: '부양육자 3' },
     { id: 5, name: '부양육자 5' },
     { id: 6, name: '부양육자 6' },
   ];
