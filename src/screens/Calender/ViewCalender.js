@@ -32,7 +32,7 @@ const ViewCalender = () => {
 
         petData = response.data;
         const updatedMyPets = [];
-        const myPetsId =[];
+        const myPetsId = [];
 
         for (let i = 0; i < petData.length; i++) {
           updatedMyPets.push(petData[i].petName);
