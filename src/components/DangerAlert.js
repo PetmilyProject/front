@@ -1,7 +1,7 @@
-import { View, StyleSheet, Modal, Pressable, Text } from 'react-native';
+import { View, StyleSheet, Modal, Pressable, Text, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { BLACK, GRAY, WHITE, YELLOW } from '../colors';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+
 import { useState } from 'react';
 
 const DangerAlert = ({
@@ -29,14 +29,14 @@ const DangerAlert = ({
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.comment}>{comment}</Text>
           <View style={styles.container_row}>
-            <TouchableOpacity onPress={onClose}>
+            <TouchableOpacity onPress={() => { onClose(); }}>
               <View
                 style={[styles.button1, { backgroundColor: `${leftBtnColor}` }]}
               >
                 <Text>{leftText}</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={onRight}>
+            <TouchableOpacity onPress={() => { onRight(); }}>
               <View
                 style={[
                   styles.button2,

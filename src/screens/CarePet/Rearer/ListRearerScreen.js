@@ -111,7 +111,7 @@ const ListRearerScreen = ({ petName, petId }) => {
           leftText={'취소'}
           rightText={'초대'}
           onClose={() => setVisible(false)}
-          onRight={() => {}}
+          onRight={() => {setVisible(false)}}
           leftBtnColor={GRAY.LIGHT}
           rightBtnColor={YELLOW.DEFAULT}
         />

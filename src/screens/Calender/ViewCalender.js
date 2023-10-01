@@ -47,7 +47,7 @@ const ViewCalender = () => {
         const updatedPetSchedules = [];
 
         // 페이지로 현재 펫 정함. 문제 생길 시 고칠 수 있음
-        const scheduleUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.am'azonaws.com:8080/schedule/${email}/get-all/${myPetsId[currentPetIndex]}`;
+        const scheduleUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${email}/get-all/${myPetsId[currentPetIndex]}`;
         // const token1 = await AsyncStorage.getItem('token');
 
         const scheduleResponse = await axios.get(scheduleUrl, {

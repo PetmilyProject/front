@@ -24,12 +24,14 @@ const CarePetList = ({
   onPhotoPress,
   onRearerPress,
   onDeletePress,
+  petId
 }) => {
   const [schedueltextColor, setScheduleTextColor] = useState(YELLOW.DARK);
   const [phototextColor, setPhotoTextColor] = useState(BLACK);
   const [rearertextColor, setRearerTextColor] = useState(BLACK);
   const [petProfiles, setPetProfiles] = useState([]);
   const [responseData, setResponseData] = useState([]);
+  const [myEmail, setMyEmail] = useState('');
   var petProfiles2 = [];
   var petData;
 
@@ -68,6 +70,8 @@ const CarePetList = ({
     try {
       const email = await AsyncStorage.getItem('email');
       const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${email}`;
+
+      setMyEmail(email);
 
       const response = await axios.get(url);
       const userData = response.data;
@@ -113,7 +117,7 @@ const CarePetList = ({
           {/* 이미지 */}
           <TouchableOpacity onPress={onPetPress}>
             <Image
-              source={require('../../../assets/pet_icon.png')}
+              source={{ uri : `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${myEmail}/downloadImage/${petId}.jpg` }}
               style={styles.image}
             />
             <View style={styles.editIconContainer}>
