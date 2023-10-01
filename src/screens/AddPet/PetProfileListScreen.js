@@ -125,8 +125,6 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
         comment={'초대를 수락하고 함께 펫을 관리해보세요'}
         subComment={'한 번 거절한 초대는 취소할 수 없습니다'}
         scrollViewName={'▶ 받은 초대'}
-        startInvitation={'▶ 초대하기'}
-        petProfilesAndSchedules={petProfiles}
       />
 
       <View style={styles.container_list}>

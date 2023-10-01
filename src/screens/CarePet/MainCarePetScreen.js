@@ -124,6 +124,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
         onRearerPress={onRearerPress}
         onDeletePress={onDeletePress}
         navigation={navigation}
+        petId={petId}
       />
       <View style={styles.line}></View>
       <View style={styles.container2}>{renderScreen()}</View>

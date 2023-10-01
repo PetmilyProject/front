@@ -26,22 +26,24 @@ const ViewListAlert = ({
   onClose,
   leftBtnColor,
   scrollViewName,
-  // 230927 추가
-  startInvitation,
-  petProfilesAndSchedules,
 }) => {
   const [items, setItems] = useState([]);
-  const [invitation, setInvitation] = useState([]);
+  const [token, setToken] = useState([]);
   const [email, setEmail] = useState('');
   const [myPets, setMyPets] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const [receivedPet, setReceivedPet] = useState([]);
 
   const findPet = async () => {
+    setItems([]);
     const tmpEmail = await AsyncStorage.getItem('email');
 
     setEmail(tmpEmail);
 
-    const token = await AsyncStorage.getItem('token');
+    const tmpToken = await AsyncStorage.getItem('token');
+
+    setToken(tmpToken);
+
+    setMyPets([]);
     const getPets = await axios.get(
       `http://43.200.8.47:8080/pet/get-all/${email}`,
       {
@@ -50,68 +52,91 @@ const ViewListAlert = ({
         },
       }
     );
+
+    setItems([]);
+    const getInvitations = await axios.get(
+      `http://43.200.8.47:8080/invitation/get/${email}`
+    )
     setMyPets(getPets.data);
+    setItems(getInvitations.data);
+
+    //console.log(getInvitations.data);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await findPet();
-    };
-
-    fetchData();
-  }, [email]);
-
-  const InvitationCard = (params) => {
-    //console.log(`http://43.200.8.47:8080/pet/${email}/downloadImage/${params.item.petId}.jpg`);
-    //console.log(params);
+  
+  const getInvitationCard = async () => {
+    setReceivedPet([]);
+    const petPromises = [];
+  
+    for (const i of items) {
+      petPromises.push(
+        axios.get(`http://43.200.8.47:8080/pet/get-pet/${email}/${i.petId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      );
+    }
+  
+    try {
+      const petResponses = await Promise.all(petPromises);
+      const petData = petResponses.map((response) => response.data);
+      setReceivedPet(petData);
+    } catch (error) {
+      console.error(`Error fetching pet data: ${error}`);
+    }
+  };
+  
+  
+  
+  // const InvitationCard = (params) => {
+  //   return (
+  //     <View style={styles.container_Item}>
+  //       <Image
+  //         source={{
+  //           uri: `http://43.200.8.47:8080/pet/${email}/downloadImage/${params.item.id}.jpg`,
+  //         }}
+  //         style={styles.user_profile}
+  //       />
+  //       <Text style={styles.user_name}>{params.item.petName}</Text>
+  //       <TextInput
+  //         style={{
+  //           height: 40,
+  //           borderColor: 'gray',
+  //           borderWidth: 1,
+  //           paddingHorizontal: 10,
+  //           borderRadius: 10,
+  //           width: 120,
+  //         }}
+  //         placeholder="초대할 이메일"
+  //         ></TextInput>
+  //       <Button
+  //         title="초대" 
+  //         //onPress={} // 버튼 클릭 시 실행될 함수
+  //         containerStyle={{ margin: 10 }} // 버튼 스타일 설정
+  //         buttonStyle={{ 
+  //           backgroundColor: 'black',
+  //           borderRadius: 10,
+  //         }} // 버튼 배경색 설정
+  //         titleStyle={{ color: 'white' }} // 버튼 텍스트 스타일 설정
+  //       />
+  //     </View>
+  //   );
+  // };
+  
+  const Item = (invitationCard) => {
     return (
       <View style={styles.container_Item}>
         <Image
-          source={{
-            uri: `http://43.200.8.47:8080/pet/${email}/downloadImage/${params.item.id}.jpg`,
-          }}
+          source={{ uri: `http://43.200.8.47:8080/pet/${email}/downloadImage/${invitationCard.item.id}.jpg`}}
           style={styles.user_profile}
-        />
-        <Text style={styles.user_name}>{params.item.petName}</Text>
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: 'gray',
-            borderWidth: 1,
-            paddingHorizontal: 10,
-            borderRadius: 10,
-            width: 120,
-          }}
-          placeholder="초대할 이메일"
-        ></TextInput>
-        <Button
-          title="초대" 
-          //onPress={} // 버튼 클릭 시 실행될 함수
-          containerStyle={{ margin: 10 }} // 버튼 스타일 설정
-          buttonStyle={{ 
-            backgroundColor: 'black',
-            borderRadius: 10,
-          }} // 버튼 배경색 설정
-          titleStyle={{ color: 'white' }} // 버튼 텍스트 스타일 설정
-        />
-      </View>
-    );
-  };
-
-  const Item = () => {
-    return (
-      <View style={styles.container_Item}>
-        <Image
-          source={require('../assets/dog.jpg')}
-          style={styles.user_profile}
-        />
-        <Text style={styles.user_name}>강아지</Text>
+          />
+        <Text style={styles.user_name}>{invitationCard.item.petName}</Text>
         <TouchableOpacity
           onPress={() => {
             console.log('승인');
           }}
           style={styles.button1_Item}
-        >
+          >
           <Text>승인</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -119,12 +144,28 @@ const ViewListAlert = ({
             console.log('거절');
           }}
           style={styles.button2_Item}
-        >
+          >
           <Text>거절</Text>
         </TouchableOpacity>
       </View>
     );
   };
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      await findPet();
+    };
+
+    fetchData();
+  }, [email, token]);
+
+  useEffect(() => {
+    const fetchInvitations = async () => {
+      await getInvitationCard();
+    };
+
+    fetchInvitations();
+  }, [items]);
 
   return (
     <Modal
@@ -140,20 +181,17 @@ const ViewListAlert = ({
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.comment}>{comment}</Text>
           <Text style={styles.comment2}>{subComment}</Text>
-          <Text style={styles.scrollViewName}>{startInvitation}</Text>
+          {/* <Text style={styles.scrollViewName}>{startInvitation}</Text>
           <ScrollView style={styles.ScrollView}>
             {myPets.map((item) => (
               <InvitationCard item={item} />
             ))}
-          </ScrollView>
+          </ScrollView> */}
           <Text style={styles.scrollViewName}>{scrollViewName}</Text>
           <ScrollView style={styles.ScrollView}>
-            {items.map((item, index) => (
-              <Text key={index}>{item}</Text>
+            {receivedPet.map((item) => (
+              <Item key={item} item={item} />
             ))}
-            <Item />
-            <Item />
-            <Item />
           </ScrollView>
 
           <View style={styles.container_row}>
@@ -190,7 +228,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     marginTop: 0,
     width: 330,
-    height: 650,
+    height: 450,
     borderRadius: 20,
   },
   container_row: {
