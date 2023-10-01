@@ -77,8 +77,6 @@ const MainCarePetScreen = ({ navigation, route }) => {
         });
         const responseData = response.data[0];
 
-        console.log('data  : ', responseData);
-
         // Update the state based on the response data
         setSchdule(responseData.schedule);
         setHealth(responseData.health);
