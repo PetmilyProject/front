@@ -46,7 +46,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   const fetchData = async () => {
     try {
       const email = await AsyncStorage.getItem('email');
-      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${email}`;
+      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/get-all/${email}`;
 
       const token = await AsyncStorage.getItem('token');
 
@@ -55,13 +55,11 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
           Authorization: `Bearer ${token}`,
         },
       });
+
       const userData = response.data;
 
-      petData = userData.pets;
-      userName = userData.userName;
-      await AsyncStorage.setItem('userName', userName);
+      petData = userData;
 
-      //inviter = userData.inviter;
       setPetProfiles(petData);
       petData.forEach(function (pet) {
         petProfiles2.push(pet);
