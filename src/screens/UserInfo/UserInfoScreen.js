@@ -40,7 +40,9 @@ const UserInfoScreen = () => {
         const myEmail = await AsyncStorage.getItem('email');
         const myUserName = await AsyncStorage.getItem('userName');
         const token = await AsyncStorage.getItem('token');
-        setImage(`http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${myEmail}/${myEmail}.jpg`);
+        setImage(
+          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${myEmail}/${myEmail}.jpg`
+        );
 
         if (myEmail && myUserName && token) {
           const response = await axios.get(
@@ -52,7 +54,8 @@ const UserInfoScreen = () => {
             }
           );
           setEmail(response.data.email);
-          setUserName(myUserName);
+          setUserName(response.data.userName);
+          // setUserName(myUserName);
         }
       } catch (error) {
         console.error('사용자 데이터 가져오기 오류:', error);
@@ -132,23 +135,6 @@ const UserInfoScreen = () => {
       />
       {/* 강아지 사진 */}
       <View style={styles.imageContainer}>
-        {/* <TouchableOpacity
-          onPress={async () => {
-            let result = await ImagePicker.launchImageLibraryAsync({
-              mediaTypes: ImagePicker.MediaTypeOptions.All,
-              allowsEditing: true,
-              aspect: [3, 3],
-              quality: 1,
-            });
-
-            console.log(result);
-
-            if (!result.canceled) {
-              setImage(result.assets[0].uri);
-            }
-          }}
-        >
-         */}
         <TouchableOpacity
           onPress={async () => {
             let result = await ImagePicker.launchImageLibraryAsync({
