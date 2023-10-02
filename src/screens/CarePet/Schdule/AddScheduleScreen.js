@@ -12,9 +12,11 @@ import { WHITE, YELLOW } from '../../../colors';
 import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
 import SelectionListAlert from '../../../components/SelectionListAlert';
+import { useEffect } from 'react';
 
 const AddScheduleScreen = ({ navigation, route }) => {
-  const petName = route.params;
+  const { petName, petId } = route.params;
+
   const [schedule, setSchedule] = useState('');
   const [time, setTime] = useState('');
   const [date, setDate] = useState('');
@@ -27,6 +29,40 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [executorVisible, setExecutorVisible] = useState(false);
   const [selectedExecutor, setSelectedExecutor] = useState([]);
 
+  const [rearer, setRearer] = useState(null);
+
+  const fetchPetLink = async () => {
+    try {
+      // 해당 계정에 속한 모든 양육자 불러오기
+      const AllRearerResponse = await axios.get(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/rearer/${petId}`
+      );
+
+      if (AllRearerResponse.status === 200) {
+        setRearer(AllRearerResponse.data);
+      } else {
+        console.error('펫 링크를 가져오는 데 실패했습니다');
+      }
+    } catch (error) {
+      console.error('펫 링크를 가져오는 중 오류 발생:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPetLink();
+    console.log(rearer);
+  }, []);
+
+  useEffect(() => {
+    if (rearer) {
+      const newExecutor = {}; // 새로운 executor 객체 생성
+      rearer.forEach((item) => {
+        // rearer의 각 항목을 반복
+        newExecutor[item.owner] = item.owner; // executor 객체에 추가
+      });
+      setExecutor(newExecutor); // executor 상태 업데이트
+    }
+  }, [rearer]);
   // 주기(요일) 리스트 아이템
   const item = {
     0: '일',
@@ -39,12 +75,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
   };
 
   // 수행자 리스트 아이템
-  const executor = {
-    11: '나',
-    12: '아빠',
-    13: '엄마',
-    14: '형',
-  };
+  const [executor, setExecutor] = useState({});
   //SelectionList 활성화 여부 함수
   const handleSelection = () => {
     setVisible(true);
