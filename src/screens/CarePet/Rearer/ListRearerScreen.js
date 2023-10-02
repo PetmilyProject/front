@@ -75,6 +75,7 @@ const ListRearerScreen = ({ petName, petId }) => {
 
   useEffect(() => {
     handleMainRearer();
+    console.log(allRearer);
   }, [allRearer]);
 
   const handleMainRearer = () => {
