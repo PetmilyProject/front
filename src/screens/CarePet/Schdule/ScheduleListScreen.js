@@ -131,7 +131,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
           <Text style={styles.time}>{item.hm}</Text>
         </View>
         <View style={styles.container_executor}>
-          <Text style={styles.executor}>수행자</Text>
+          <Text style={styles.executor}>{item.executer}</Text>
         </View>
       </TouchableOpacity>
     );
