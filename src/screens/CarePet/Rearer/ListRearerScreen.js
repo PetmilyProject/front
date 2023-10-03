@@ -32,6 +32,18 @@ const RearerItem = ({ name }) => (
   <View style={styles.rearerItem}>{renderRearer(name)}</View>
 );
 
+const giveInvitation = async (receiver, petId) => {
+  const email = await AsyncStorage.getItem('email');
+  const token = await AsyncStorage.getItem('token');
+  const card = await axios.post(`http://43.200.8.47:8080/invitation/post/${email}/${receiver}/${petId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  console.log(`http://43.200.8.47:8080/invitation/post/${email}/${receiver}/${petId}에 등록 요청. 메시지 : `, card.data);
+}
+
 const ListRearerScreen = ({ petName, petId }) => {
   const [visible, setVisible] = useState(false); // 초대 확인 모달 관리
   const [inviteName, setInviteName] = useState('');
@@ -75,7 +87,7 @@ const ListRearerScreen = ({ petName, petId }) => {
 
   useEffect(() => {
     handleMainRearer();
-    console.log(allRearer);
+    //console.log(allRearer);
   }, [allRearer]);
 
   const handleMainRearer = () => {
@@ -104,6 +116,8 @@ const ListRearerScreen = ({ petName, petId }) => {
           onClose={() => setVisible(false)}
           onRight={() => {
             setVisible(false);
+            setInviteName('');
+            giveInvitation(inviteName, petId)
           }}
           leftBtnColor={GRAY.LIGHT}
           rightBtnColor={YELLOW.DEFAULT}
@@ -129,7 +143,7 @@ const ListRearerScreen = ({ petName, petId }) => {
                 onChangeText={(text) => setInviteName(text)}
                 keyboardType="email-address"
                 placeholder="예) petmily@gmail.com"
-              />
+              >{inviteName}</TextInput>
             </View>
             <View
               borderRadius={30}

@@ -27,6 +27,18 @@ const ViewListAlert = ({
   leftBtnColor,
   scrollViewName,
 }) => {
+  const deleteInvitation = async (receiver, petId) => {
+    const email = await AsyncStorage.getItem('email');
+    const token = await AsyncStorage.getItem('token');
+    const card = await axios.delete(`http://43.200.8.47:8080/invitation/delete/${email}/${receiver}/${petId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    console.log(`http://43.200.8.47:8080/invitation/delete/${email}/${receiver}/${petId}에 삭제 요청. 메시지 : `, card.data);
+  }
+
   const [items, setItems] = useState([]);
   const [token, setToken] = useState([]);
   const [email, setEmail] = useState('');
@@ -64,17 +76,17 @@ const ViewListAlert = ({
   };
   
   const getInvitationCard = async () => {
-    setReceivedPet([]);
+    setReceivedPet([]); 
     const petPromises = [];
   
     for (const i of items) {
-      petPromises.push(
-        axios.get(`http://43.200.8.47:8080/pet/get-pet/${email}/${i.petId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-      );
+      const petInvitation = axios.get(`http://43.200.8.47:8080/pet/get-pet/${i.inviter}/${i.petId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      petPromises.push(petInvitation);
     }
   
     try {
@@ -86,54 +98,59 @@ const ViewListAlert = ({
     }
   };
   
-  
-  
-  // const InvitationCard = (params) => {
-  //   return (
-  //     <View style={styles.container_Item}>
-  //       <Image
-  //         source={{
-  //           uri: `http://43.200.8.47:8080/pet/${email}/downloadImage/${params.item.id}.jpg`,
-  //         }}
-  //         style={styles.user_profile}
-  //       />
-  //       <Text style={styles.user_name}>{params.item.petName}</Text>
-  //       <TextInput
-  //         style={{
-  //           height: 40,
-  //           borderColor: 'gray',
-  //           borderWidth: 1,
-  //           paddingHorizontal: 10,
-  //           borderRadius: 10,
-  //           width: 120,
-  //         }}
-  //         placeholder="초대할 이메일"
-  //         ></TextInput>
-  //       <Button
-  //         title="초대" 
-  //         //onPress={} // 버튼 클릭 시 실행될 함수
-  //         containerStyle={{ margin: 10 }} // 버튼 스타일 설정
-  //         buttonStyle={{ 
-  //           backgroundColor: 'black',
-  //           borderRadius: 10,
-  //         }} // 버튼 배경색 설정
-  //         titleStyle={{ color: 'white' }} // 버튼 텍스트 스타일 설정
-  //       />
-  //     </View>
-  //   );
-  // };
+  const acceptPetLink = async (inviter, petId) => {
+    const email = await AsyncStorage.getItem('email');
+    const token = await AsyncStorage.getItem('token');
+    const petLinkUrl = `http://43.200.8.47:8080/link/post/${email}/${inviter}/${petId}`;
+    const petLinkResponse = await axios.post(petLinkUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(`${petLinkUrl}에 등록 요청. 메시지 : `, petLinkResponse.data);
+    
+    const deleteUrl = `http://43.200.8.47:8080/invitation/delete/${inviter}/${email}/${petId}`;
+    const deleteResponse = await axios.delete(deleteUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(`${deleteUrl}에 삭제 요청. 기등록된 초대 요청 삭제. 메시지 : `, deleteResponse.data);
+
+    await findPet();
+  }
+
+  const declinePetLink = async (inviter, petId) => {
+    const email = await AsyncStorage.getItem('email');
+    const token = await AsyncStorage.getItem('token');
+    const deleteUrl = `http://43.200.8.47:8080/invitation/delete/${inviter}/${email}/${petId}`;
+    const deleteResponse = await axios.delete(deleteUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(`${deleteUrl}에 삭제 요청. 기등록된 초대 요청 삭제. 메시지 : `, deleteResponse.data);
+
+    await findPet();
+  }
   
   const Item = (invitationCard) => {
     return (
       <View style={styles.container_Item}>
         <Image
-          source={{ uri: `http://43.200.8.47:8080/pet/${email}/downloadImage/${invitationCard.item.id}.jpg`}}
+          source={{ 
+            uri: `http://43.200.8.47:8080/pet/${invitationCard.item.inviter}/downloadImage/${invitationCard.item.id}.jpg`
+          }}
           style={styles.user_profile}
           />
         <Text style={styles.user_name}>{invitationCard.item.petName}</Text>
         <TouchableOpacity
           onPress={() => {
             console.log('승인');
+            acceptPetLink(invitationCard.item.inviter, invitationCard.item.id);
           }}
           style={styles.button1_Item}
           >
@@ -142,6 +159,7 @@ const ViewListAlert = ({
         <TouchableOpacity
           onPress={() => {
             console.log('거절');
+            declinePetLink(invitationCard.item.inviter, invitationCard.item.id)
           }}
           style={styles.button2_Item}
           >

@@ -1,5 +1,10 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import PropTypes from 'prop-types';
 
 const Button2 = ({
@@ -13,27 +18,26 @@ const Button2 = ({
   height,
 }) => {
   return (
-    <Pressable onPress={onPress}>
-      <TouchableOpacity
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        btnStyle.yellow,
+        {
+          backgroundColor: `${backgrouncolor}`,
+          width: width,
+          paddingVertical: paddingVertical,
+        },
+      ]}
+    >
+      <Text
         style={[
-          btnStyle.yellow,
-          {
-            backgroundColor: `${backgrouncolor}`,
-            width: width,
-            paddingVertical: paddingVertical,
-          },
+          btnStyle.yellow_text,
+          { color: `${color}`, fontSize: fontSize },
         ]}
       >
-        <Text
-          style={[
-            btnStyle.yellow_text,
-            { color: `${color}`, fontSize: fontSize },
-          ]}
-        >
-          {text}
-        </Text>
-      </TouchableOpacity>
-    </Pressable>
+        {text}
+      </Text>
+    </TouchableOpacity>
   );
 };
 

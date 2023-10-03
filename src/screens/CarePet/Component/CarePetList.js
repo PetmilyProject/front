@@ -32,6 +32,7 @@ const CarePetList = ({
   const [petProfiles, setPetProfiles] = useState([]);
   const [responseData, setResponseData] = useState([]);
   const [myEmail, setMyEmail] = useState('');
+  const [inviterEmail, setInviterEmail] = useState('');
   var petProfiles2 = [];
   var petData;
 
@@ -57,7 +58,11 @@ const CarePetList = ({
   // update 버튼 누를 시 작동. 추후 수정 바람.
   const onUpdatePress = () => {};
   const onPetPress = () => {
-    navigation.navigate(CarePetRoutes.VIEW_PET, petName);
+    const route = [];
+    route.push(petName);
+    route.push(petId);
+
+    navigation.navigate(CarePetRoutes.VIEW_PET, route);
   };
 
   const textStyle = StyleSheet.create({
@@ -69,19 +74,23 @@ const CarePetList = ({
   const fetchData = async () => {
     try {
       const email = await AsyncStorage.getItem('email');
-      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${email}`;
+      const token = await AsyncStorage.getItem('token');
+      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/getAll/${email}`;
 
       setMyEmail(email);
 
-      const response = await axios.get(url);
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const userData = response.data;
+      //console.log(userData)
 
-      petData = userData.pets;
-      //inviter = userData.inviter;
-      setPetProfiles(petData);
-      petData.forEach(function (pet) {
-        petProfiles2.push(pet);
-        getImageUrl(pet.inviter, pet.id);
+      setPetProfiles(userData);
+      userData.forEach(function (user) {
+        setInviterEmail(user.inviter)
+        getImageUrl(user.inviter, user.id);
       });
     } catch (error) {
       console.log('Error fetching pet data:', error);
@@ -96,6 +105,7 @@ const CarePetList = ({
     try {
       const email = await AsyncStorage.getItem('email');
       const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg`;
+
       // console.log(url);
       setPetProfiles((prevProfiles) =>
         prevProfiles.map((profile) => {
@@ -117,7 +127,7 @@ const CarePetList = ({
           {/* 이미지 */}
           <TouchableOpacity onPress={onPetPress}>
             <Image
-              source={{ uri : `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${myEmail}/downloadImage/${petId}.jpg` }}
+              source={{ uri : `http://43.200.8.47:8080/pet/${inviterEmail}/downloadImage/${petId}.jpg` }}
               style={styles.image}
             />
             <View style={styles.editIconContainer}>

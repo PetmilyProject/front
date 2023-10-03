@@ -6,6 +6,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   Keyboard,
+  TouchableOpacity
 } from 'react-native';
 import { BLACK, GRAY, RED, WHITE, YELLOW } from '../../colors';
 import ImagePickerComponent from '../../components/ImagePicker';
@@ -20,7 +21,8 @@ import { AddPetRoutes, CarePetRoutes } from '../../navigations/routes';
 import { number } from 'prop-types';
 
 const ViewPetInfoScreen = ({ navigation, route }) => {
-  const petName = route.params;
+  const petName = route.params[0];
+  const petId = route.params[1];
   const [imgUrl, setImgUrl] = useState(null);
   const [name, setName] = useState(petName);
   const [age, setAge] = useState('');
@@ -28,8 +30,12 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
   const [species, setSpecies] = useState('');
   const [character, setCharater] = useState('');
   const [email, setEmail] = useState('');
-  const InsertUrl = (url) => {
-    setImgUrl(url);
+  const InsertUrl = async (url) => {
+    const linkResponse = await axios.get(url);
+    const inviter = linkResponse.data.inviter
+    const petImageUrl = `http://43.200.8.47:8080/pet/${inviter}/downloadImage/${petId}.jpg`;
+
+    setImgUrl(petImageUrl);
   };
 
   const dismissKeyboard = () => {
@@ -40,58 +46,56 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
     const fetchData = async () => {
       try {
         const email = await AsyncStorage.getItem('email');
-        setEmail(email);
-        const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/get-pet/${email}/${petName}`;
+        const token = await AsyncStorage.getItem('token');
 
-        const response = await axios.get(url);
-        const responseData = response.data;
+        setEmail(email);
+        const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/get/${email}/${petId}`;
+
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const inviter = response.data.inviter;
+        
+        const petUrl = `http://43.200.8.47:8080/pet/get-pet/${inviter}/${petId}`;
+        const rawResponseData = await axios.get(petUrl, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const responseData = rawResponseData.data;
 
         setAge(responseData.petAge);
-        setSpecies(responseData.detailInfo);
+        setCharater(responseData.detailInfo);
       } catch (error) {
         console.log('Error fetching pet data:', error);
       }
     };
 
     fetchData();
-  }, [petName]);
+  }, []);
 
-  // 펫 계정 수정(이름 변경시 수정X)
-  const handlePetInfoSubmit = () => {
-    console.log(petName, email, name, age, species, +'\n');
-    AsyncStorage.getItem('email')
-      .then((email) => {
-        AsyncStorage.getItem('token')
-          .then((token) => {
-            axios
-              .put(
-                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/put-pet/${email}/${petName}`,
-                {
-                  petName: name,
-                  petAge: age,
-                  detailInfo: species,
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              )
-              .then((response) => {
-                console.log(response.data);
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    navigation.navigate(CarePetRoutes.MAIN_CARE_PET, name);
+  const handlePetInfoSubmit = async () => {
+    const email = await AsyncStorage.getItem('email');
+    const token = await AsyncStorage.getItem('token');
+
+    const putData = await axios.put(`http://43.200.8.47:8080/pet/put-pet/${email}/${petId}`,
+    {
+      petName: name,
+      petAge: age,
+      detailInfo: character,
+    },{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    //console.log(putData.data);
+
+    const route = [petName, petId];
+    
+    navigation.navigate(CarePetRoutes.MAIN_CARE_PET, route);
   };
   //펫 계정 나가기
 
@@ -141,7 +145,9 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
               <ImagePickerComponent
                 width={40}
                 height={40}
-                InsertUrl={InsertUrl}
+                onPress={
+                  InsertUrl(`http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/get/${email}/${petId}`)
+                }
               />
             </View>
           </View>
@@ -164,6 +170,7 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
             type={'input'}
             keyboardType={'decimal-pad'}
           />
+          {/* 
           <InputText_in
             title={'구분'}
             titleSize={20}
@@ -178,6 +185,7 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
             onChangeText={setGender}
             type={'input'}
           />
+          */}
           <InputText_in
             title={'특징'}
             titleSize={20}
