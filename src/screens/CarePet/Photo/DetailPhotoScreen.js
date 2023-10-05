@@ -20,6 +20,7 @@ const DetailPhotoScreen = ({ Navigation, route }) => {
     }
   };
 
+  console.log('par : ', param);
   return (
     <View style={styles.container}>
       {/* 작성자 */}

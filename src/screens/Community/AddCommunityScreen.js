@@ -19,15 +19,11 @@ const AddCommunityScreen = ({ navigation, route }) => {
   const [contents, setContents] = useState('');
   const [title, setTitle] = useState('');
 
-  // 난수생성
-  const generateSharedPetId = () => {
-    const randomId = Math.floor(Math.random() * 100000); // 랜덤한 숫자 생성
-    return randomId;
-  };
-  const [sharedPetId, setSharedPetId] = useState(generateSharedPetId());
+  const [image, setImage] = useState('');
 
+  // 유저네임 가져오기
   useEffect(() => {
-    AsyncStorage.getItem('email')
+    AsyncStorage.getItem('userName')
       .then((storedUserName) => {
         if (storedUserName) {
           setUserName(storedUserName);
@@ -38,41 +34,50 @@ const AddCommunityScreen = ({ navigation, route }) => {
       });
   }, []);
 
-  // 이미지 업로드
+  // 사진 전송
   const handleImageUpload = async () => {
     if (!imgUrl) {
       console.log('이미지 없음');
       return;
     }
-    const myEmail = await AsyncStorage.getItem('email');
-    const apiUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080`;
-
-    const formData = new FormData();
-    formData.append('file', {
-      uri: imgUrl,
-      type: 'image/jpeg',
-      name: 'image.jpg',
-      postId: postId,
-    });
-
     try {
-      const response = await fetch(
-        `${apiUrl}/communityImage/uploadImage/${myEmail}/${postId}`,
+      const formData = new FormData();
+
+      const myEmail = await AsyncStorage.getItem('email');
+      const token = await AsyncStorage.getItem('token');
+
+      console.log('uri : ', imgUrl);
+
+      formData.append('file', {
+        uri: imgUrl,
+        type: 'multipart/form-data',
+        name: `${myEmail}/${postId}.jpg`,
+        postId: `${postId}`,
+      });
+
+      console.log('id : ', postId);
+
+      const response = await axios.post(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/communityImage/uploadImage/${myEmail}/${postId}`,
+        formData,
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'multipart/form-data' },
-          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
-      if (response.ok) {
-        console.log('사진 등록 성공');
-        navigation.goBack(); // 업로드 성공 후 뒤로 이동
+      if (response.data && response.data.imageUrl) {
+        setImage(response.data.imageUrl);
+        // getImage();
+        console.log('성공 : ', response.data.imageUrl);
       } else {
-        console.log('사진 등록 실패');
+        console.log('오류이유 : ', response);
       }
     } catch (error) {
-      console.log('사진 등록 요청 실패' + error);
+      console.error('이미지 업로드 오류:', error);
     }
   };
 
@@ -82,25 +87,37 @@ const AddCommunityScreen = ({ navigation, route }) => {
       .then((myEmail) => {
         AsyncStorage.getItem('token')
           .then((token) => {
-            axios
-              .post(
-                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/community/post/${myEmail}`,
-                {
-                  community_id: postId,
-                  title: title,
-                  wrote: contents,
+            const uploadImagePromise = handleImageUpload();
+            const createCommunityPostPromise = axios.post(
+              `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/community/post/${myEmail}`,
+              {
+                community_id: postId,
+                title: title,
+                wrote: contents,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
                 },
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              )
-              .then((response) => {
-                console.log(response.data);
+              }
+            );
+
+            Promise.all([uploadImagePromise, createCommunityPostPromise])
+              .then((responses) => {
+                console.log(
+                  '이미지 업로드와 커뮤니티 글 작성이 모두 성공했습니다.'
+                );
+                console.log('이미지 업로드 응답:', responses[0]);
+                console.log('커뮤니티 글 작성 응답:', responses[1]);
               })
-              .catch((error) => {
-                console.error(error);
+              .catch((errors) => {
+                console.error(
+                  '이미지 업로드 또는 커뮤니티 글 작성 중 오류 발생:',
+                  errors
+                );
+              })
+              .finally(() => {
+                navigation.goBack(); // 뒤로 이동
               });
           })
           .catch((error) => {
@@ -110,7 +127,6 @@ const AddCommunityScreen = ({ navigation, route }) => {
       .catch((error) => {
         console.error(error);
       });
-    navigation.goBack();
   };
 
   const InsertUrl = (url) => {
@@ -208,7 +224,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     marginHorizontal: 20,
-    //backgroundColor: YELLOW.DARK,
   },
   profile: {
     width: 50,

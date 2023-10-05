@@ -39,6 +39,8 @@ const AddphotoScreen = ({ navigation, route }) => {
       });
   }, []);
 
+  console.log('ddd : ', sharedPetId);
+
   // 이미지 업로드
   const handleImageUpload = async () => {
     if (!imgUrl) {

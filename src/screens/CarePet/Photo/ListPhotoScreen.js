@@ -33,7 +33,7 @@ const ListPhotoScreen = ({ Navigation, petName }) => {
         )
       ).data;
       setSharedPets((prevPetInfo) => prevPetInfo.concat(sharedPetInfo));
-      //console.log(sharedPetInfo);
+      // console.log(sharedPetInfo);
 
       const newImageList = []; // 새로운 이미지 목록을 담을 배열 생성
 
@@ -97,6 +97,7 @@ const ListPhotoScreen = ({ Navigation, petName }) => {
     const handlePress = () => {
       const matchedPet = sharedPets.find((pet) => pet.sharedPetId === item.id);
 
+      console.log('it : ', item);
       if (matchedPet) {
         navigation.navigate(CarePetRoutes.DETAIL_PHOTO, {
           petInfo: {

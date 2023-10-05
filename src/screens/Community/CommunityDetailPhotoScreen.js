@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   TextInput,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -17,9 +17,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BLACK, RED } from '../../colors';
 import Comment from '../../components/Comment';
 
-const CommunityDetailPhotoScreen = (props) => {
-  const params = props.route.params;
-  const photoUrl = params.detailUrl;
+const CommunityDetailPhotoScreen = (props, route) => {
+  const param = props.route.params;
+  const photoUrl = param.detailUrl;
   const [liked, setLiked] = useState(BLACK.DEFAULT);
   const [likes, setLikes] = useState(0);
   const [comment, setComment] = useState('');
@@ -33,6 +33,7 @@ const CommunityDetailPhotoScreen = (props) => {
       setComment('');
     }
   };
+  console.log('넘어온거 : ', param);
 
   const LikeHandle = () => {
     if (liked === BLACK.DEFAULT) {
@@ -46,25 +47,30 @@ const CommunityDetailPhotoScreen = (props) => {
 
   const getDescription = () => {
     const title = '우리의 꿈';
-    const detail = '내 어린 시절 우연히\n들었던 믿지 못할 한마디\n\n' +
+    const detail =
+      '내 어린 시절 우연히\n들었던 믿지 못할 한마디\n\n' +
       '이 세상을 다 준다는\n매혹적인 얘기\n내게 꿈을 심어 주었어';
     const nowDate = new Date().toISOString().slice(0, 10);
 
     return (
       <View
         style={styles.give_margin}
-        onLayout={(event) => { setContentHeight(event.nativeEvent.layout.height); }}
+        onLayout={(event) => {
+          setContentHeight(event.nativeEvent.layout.height);
+        }}
       >
         <View style={{ marginBottom: 10 }}>
           <Text style={{ fontWeight: 'bold' }}>{title}</Text>
         </View>
         <View>
           <Text>{detail}</Text>
-          <Text style={{ size: 12, color: 'gray', marginTop: 5 }}>2023.08.24</Text>
+          <Text style={{ size: 12, color: 'gray', marginTop: 5 }}>
+            2023.08.24
+          </Text>
         </View>
       </View>
     );
-  }
+  };
 
   return (
     <View style={styles.main_style}>
@@ -74,7 +80,11 @@ const CommunityDetailPhotoScreen = (props) => {
           <View style={styles.header_container}>
             <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
               <TouchableOpacity>
-                <MaterialCommunityIcons name='dots-vertical' size={30} style={{ margin: 5 }} />
+                <MaterialCommunityIcons
+                  name="dots-vertical"
+                  size={30}
+                  style={{ margin: 5 }}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -85,26 +95,36 @@ const CommunityDetailPhotoScreen = (props) => {
               style={{
                 height: '100%',
                 width: '100%',
-                resizeMode: 'contain'
+                resizeMode: 'contain',
               }}
             />
           </View>
           {/* 상세 정보 영역 */}
-          <View style={styles.detail_container.height = 600 + contentHeight}>
+          <View style={(styles.detail_container.height = 600 + contentHeight)}>
             <View style={styles.like_area}>
               {/* 좋아요 버튼 */}
               <TouchableOpacity
                 onPress={LikeHandle}
                 style={{ flexDirection: 'row', padding: 5 }}
               >
-                <MaterialCommunityIcons name="cards-heart" size={36} color={liked} />
+                <MaterialCommunityIcons
+                  name="cards-heart"
+                  size={36}
+                  color={liked}
+                />
               </TouchableOpacity>
-              <Text style={{ fontSize: 15, lineHeight: 30, alignSelf: 'center' }}> 좋아요 {likes}개</Text>
+              <Text
+                style={{ fontSize: 15, lineHeight: 30, alignSelf: 'center' }}
+              >
+                {' '}
+                좋아요 {likes}개
+              </Text>
             </View>
             {/* 설명 부분 */}
             <View>
-              {getDescription()}
               <View style={styles.separator} />
+              <Text style={styles.content}>{param.communityinfo.title}</Text>
+              <Text style={styles.date}>{param.communityinfo.wrote}</Text>
             </View>
           </View>
           {/* 댓글 영역 */}
@@ -172,22 +192,20 @@ const styles = StyleSheet.create({
   header_container: {
     flex: 0.1,
     alignContent: 'flex-end',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   image_container: {
     flex: 0.6,
-    backgroundColor: 'lightgray'
+    backgroundColor: 'lightgray',
   },
   detail_container: {
     flex: 0.3,
     backgroundColor: 'white',
     height: 0,
   },
-  comment_container: {
-
-  },
+  comment_container: {},
   give_margin: {
-    margin: 10
+    margin: 10,
   },
   separator: {
     marginBottom: 10,
@@ -195,7 +213,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'lightgray',
     width: '100%',
     marginVertical: 10,
-  }
+  },
 });
 
 export default CommunityDetailPhotoScreen;
