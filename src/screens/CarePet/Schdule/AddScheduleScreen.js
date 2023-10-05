@@ -12,9 +12,11 @@ import { WHITE, YELLOW } from '../../../colors';
 import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
 import SelectionListAlert from '../../../components/SelectionListAlert';
+import { useEffect } from 'react';
 
 const AddScheduleScreen = ({ navigation, route }) => {
-  const petName = route.params;
+  const { petName, petId } = route.params;
+
   const [schedule, setSchedule] = useState('');
   const [time, setTime] = useState('');
   const [date, setDate] = useState('');
@@ -25,7 +27,51 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [submit, setSubmit] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
   const [executorVisible, setExecutorVisible] = useState(false);
-  const [selectedExecutor, setSelectedExecutor] = useState([]);
+  const [executor, setExecutor] = useState([]);
+
+  const [rearer, setRearer] = useState(null);
+
+  const fetchPetLink = async () => {
+    try {
+      // 해당 계정에 속한 모든 양육자 불러오기
+      const AllRearerResponse = await axios.get(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/rearer/${petId}`
+      );
+
+      if (AllRearerResponse.status === 200) {
+        setRearer(AllRearerResponse.data);
+      } else {
+        console.error('펫 링크를 가져오는 데 실패했습니다');
+      }
+    } catch (error) {
+      console.error('펫 링크를 가져오는 중 오류 발생:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPetLink();
+  }, []);
+
+  //수행자 랜더링
+  useEffect(() => {
+    if (rearer) {
+      const newExecutor = {};
+      rearer.forEach((item) => {
+        // rearer의 각 항목을 반복
+        newExecutor[item.owner] = item.owner;
+      });
+      setExecutorList(newExecutor);
+    }
+  }, [rearer]);
+
+  // 랜더링된 수행자 리스트
+  const [executorList, setExecutorList] = useState({});
+
+  //수행자 리스트 확인 버튼을 눌렀을 때 호출되는 함수
+  const handleExecutorSelection = (selectedItems) => {
+    setExecutor(selectedItems);
+    setExecutorVisible(false);
+  };
 
   // 주기(요일) 리스트 아이템
   const item = {
@@ -38,25 +84,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
     6: '토',
   };
 
-  // 수행자 리스트 아이템
-  const executor = {
-    11: '나',
-    12: '아빠',
-    13: '엄마',
-    14: '형',
-  };
-  //SelectionList 활성화 여부 함수
-  const handleSelection = () => {
-    setVisible(true);
-  };
-
-  //SelectionList 활성화 여부 함수
-  const handleExecutorSelection = (selectedItems) => {
-    setSelectedExecutor(selectedItems);
-    setExecutorVisible(false);
-  };
-
-  // 주기 리스트 확인 버튼을 눌렀을 때 호출되는 함수
+  // 주기(요일) 리스트 확인 버튼을 눌렀을 때 호출되는 함수
   const handleConfirmSelection = (selectedDays) => {
     console.log('선택한 요일:', selectedDays);
     let cnt = 0;
@@ -83,7 +111,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
     // console.log(cnt);
     setSelectedDays(selectedDays);
   };
-
   const handleTimeChange = (selectedTime) => {
     setTime(selectedTime);
   };
@@ -91,7 +118,16 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const handleScheduleSubmit = () => {
     setSubmit(true);
     if (schedule != '') {
-      console.log(petName, schedule, date, time, repeat, alarm, 'end \n');
+      console.log(
+        petName,
+        schedule,
+        date,
+        time,
+        repeat,
+        alarm,
+        executor,
+        'end \n'
+      );
 
       AsyncStorage.getItem('email')
         .then((myEmail) => {
@@ -99,7 +135,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
             .then((token) => {
               axios
                 .post(
-                  `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/${petName}`,
+                  `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/add/${petId}`,
                   {
                     schedule: schedule,
                     date: date,
@@ -122,11 +158,11 @@ const AddScheduleScreen = ({ navigation, route }) => {
                 });
             })
             .catch((error) => {
-              console.error(error);
+              console.error(error, 2);
             });
         })
         .catch((error) => {
-          console.error(error);
+          console.error(error, 3);
         });
     } else {
       return 1;
@@ -173,7 +209,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
             alarm={alarm}
             onToggleAlarm={setaaa}
           />
-          {/* 주기(요일) 선택 리스트*/}
+          {/* 주기(요일) 선택 리스트 Alert*/}
           <SelectionListAlert
             visible={visible}
             onClose={() => setVisible(false)}
@@ -186,35 +222,37 @@ const AddScheduleScreen = ({ navigation, route }) => {
             selected={selectedDays} // 선택한 요일을 전달합니다.
             onConfirmSelection={handleConfirmSelection} // 확인 버튼을 눌렀을 때 선택한 요일을 처리하는 함수를 전달합니다.
           />
-          {/* 주기(요일) 입력 */}
+          {/* 주기(요일) 입력란 */}
           <InputText_in
             title={'주기'}
             titleSize={20}
             type={'free'}
-            onPress={handleSelection}
+            onPress={() => {
+              setVisible(true);
+            }}
             selectedDays={selectedDays} // 이 부분 추가
           />
 
-          {/* 수행자 선택 리스트*/}
+          {/* 수행자 선택 리스트 Alert*/}
           <SelectionListAlert
             visible={executorVisible}
             onClose={() => setExecutorVisible(false)}
-            item={executor}
+            item={executorList}
             width={220}
             scrollViewHeight={150}
             marginTop={500}
             marginLeft={140}
             buttonText={'확인'}
-            selected={selectedExecutor}
+            selected={executor}
             onConfirmSelection={handleExecutorSelection}
           />
-          {/* 수행자 입력 */}
+          {/* 수행자 입력란 */}
           <InputText_in
             title={'수행자'}
             titleSize={20}
             type={'free'}
             onPress={() => setExecutorVisible(true)}
-            selectedDays={selectedExecutor}
+            selectedDays={executor}
           />
 
           <InputText_in

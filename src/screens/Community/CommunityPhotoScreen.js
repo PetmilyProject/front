@@ -35,7 +35,7 @@ const CommunityPhotoScreen = () => {
         const responseData = response.data;
 
         setMyPhotoUrl(responseData);
-        // console.log('dddzz : ', responseData);
+        console.log('dddzz : ', responseData);
       } catch (error) {
         console.log('Error fetching pet data:', error);
       }
