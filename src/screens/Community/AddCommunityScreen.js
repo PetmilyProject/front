@@ -19,6 +19,8 @@ const AddCommunityScreen = ({ navigation, route }) => {
   const [contents, setContents] = useState('');
   const [title, setTitle] = useState('');
 
+  const [image, setImage] = useState('');
+
   // 유저네임 가져오기
   useEffect(() => {
     AsyncStorage.getItem('userName')
@@ -32,41 +34,50 @@ const AddCommunityScreen = ({ navigation, route }) => {
       });
   }, []);
 
-  // 이미지 업로드
+  // 사진 전송
   const handleImageUpload = async () => {
     if (!imgUrl) {
       console.log('이미지 없음');
       return;
     }
-    const myEmail = await AsyncStorage.getItem('email');
-    const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080`;
-
-    const formData = new FormData();
-    formData.append('file', {
-      uri: imgUrl,
-      type: 'image/jpeg',
-      name: 'image.jpg',
-      postId: postId,
-    });
-
     try {
-      const response = await fetch(
-        `${url}/communityImage/uploadImage/${myEmail}/${postId}`,
+      const formData = new FormData();
+
+      const myEmail = await AsyncStorage.getItem('email');
+      const token = await AsyncStorage.getItem('token');
+
+      console.log('uri : ', imgUrl);
+
+      formData.append('file', {
+        uri: imgUrl,
+        type: 'multipart/form-data',
+        name: `${myEmail}/${postId}.jpg`,
+        postId: `${postId}`,
+      });
+
+      console.log('id : ', postId);
+
+      const response = await axios.post(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/communityImage/uploadImage/${myEmail}/${postId}`,
+        formData,
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'multipart/form-data' },
-          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
-      if (response.ok) {
-        console.log('사진 등록 성공');
-        navigation.goBack(); // 업로드 성공 후 뒤로 이동
+      if (response.data && response.data.imageUrl) {
+        setImage(response.data.imageUrl);
+        // getImage();
+        console.log('성공 : ', response.data.imageUrl);
       } else {
-        console.log('사진 등록 실패');
+        console.log('오류이유 : ', response);
       }
     } catch (error) {
-      console.log('사진 등록 요청 실패' + error);
+      console.error('이미지 업로드 오류:', error);
     }
   };
 

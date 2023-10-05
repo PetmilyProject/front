@@ -168,26 +168,26 @@ const UserInfoScreen = () => {
           rightText={'로그아웃'}
         />
         {/* 강아지 사진 */}
-        <View style={styles.imageContainer}>
-          <TouchableOpacity
-            onPress={async () => {
-              let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.All,
-                allowsEditing: true,
-                aspect: [3, 3],
-                quality: 1,
-              });
+        <TouchableOpacity
+          onPress={async () => {
+            let result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.All,
+              allowsEditing: true,
+              aspect: [3, 3],
+              quality: 1,
+            });
 
-              console.log(
-                '결과 : ',
-                result,
-                '넣을 데이터 : ',
-                result.assets[0].uri
-              );
+            console.log(
+              '결과 : ',
+              result,
+              '넣을 데이터 : ',
+              result.assets[0].uri
+            );
 
-              uploadImage(result.assets[0].uri);
-            }}
-          >
+            uploadImage(result.assets[0].uri);
+          }}
+        >
+          <View style={styles.imageContainer}>
             {image ? (
               <Image
                 source={{ uri: image + '?cache=' + Math.random() }}
@@ -202,8 +202,8 @@ const UserInfoScreen = () => {
             <View style={styles.editIconContainer}>
               <MaterialIcons name="edit" size={24} color="black" />
             </View>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
 
         {/* 이메일과 닉네임 */}
         <View style={styles.infoContainer}>
