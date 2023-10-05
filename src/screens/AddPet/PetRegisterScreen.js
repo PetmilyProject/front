@@ -25,8 +25,10 @@ const PetRegisterScreen = ({ navigation, route }) => {
   const [list, setList] = useState([]);
 
   const onInsert = async () => {
+    const tmpToken = await AsyncStorage.getItem('token');
+    const myEmail = await AsyncStorage.getItem('email');
+
     try {
-      const myEmail = await AsyncStorage.getItem('email');
       setEmail(myEmail);
       const userResponse = await axios.get(
         `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`
@@ -44,22 +46,36 @@ const PetRegisterScreen = ({ navigation, route }) => {
       };
 
       const addPetUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/add/${myEmail}`;
-
-      axios
+      const addPetResponse = await axios
         .post(
           // 이 형식 그대로 안맞춰져서 안되는 거였음
           addPetUrl,
           {
-            userId: myId,
             petName: name,
             detailInfo: character,
             petAge: age,
             inviter: userInviter,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${tmpToken}`,
+            },
           }
         )
         .catch((error) => {
           console.error('펫 추가 실패:', error);
         });
+
+        console.log("펫 추가 메시지 : ", addPetResponse.data)
+
+      // petlink 추가
+      await axios.post(`http://43.200.8.47:8080/link/post/${myEmail}/${myEmail}/${addPetResponse.data.id}`, {
+        headers: {
+          Authorization: `Bearer ${tmpToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+        //data: formData,
+      });
 
       setList((prev) => [newPet, ...prev]);
       navigation.navigate(AddPetRoutes.LIST, { list: list, newPet: newPet });
@@ -103,22 +119,15 @@ const PetRegisterScreen = ({ navigation, route }) => {
     const match = /\.(\w+)$/.exec(filename ?? '');
     const type = match ? `image/${match[1]}` : `image`;
     const formData = new FormData();
+    const myEmail = await AsyncStorage.getItem('email');
+    const tmpToken = await AsyncStorage.getItem('token');
     formData.append('image', { uri: localUri, name: filename, type });
 
     await axios({
       method: 'post',
       uri: `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${myEmail}/uploadImage/${userId}`,
       headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      data: formData,
-    });
-
-    // petlink 추가
-    await axios({
-      method: 'post',
-      uri: `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/post/${myEmail}/${inviter}/${petid}`,
-      headers: {
+        Authorization: `Bearer ${tmpToken}`,
         'Content-Type': 'multipart/form-data',
       },
       data: formData,

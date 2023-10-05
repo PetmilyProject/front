@@ -85,7 +85,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   const getImageUrl = async (inviter, id) => {
     try {
       const email = await AsyncStorage.getItem('email');
-      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg`;
+      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg` + '?cache=' + Math.random();
       setPetProfiles((prevProfiles) =>
         prevProfiles.map((profile) => {
           if (profile.id === id) {

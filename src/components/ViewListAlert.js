@@ -36,7 +36,7 @@ const ViewListAlert = ({
       },
     });
   
-    console.log(`http://43.200.8.47:8080/invitation/delete/${email}/${receiver}/${petId}에 삭제 요청. 메시지 : `, card.data);
+    console.log(`http://43.200.8.47:8080/invitation/delete/${email}/${receiver}/${petId}에 삭제 요청.`);
   }
 
   const [items, setItems] = useState([]);
@@ -57,18 +57,22 @@ const ViewListAlert = ({
 
     setMyPets([]);
     const getPets = await axios.get(
-      `http://43.200.8.47:8080/pet/get-all/${email}`,
+      `http://43.200.8.47:8080/pet/get-all/${tmpEmail}`,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${tmpToken}`,
         },
       }
     );
 
     setItems([]);
     const getInvitations = await axios.get(
-      `http://43.200.8.47:8080/invitation/get/${email}`
-    )
+      `http://43.200.8.47:8080/invitation/get/${tmpEmail}`, {
+        headers: {
+          Authorization: `Bearer ${tmpToken}`,
+        },
+      }
+    );
     setMyPets(getPets.data);
     setItems(getInvitations.data);
 
@@ -78,11 +82,13 @@ const ViewListAlert = ({
   const getInvitationCard = async () => {
     setReceivedPet([]); 
     const petPromises = [];
+    const tmpEmail = await AsyncStorage.getItem('email');
+    const tmpToken = await AsyncStorage.getItem('token');
   
     for (const i of items) {
-      const petInvitation = axios.get(`http://43.200.8.47:8080/pet/get-pet/${i.inviter}/${i.petId}`, {
+      const petInvitation = await axios.get(`http://43.200.8.47:8080/pet/get-pet/${i.inviter}/${i.petId}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${tmpToken}`,
         },
       });
 

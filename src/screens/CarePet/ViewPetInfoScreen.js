@@ -9,6 +9,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { BLACK, GRAY, RED, WHITE, YELLOW } from '../../colors';
+import * as ImagePicker from 'expo-image-picker';
 import ImagePickerComponent from '../../components/ImagePicker';
 import { Ionicons } from '@expo/vector-icons';
 import { TextInput } from 'react-native-gesture-handler';
@@ -18,7 +19,7 @@ import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { AddPetRoutes, CarePetRoutes } from '../../navigations/routes';
-import { number } from 'prop-types';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const ViewPetInfoScreen = ({ navigation, route }) => {
   const petName = route.params[0];
@@ -30,10 +31,58 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
   const [species, setSpecies] = useState('');
   const [character, setCharater] = useState('');
   const [email, setEmail] = useState('');
-  const InsertUrl = async (url) => {
-    const linkResponse = await axios.get(url);
-    const inviter = linkResponse.data.inviter
+  
+  const uploadImage = async (uri) => {
+    try {
+      const formData = new FormData();
+
+      const myEmail = await AsyncStorage.getItem('email');
+      const token = await AsyncStorage.getItem('token');
+      const linkResponse = await axios.get(`http:43.200.8.47:8080/pet/get-pet/${myEmail}/${petId}`);
+      const inviter = linkResponse.data.inviter;
+      const petProfile = `http://43.200.8.47:8080/pet/${inviter}/downloadImage/${petId}.jpg`;
+      setImgUrl(petProfile);
+
+      console.log('post 할 uri : ', uri);
+
+      formData.append('file', {
+        uri: `${uri}`,
+        type: 'multipart/form-data',
+        name: `${myEmail}.jpg`,
+        // type: 'image/jpg',
+      });
+
+      const response = await axios.post(
+        `http://43.200.8.47:8080/pet/${inviter}/uploadImage/${petId}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(response.data);
+      // 업로드 성공 시 서버에서 이미지 URL을 반환하는 것을 가정합니다.
+      if (response.data && response.data.imageUrl) {
+        setImgUrl(response.data.imageUrl);
+        console.log('성공 : ', response.data.imageUrl);
+      }
+    } catch (error) {
+      console.error('이미지 업로드 오류:', error);
+    }
+  };
+
+  const InsertUrl = async () => {
+    const myEmail = await AsyncStorage.getItem('email');
+    const token = await AsyncStorage.getItem('token');
+    const linkResponse = await axios.get(`http:43.200.8.47:8080/pet/get-pet/${myEmail}/${petId}`);
+    const inviter = linkResponse.data.inviter;
     const petImageUrl = `http://43.200.8.47:8080/pet/${inviter}/downloadImage/${petId}.jpg`;
+
+    console.log("펫 이미지 url : ", petImageUrl);
 
     setImgUrl(petImageUrl);
   };
@@ -74,13 +123,16 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
     };
 
     fetchData();
-  }, []);
+    InsertUrl();
+  }, [imgUrl]);
 
   const handlePetInfoSubmit = async () => {
     const email = await AsyncStorage.getItem('email');
     const token = await AsyncStorage.getItem('token');
+    const linkResponse = await axios.get(`http:43.200.8.47:8080/pet/get-pet/${email}/${petId}`);
+    const inviter = linkResponse.data.inviter;
 
-    const putData = await axios.put(`http://43.200.8.47:8080/pet/put-pet/${email}/${petId}`,
+    const putData = await axios.put(`http://43.200.8.47:8080/pet/put-pet/${inviter}/${petId}`,
     {
       petName: name,
       petAge: age,
@@ -91,7 +143,7 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
       },
     });
 
-    //console.log(putData.data);
+    console.log(putData.data);
 
     const route = [petName, petId];
     
@@ -134,33 +186,39 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        <View style={styles.container_profile}>
-          <View style={styles.container_photo}>
-            {imgUrl === null ? (
-              <View style={styles.photoBox}></View>
-            ) : (
-              <Image source={{ uri: imgUrl }} style={styles.image} />
-            )}
-            <View style={{ marginTop: 120, marginLeft: -50 }}>
-              <ImagePickerComponent
-                width={40}
-                height={40}
-                onPress={
-                  InsertUrl(`http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/get/${email}/${petId}`)
-                }
+      <TouchableOpacity
+          onPress={async () => {
+            let result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.All,
+              allowsEditing: true,
+              aspect: [3, 3],
+              quality: 1,
+            });
+
+            console.log(
+              '결과 : ',
+              result,
+              '넣을 데이터 : ',
+              result.assets[0].uri
+            );
+
+            uploadImage(result.assets[0].uri);
+          }}
+        >
+          <View style={styles.imageContainer}>
+            <View style={styles.photoBox}>
+            {(
+              <Image
+                source={{ uri: imgUrl + '?cache=' + Math.random() }}
+                style={styles.photoBox}
               />
+            )}
+            <View style={styles.editIconContainer}>
+              <MaterialIcons name="edit" size={24} color="black" />
+            </View>
             </View>
           </View>
-          <View style={styles.container_name}>
-            <Ionicons name="md-pencil" size={20} color="black" />
-            <TextInput
-              style={styles.name}
-              onChangeText={(text) => setName(text.trim())}
-            >
-              {name}
-            </TextInput>
-          </View>
-        </View>
+        </TouchableOpacity>
         <View style={styles.container_info}>
           <InputText_in
             title={'나이'}
@@ -256,6 +314,14 @@ const styles = StyleSheet.create({
     flex: 2,
     alignItems: 'center',
     // backgroundColor: GRAY.LIGHTER,
+  },
+  editIconContainer: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    backgroundColor: '#FFCC33',
+    borderRadius: 50,
+    padding: 5,
   },
 });
 

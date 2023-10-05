@@ -89,9 +89,15 @@ const CarePetList = ({
 
       setPetProfiles(userData);
       userData.forEach(function (user) {
-        setInviterEmail(user.inviter)
+        //setInviterEmail(user.inviter)
         getImageUrl(user.inviter, user.id);
       });
+
+      const myEmail = await AsyncStorage.getItem('email');
+      const linkResponse = await axios.get(`http:43.200.8.47:8080/pet/get-pet/${myEmail}/${petId}`);
+      const inviter = linkResponse.data.inviter;
+      
+      setInviterEmail(inviter);
     } catch (error) {
       console.log('Error fetching pet data:', error);
     }
@@ -127,7 +133,7 @@ const CarePetList = ({
           {/* 이미지 */}
           <TouchableOpacity onPress={onPetPress}>
             <Image
-              source={{ uri : `http://43.200.8.47:8080/pet/${inviterEmail}/downloadImage/${petId}.jpg` }}
+              source={{ uri : `http://43.200.8.47:8080/pet/${inviterEmail}/downloadImage/${petId}.jpg` + '?cache=' + Math.random() }}
               style={styles.image}
             />
             <View style={styles.editIconContainer}>
