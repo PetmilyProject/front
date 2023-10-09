@@ -30,6 +30,7 @@ const SignUpScreen = ({ navigation }) => {
           password: password,
           userName: userName,
           phoneNumber: phoneNumber,
+          inviter: email,
         }
       )
       .then((response) => {
@@ -96,7 +97,7 @@ const SignUpScreen = ({ navigation }) => {
             width={350}
           />
         </View>
-        <View style={{ flex: 1 }}>
+        <View>
           <Button2
             backgrouncolor={YELLOW.DEFAULT}
             color={WHITE}

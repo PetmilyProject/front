@@ -7,6 +7,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   ScrollView,
+  Text,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -16,12 +17,16 @@ import { YELLOW } from '../../colors';
 import { CommunityRoutes } from '../../navigations/routes';
 
 const CommunityPhotoScreen = () => {
-  const [myPhotoUrl, setMyPhotoUrl] = useState([]);
+  //const [myPhotoUrl, setMyPhotoUrl] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [topicData, setTopicData] = useState([]);
   const navigation = useNavigation();
+  const [sortedPhotoUrl, setSortedPhotoUrl] = useState([]);
+  const [titleOfPost, setTitleOfPost] = useState([]);
 
   useEffect(() => {
     fetchData();
+    getTopic();
   }, []);
 
   const fetchData = async () => {
@@ -37,7 +42,26 @@ const CommunityPhotoScreen = () => {
 
       const responseData = response.data;
 
-      setMyPhotoUrl(responseData);
+      const sorted = responseData.sort((a, b) => {
+        const numA = parseInt(a.split('/')[5].slice(0, -4), 10);
+        const numB = parseInt(b.split('/')[5].slice(0, -4), 10);
+        return numB - numA;
+      });
+      setSortedPhotoUrl(sorted);
+
+      let tmpTitle = [];
+
+      for (let i = 0; i < sorted.length; i++) {
+        const num = sorted[i].split('/')[5].slice(0, -4);
+        const tmp = await axios.get(`http://43.200.8.47:8080/community/get/${num}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        tmpTitle.push(tmp.data.title);
+      }
+      
+      setTitleOfPost(tmpTitle);      
       setIsRefreshing(false);
     } catch (error) {
       console.log('Error fetching pet data:', error);
@@ -58,7 +82,7 @@ const CommunityPhotoScreen = () => {
       const responseData = response.data;
 
       const communityIdFromURL = parseInt(
-        myPhotoUrl[index].split('/').pop().split('.')[0]
+        sortedPhotoUrl[index].split('/').pop().split('.')[0]
       );
 
       const communityIds = responseData.map((item) => item.communityId);
@@ -76,7 +100,7 @@ const CommunityPhotoScreen = () => {
             title: matchedCommunity.title,
             wrote: matchedCommunity.wrote,
           },
-          detailUrl: myPhotoUrl[index],
+          detailUrl: sortedPhotoUrl[index],
         });
       }
     } catch (error) {
@@ -91,6 +115,23 @@ const CommunityPhotoScreen = () => {
   const handleRefresh = () => {
     setIsRefreshing(true);
     fetchData();
+  };
+
+  const getTopic = async () => {
+    const email = await AsyncStorage.getItem('email');
+    const token = await AsyncStorage.getItem('token');
+    const getData = await axios.get(
+      'http://43.200.8.47:8080/community/getAll',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    let sortedData = getData.data.sort();
+
+    //console.log(sortedData);
+    setTopicData(getData.data);
   };
 
   return (
@@ -108,7 +149,7 @@ const CommunityPhotoScreen = () => {
       >
         <View style={styles.container}>
           <FlatList
-            data={myPhotoUrl}
+            data={sortedPhotoUrl}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => (
               <TouchableOpacity
@@ -116,6 +157,7 @@ const CommunityPhotoScreen = () => {
                 style={styles.photoList}
               >
                 <Image source={{ uri: item }} style={styles.photoItem} />
+                <Text style={{marginLeft: 15}}>{titleOfPost[index]}</Text>
               </TouchableOpacity>
             )}
             numColumns={2}
@@ -137,7 +179,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   separator: {
-    backgroundColor: 'gray',
+    backgroundColor: 'lightgray',
     height: 1,
     width: '100%',
   },

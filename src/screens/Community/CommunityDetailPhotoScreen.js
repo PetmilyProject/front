@@ -25,6 +25,7 @@ const CommunityDetailPhotoScreen = (props, route) => {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [contentHeight, setContentHeight] = useState(0);
+  const [userInfo, setUserInfo] = useState([]);
 
   // 댓글 작성 핸들러
   const handleComment = () => {
@@ -33,7 +34,7 @@ const CommunityDetailPhotoScreen = (props, route) => {
       setComment('');
     }
   };
-  console.log('넘어온거 : ', param);
+  //console.log('넘어온거 : ', param);
 
   const LikeHandle = () => {
     if (liked === BLACK.DEFAULT) {
@@ -45,32 +46,23 @@ const CommunityDetailPhotoScreen = (props, route) => {
     }
   };
 
-  const getDescription = () => {
-    const title = '우리의 꿈';
-    const detail =
-      '내 어린 시절 우연히\n들었던 믿지 못할 한마디\n\n' +
-      '이 세상을 다 준다는\n매혹적인 얘기\n내게 꿈을 심어 주었어';
-    const nowDate = new Date().toISOString().slice(0, 10);
+  const getUserInfo = async () => {
+    const email = await AsyncStorage.getItem('email');
+    const token = await AsyncStorage.getItem('token');
 
-    return (
-      <View
-        style={styles.give_margin}
-        onLayout={(event) => {
-          setContentHeight(event.nativeEvent.layout.height);
-        }}
-      >
-        <View style={{ marginBottom: 10 }}>
-          <Text style={{ fontWeight: 'bold' }}>{title}</Text>
-        </View>
-        <View>
-          <Text>{detail}</Text>
-          <Text style={{ size: 12, color: 'gray', marginTop: 5 }}>
-            2023.08.24
-          </Text>
-        </View>
-      </View>
-    );
+    const userResponse = await axios.get(`http://43.200.8.47:8080/users/${param.communityinfo.email}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    //console.log(userResponse.data);
+    setUserInfo(userResponse.data);
   };
+
+  useEffect(() => {
+    getUserInfo();
+  }, [])
 
   return (
     <View style={styles.main_style}>
@@ -78,12 +70,19 @@ const CommunityDetailPhotoScreen = (props, route) => {
         <View style={styles.upside_style}>
           {/* 헤더 영역 */}
           <View style={styles.header_container}>
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <View style={{ flexDirection: 'row', marginLeft: 10 }}>
+              <Image 
+                source={{ uri: `http://43.200.8.47:8080/profile/get/${userInfo.email}/${userInfo.email}.jpg`}}
+                style={ styles.profile_image }
+              />
+              <View style={{ flex: 1, marginTop: 10, marginLeft: 10 }}>
+                <Text>{userInfo.userName}</Text>
+              </View>
               <TouchableOpacity>
                 <MaterialCommunityIcons
                   name="dots-vertical"
                   size={30}
-                  style={{ margin: 5 }}
+                  style={{ margin: 5, marginRight: 0 }}
                 />
               </TouchableOpacity>
             </View>
@@ -122,9 +121,10 @@ const CommunityDetailPhotoScreen = (props, route) => {
             </View>
             {/* 설명 부분 */}
             <View>
+              <Text style={styles.title}>{param.communityinfo.title}</Text>
+              <Text style={styles.content}>{param.communityinfo.wrote}</Text>
+              <Text style={styles.date}>{param.communityinfo.date}</Text>
               <View style={styles.separator} />
-              <Text style={styles.content}>{param.communityinfo.title}</Text>
-              <Text style={styles.date}>{param.communityinfo.wrote}</Text>
             </View>
           </View>
           {/* 댓글 영역 */}
@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
     flex: 0.1,
     alignContent: 'flex-end',
     backgroundColor: 'white',
+    justifyContent: 'center'
   },
   image_container: {
     flex: 0.6,
@@ -214,6 +215,28 @@ const styles = StyleSheet.create({
     width: '100%',
     marginVertical: 10,
   },
+  title: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    marginLeft: 10
+  },
+  content: {
+    fontSize: 15,
+    marginBottom: 5,
+    marginLeft: 10
+  },
+  date: {
+    fontSize: 12,
+    color: 'gray',
+    marginLeft: 10
+  },
+  profile_image: { 
+    width: 40,
+    height: 40,
+    borderRadius: 30,
+    marginBottom: 0,
+  }
 });
 
 export default CommunityDetailPhotoScreen;
