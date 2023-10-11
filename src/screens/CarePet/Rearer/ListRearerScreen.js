@@ -15,34 +15,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BLACK, GRAY, WHITE, YELLOW } from '../../../colors';
 import DangerAlert from '../../../components/DangerAlert';
 
-// 양육자 프로필 생성
-const renderRearer = (name) => {
-  return (
-    <View style={styles.container_profile}>
-      <Image
-        style={styles.dogImage}
-        source={require('../../../assets/user.jpg')}
-      />
-      <Text style={styles.nicname}>{name}</Text>
-    </View>
-  );
-};
-
-const RearerItem = ({ name }) => (
-  <View style={styles.rearerItem}>{renderRearer(name)}</View>
-);
-
 const giveInvitation = async (receiver, petId) => {
   const email = await AsyncStorage.getItem('email');
   const token = await AsyncStorage.getItem('token');
-  const card = await axios.post(`http://43.200.8.47:8080/invitation/post/${email}/${receiver}/${petId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const card = await axios.post(
+    `http://43.200.8.47:8080/invitation/post/${email}/${receiver}/${petId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
-  console.log(`http://43.200.8.47:8080/invitation/post/${email}/${receiver}/${petId}에 등록 요청. 메시지 : `, card.data);
-}
+  console.log(
+    `http://43.200.8.47:8080/invitation/post/${email}/${receiver}/${petId}에 등록 요청. 메시지 : `,
+    card.data
+  );
+};
 
 const ListRearerScreen = ({ petName, petId }) => {
   const [visible, setVisible] = useState(false); // 초대 확인 모달 관리
@@ -54,6 +43,30 @@ const ListRearerScreen = ({ petName, petId }) => {
   const [allRearer, setAllRearer] = useState([]);
   const [mainRearer, setMainRearer] = useState(null);
   const [subRearer, setSubRearer] = useState([]);
+
+  const handleDetailRearer = (email) => {};
+
+  // 양육자 프로필 생성
+  const renderRearer = (email) => {
+    console.log(email);
+    return (
+      <View style={styles.container_profile}>
+        <TouchableOpacity onPress={handleDetailRearer(email)}>
+          <Image
+            source={{
+              uri: `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${email.owner}/${email.owner}.jpg`,
+            }}
+            style={styles.dogImage}
+          />
+          <Text style={styles.nicname}>{email.ownerName}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+  //부 양육자 프로필 랜더링
+  const RearerItem = ({ owner }) => {
+    return <View style={styles.rearerItem}>{renderRearer(owner)}</View>;
+  };
 
   const fetchPetLink = async () => {
     try {
@@ -79,6 +92,7 @@ const ListRearerScreen = ({ petName, petId }) => {
     } catch (error) {
       console.error('펫 링크를 가져오는 중 오류 발생:', error);
     }
+    handleMainRearer();
   };
 
   useEffect(() => {
@@ -86,8 +100,8 @@ const ListRearerScreen = ({ petName, petId }) => {
   }, []);
 
   useEffect(() => {
+    // console.log(allRearer);
     handleMainRearer();
-    //console.log(allRearer);
   }, [allRearer]);
 
   const handleMainRearer = () => {
@@ -96,6 +110,7 @@ const ListRearerScreen = ({ petName, petId }) => {
     );
     if (mainRearerCandidate) {
       setMainRearer(mainRearerCandidate);
+
       setSubRearer(allRearer.filter((item) => item.owner !== inviter));
     }
   };
@@ -117,7 +132,7 @@ const ListRearerScreen = ({ petName, petId }) => {
           onRight={() => {
             setVisible(false);
             setInviteName('');
-            giveInvitation(inviteName, petId)
+            giveInvitation(inviteName, petId);
           }}
           leftBtnColor={GRAY.LIGHT}
           rightBtnColor={YELLOW.DEFAULT}
@@ -143,7 +158,9 @@ const ListRearerScreen = ({ petName, petId }) => {
                 onChangeText={(text) => setInviteName(text)}
                 keyboardType="email-address"
                 placeholder="예) petmily@gmail.com"
-              >{inviteName}</TextInput>
+              >
+                {inviteName}
+              </TextInput>
             </View>
             <View
               borderRadius={30}
@@ -182,7 +199,7 @@ const ListRearerScreen = ({ petName, petId }) => {
                 <Image source={require('../../../assets/crown.png')} />
                 {mainRearer && (
                   <View style={styles.rearerItem}>
-                    {renderRearer(mainRearer.owner)}
+                    {renderRearer(mainRearer)}
                   </View>
                 )}
               </View>
@@ -190,7 +207,7 @@ const ListRearerScreen = ({ petName, petId }) => {
             <View style={styles.rearerContainer}>
               {/* 부양육자 표시 */}
               {subRearer.map((item) => (
-                <RearerItem key={item.linkId} name={item.owner} />
+                <RearerItem key={item.linkId} owner={item} />
               ))}
             </View>
           </ScrollView>
@@ -233,6 +250,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 120,
+    marginVertical: 4,
     //padding: 5,
   },
   nicname: {
