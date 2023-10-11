@@ -83,15 +83,15 @@ const ScheduleListScreen = ({ petName, petId }) => {
       });
   }, [currentDate]);
 
-  const handleLongPress = (index) => {
-    if (selectedItemIndices.includes(index)) {
-      // If the item is already selected, remove it from the selection
-      setSelectedItemIndices(selectedItemIndices.filter((i) => i !== index));
-    } else {
-      // If the item is not selected, add it to the selection
-      setSelectedItemIndices([...selectedItemIndices, index]);
-    }
-  };
+  // const handleLongPress = (index) => {
+  //   if (selectedItemIndices.includes(index)) {
+  //     // If the item is already selected, remove it from the selection
+  //     setSelectedItemIndices(selectedItemIndices.filter((i) => i !== index));
+  //   } else {
+  //     // If the item is not selected, add it to the selection
+  //     setSelectedItemIndices([...selectedItemIndices, index]);
+  //   }
+  // };
   const renderItem = ({ item, index }) => {
     const isSelected = selectedItemIndices.includes(index.id);
     const backgroundColor = executeArray[index]
@@ -101,8 +101,8 @@ const ScheduleListScreen = ({ petName, petId }) => {
     return (
       <TouchableOpacity
         onPress={() => onSchedulePress(item.id)}
-        onLongPress={() => handleLongPress(index)}
-        delayLongPress={300}
+        // onLongPress={() => handleLongPress(index)}
+        // delayLongPress={300}
         style={[
           styles.scheduleItem,
           {
@@ -111,7 +111,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
           },
         ]}
       >
-        <TouchableOpacity onPress={() => toggleExecute(index)}>
+        <TouchableOpacity onPress={() => handleCompleted(index)}>
           {isSelected ? (
             <AntDesign name="circledown" size={24} color="#34D399" />
           ) : executeArray[index] ? (
@@ -137,12 +137,65 @@ const ScheduleListScreen = ({ petName, petId }) => {
     );
   };
 
-  const toggleExecute = (index) => {
+  //is_Completed
+  const handleCompleted = (index) => {
     const newExecuteArray = [...executeArray];
     newExecuteArray[index] = !newExecuteArray[index];
     setExecuteArray(newExecuteArray);
-  };
 
+    // if (schedule != '') {
+    //   console.log(
+    //     petName,
+    //     schedule,
+    //     date,
+    //     time,
+    //     repeat,
+    //     alarm,
+    //     executor,
+    //     'end \n'
+    //   );
+
+    //   AsyncStorage.getItem('email')
+    //     .then((myEmail) => {
+    //       AsyncStorage.getItem('token')
+    //         .then((token) => {
+    //           axios
+    //             .post(
+    //               `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/add/${petId}`,
+    //               {
+    //                 schedule: schedule,
+    //                 date: date,
+    //                 hm: time,
+    //                 period: repeat,
+    //                 notice: alarm,
+    //                 isCompleted: 0,
+    //               },
+    //               {
+    //                 headers: {
+    //                   Authorization: `Bearer ${token}`,
+    //                 },
+    //               }
+    //             )
+    //             .then((response) => {
+    //               console.log(response.data);
+    //             })
+    //             .catch((error) => {
+    //               console.error(error);
+    //             });
+    //         })
+    //         .catch((error) => {
+    //           console.error(error, 2);
+    //         });
+    //     })
+    //     .catch((error) => {
+    //       console.error(error, 3);
+    //     });
+    // } else {
+    //   return 1;
+    // }
+    // navigation.goBack();
+  };
+  //날짜 선택 화살표
   const handleLeftArrowPress = () => {
     const currentDateObj = new Date(currentDate);
     currentDateObj.setDate(currentDateObj.getDate() - 1);

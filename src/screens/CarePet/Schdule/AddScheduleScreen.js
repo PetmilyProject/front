@@ -58,7 +58,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
       const newExecutor = {};
       rearer.forEach((item) => {
         // rearer의 각 항목을 반복
-        newExecutor[item.owner] = item.owner;
+        newExecutor[item.ownerName] = item.ownerName;
       });
       setExecutorList(newExecutor);
     }

@@ -151,6 +151,7 @@ const UserInfoScreen = () => {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: WHITE,
       }}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
