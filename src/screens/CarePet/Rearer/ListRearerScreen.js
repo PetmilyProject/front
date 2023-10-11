@@ -14,6 +14,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BLACK, GRAY, WHITE, YELLOW } from '../../../colors';
 import DangerAlert from '../../../components/DangerAlert';
+import { useNavigation } from '@react-navigation/native';
+import { CarePetRoutes } from '../../../navigations/routes';
 
 const giveInvitation = async (receiver, petId) => {
   const email = await AsyncStorage.getItem('email');
@@ -43,15 +45,15 @@ const ListRearerScreen = ({ petName, petId }) => {
   const [allRearer, setAllRearer] = useState([]);
   const [mainRearer, setMainRearer] = useState(null);
   const [subRearer, setSubRearer] = useState([]);
+  const [isInviter, setIsInviter] = useState(false);
 
-  const handleDetailRearer = (email) => {};
+  const navigation = useNavigation();
 
   // 양육자 프로필 생성
   const renderRearer = (email) => {
-    console.log(email);
     return (
       <View style={styles.container_profile}>
-        <TouchableOpacity onPress={handleDetailRearer(email)}>
+        <TouchableOpacity onPress={() => handleDetailRearer(email)}>
           <Image
             source={{
               uri: `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${email.owner}/${email.owner}.jpg`,
@@ -62,6 +64,14 @@ const ListRearerScreen = ({ petName, petId }) => {
         </TouchableOpacity>
       </View>
     );
+  };
+  //양육자 상세 정보 navigation
+  const handleDetailRearer = (email) => {
+    navigation.navigate(CarePetRoutes.DETAIL_REARER, {
+      ownerName: email.ownerName,
+      owner: email.owner,
+      petId: petId,
+    });
   };
   //부 양육자 프로필 랜더링
   const RearerItem = ({ owner }) => {
