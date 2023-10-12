@@ -1,14 +1,16 @@
 import { Image } from 'react-native';
 import { View, StyleSheet, Text } from 'react-native';
-import { GRAY, RED, WHITE } from '../../../colors';
+import { GRAY, RED, WHITE, YELLOW } from '../../../colors';
 import Button2 from '../../../components/Button2';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { CarePetRoutes } from '../../../navigations/routes';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DangerAlert from '../../../components/DangerAlert';
 
 const DetailRearerScreen = ({ route }) => {
+  const [visible, setVisible] = useState(false); // 모달 관리
   const [petLink, setPetLink] = useState(null);
   const [email, setEmail] = useState('');
   const [isInviter, setIsInviter] = useState(false);
@@ -18,9 +20,6 @@ const DetailRearerScreen = ({ route }) => {
   const owner = route.params.owner;
   const ownerName = route.params.ownerName;
   const petId = route.params.petId;
-  console.log(isInviter);
-
-  console.log('owner', owner, 'petId', petId);
 
   const navigation = useNavigation();
 
@@ -46,8 +45,6 @@ const DetailRearerScreen = ({ route }) => {
           setDeleteInviter(true);
         }
         setPetLink(linkedPet);
-
-        // console.log('특정 PetLink 데이터:', linkedPet.linkId, '사용자:', email);
       } else {
         console.log('PetLink를 가져오는데 실패했습니다.');
       }
@@ -80,6 +77,20 @@ const DetailRearerScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <DangerAlert
+        visible={visible}
+        title={`${ownerName}` + ' 님을' + '\n' + '삭제하시겠습니까?'}
+        comment={'한 번 삭제한 양육자는 복구할 수 없습니다.'}
+        leftText={'취소'}
+        rightText={'삭제'}
+        onClose={() => setVisible(false)}
+        onRight={() => {
+          setVisible(false);
+          deleteRearer();
+        }}
+        leftBtnColor={GRAY.LIGHT}
+        rightBtnColor={YELLOW.DEFAULT}
+      />
       <View style={styles.imageContainer}>
         <Image
           style={styles.dogImage}
@@ -105,7 +116,7 @@ const DetailRearerScreen = ({ route }) => {
             color={WHITE}
             text={'양육자 삭제'}
             onPress={() => {
-              deleteRearer();
+              setVisible(true);
             }}
             width={350}
           />

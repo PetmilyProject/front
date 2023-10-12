@@ -6,7 +6,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   Keyboard,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import { BLACK, GRAY, RED, WHITE, YELLOW } from '../../colors';
 import * as ImagePicker from 'expo-image-picker';
@@ -20,6 +20,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { AddPetRoutes, CarePetRoutes } from '../../navigations/routes';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import DangerAlert from '../../components/DangerAlert';
 
 const ViewPetInfoScreen = ({ navigation, route }) => {
   const petName = route.params[0];
@@ -30,15 +32,21 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
   const [gender, setGender] = useState('');
   const [species, setSpecies] = useState('');
   const [character, setCharater] = useState('');
+  const [inviter, setInviter] = useState('');
   const [email, setEmail] = useState('');
-  
+  const [petLink, setPetLink] = useState(null);
+
+  const [visible, setVisible] = useState(false);
+
   const uploadImage = async (uri) => {
     try {
       const formData = new FormData();
 
       const myEmail = await AsyncStorage.getItem('email');
       const token = await AsyncStorage.getItem('token');
-      const linkResponse = await axios.get(`http:43.200.8.47:8080/pet/get-pet/${myEmail}/${petId}`);
+      const linkResponse = await axios.get(
+        `http:43.200.8.47:8080/pet/get-pet/${myEmail}/${petId}`
+      );
       const inviter = linkResponse.data.inviter;
       const petProfile = `http://43.200.8.47:8080/pet/${inviter}/downloadImage/${petId}.jpg`;
       setImgUrl(petProfile);
@@ -63,7 +71,6 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
           },
         }
       );
-
       console.log(response.data);
       // 업로드 성공 시 서버에서 이미지 URL을 반환하는 것을 가정합니다.
       if (response.data && response.data.imageUrl) {
@@ -77,12 +84,16 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
 
   const InsertUrl = async () => {
     const myEmail = await AsyncStorage.getItem('email');
+    setEmail(myEmail);
     const token = await AsyncStorage.getItem('token');
-    const linkResponse = await axios.get(`http:43.200.8.47:8080/pet/get-pet/${myEmail}/${petId}`);
+    const linkResponse = await axios.get(
+      `http:43.200.8.47:8080/pet/get-pet/${myEmail}/${petId}`
+    );
     const inviter = linkResponse.data.inviter;
+    setInviter(inviter);
     const petImageUrl = `http://43.200.8.47:8080/pet/${inviter}/downloadImage/${petId}.jpg`;
 
-    console.log("펫 이미지 url : ", petImageUrl);
+    console.log('펫 이미지 url : ', petImageUrl);
 
     setImgUrl(petImageUrl);
   };
@@ -106,7 +117,7 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
           },
         });
         const inviter = response.data.inviter;
-        
+        setPetLink(response.data.linkId);
         const petUrl = `http://43.200.8.47:8080/pet/get-pet/${inviter}/${petId}`;
         const rawResponseData = await axios.get(petUrl, {
           headers: {
@@ -129,36 +140,59 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
   const handlePetInfoSubmit = async () => {
     const email = await AsyncStorage.getItem('email');
     const token = await AsyncStorage.getItem('token');
-    const linkResponse = await axios.get(`http:43.200.8.47:8080/pet/get-pet/${email}/${petId}`);
+    const linkResponse = await axios.get(
+      `http:43.200.8.47:8080/pet/get-pet/${email}/${petId}`
+    );
     const inviter = linkResponse.data.inviter;
 
-    const putData = await axios.put(`http://43.200.8.47:8080/pet/put-pet/${inviter}/${petId}`,
-    {
-      petName: name,
-      petAge: age,
-      detailInfo: character,
-    },{
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const putData = await axios.put(
+      `http://43.200.8.47:8080/pet/put-pet/${inviter}/${petId}`,
+      {
+        petName: name,
+        petAge: age,
+        detailInfo: character,
       },
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     console.log(putData.data);
 
     const route = [petName, petId];
-    
+
     navigation.navigate(CarePetRoutes.MAIN_CARE_PET, route);
   };
-  //펫 계정 나가기
 
-  const handleLeaveAccount = () => {
+  // 계정나가기
+  //owner 계정나가기 - petLink 삭제
+  const deletePetLink = async () => {
+    try {
+      const response = await axios.delete(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/delete/${petLink}`
+      );
+
+      if (response.status === 200) {
+        navigation.navigate(AddPetRoutes.LIST);
+        console.log('펫계정 나가기 성공');
+      } else {
+        console.log('펫계정 나가기를 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('펫 계정 나가는 중 오류 발생:', error);
+    }
+  };
+  //inviter 계정나가기(1)- pet 삭제
+  const deletePet = () => {
     AsyncStorage.getItem('email')
       .then((email) => {
         AsyncStorage.getItem('token')
           .then((token) => {
             axios
               .delete(
-                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/delete-pet/${email}/${petName}`,
+                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/delete-pet/${email}/${petId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -182,11 +216,48 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
 
     navigation.navigate(AddPetRoutes.LIST);
   };
+  // //inviter 계정 나가기(2) - AllPetLink 삭제
+  const deleteAllPetLink = async () => {
+    try {
+      const response = await axios.delete(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/deleteAll/${petId}`
+      );
+      console.log(response.data);
+
+      if (response.status === 200) {
+        navigation.navigate(AddPetRoutes.LIST);
+
+        console.log('모든 펫링크 지우기 성공');
+      } else {
+        console.log('모든 펫링크 지우기 실패');
+      }
+    } catch (error) {
+      console.error('모든 펫링크 지우는 중 오류 발생:', error);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-      <TouchableOpacity
+        <DangerAlert
+          visible={visible}
+          title={`${petName}` + ' 계정에서' + '\n' + '나가시겠습니까?'}
+          comment={'한 번 삭제된 계정은 복구 수 없습니다.'}
+          leftText={'취소'}
+          rightText={'나가기'}
+          onClose={() => setVisible(false)}
+          onRight={() => {
+            setVisible(false);
+            {
+              inviter === email
+                ? (deleteAllPetLink(), deletePet())
+                : deletePetLink();
+            }
+          }}
+          leftBtnColor={GRAY.LIGHT}
+          rightBtnColor={YELLOW.DEFAULT}
+        />
+        <TouchableOpacity
           onPress={async () => {
             let result = await ImagePicker.launchImageLibraryAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -207,15 +278,15 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
         >
           <View style={styles.imageContainer}>
             <View style={styles.photoBox}>
-            {(
-              <Image
-                source={{ uri: imgUrl + '?cache=' + Math.random() }}
-                style={styles.photoBox}
-              />
-            )}
-            <View style={styles.editIconContainer}>
-              <MaterialIcons name="edit" size={24} color="black" />
-            </View>
+              {
+                <Image
+                  source={{ uri: imgUrl + '?cache=' + Math.random() }}
+                  style={styles.photoBox}
+                />
+              }
+              <View style={styles.editIconContainer}>
+                <MaterialIcons name="edit" size={24} color="black" />
+              </View>
             </View>
           </View>
         </TouchableOpacity>
@@ -258,12 +329,21 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
               text={'확인'}
               onPress={handlePetInfoSubmit}
             />
-            <Button2
-              backgrouncolor={RED.DEFAULT}
-              color={WHITE}
-              text={'계정 나가기'}
-              onPress={handleLeaveAccount}
-            />
+            {inviter === email ? (
+              <Button2
+                backgrouncolor={RED.DEFAULT}
+                color={WHITE}
+                text={'계정 지우기'}
+                onPress={() => setVisible(true)}
+              />
+            ) : (
+              <Button2
+                backgrouncolor={RED.DEFAULT}
+                color={WHITE}
+                text={'계정 나가기'}
+                onPress={() => setVisible(true)}
+              />
+            )}
           </View>
         </View>
       </View>
