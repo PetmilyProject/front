@@ -45,7 +45,8 @@ const ListRearerScreen = ({ petName, petId }) => {
   const [allRearer, setAllRearer] = useState([]);
   const [mainRearer, setMainRearer] = useState(null);
   const [subRearer, setSubRearer] = useState([]);
-  const [isInviter, setIsInviter] = useState(false);
+  const [email, setEmail] = useState('');
+  // const [isInviter, setIsInviter] = useState(false);
 
   const navigation = useNavigation();
 
@@ -81,6 +82,7 @@ const ListRearerScreen = ({ petName, petId }) => {
   const fetchPetLink = async () => {
     try {
       const email = await AsyncStorage.getItem('email');
+      setEmail(email);
 
       // 특정 petLink
       const response = await axios.get(
@@ -148,54 +150,63 @@ const ListRearerScreen = ({ petName, petId }) => {
           rightBtnColor={YELLOW.DEFAULT}
         />
         <View style={{ flex: 1, marginTop: 15 }}>
-          <Text style={{ fontSize: 16, margin: 10, marginBottom: 15, flex: 1 }}>
-            초대하기
-          </Text>
+          {inviter !== email ? (
+            <View></View>
+          ) : (
+            <>
+              <Text
+                style={{ fontSize: 16, margin: 10, marginBottom: 15, flex: 1 }}
+              >
+                초대하기
+              </Text>
 
-          <View style={styles.container_invite}>
-            <View style={{ flex: 0.7 }}>
-              <TextInput
-                borderRadius={30}
-                style={{
-                  marginLeft: 10,
-                  marginRight: 10,
-                  height: 40,
-                  width: 250,
-                  borderWidth: 1,
-                  borderColor: 'gray',
-                  paddingLeft: 20,
-                }}
-                onChangeText={(text) => setInviteName(text)}
-                keyboardType="email-address"
-                placeholder="예) petmily@gmail.com"
-              >
-                {inviteName}
-              </TextInput>
-            </View>
-            <View
-              borderRadius={30}
-              style={{
-                flex: 0.25,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: YELLOW.DEFAULT,
-                height: 40,
-              }}
-            >
-              <TouchableOpacity
-                style={{
-                  fontSize: 17,
-                  color: WHITE,
-                }}
-                onPress={() => {
-                  setVisible(true);
-                }}
-                paddingVertical={13}
-              >
-                <Text>초대</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+              <View style={styles.container_invite}>
+                <View style={{ flex: 0.7 }}>
+                  <TextInput
+                    borderRadius={30}
+                    style={{
+                      marginLeft: 10,
+                      marginRight: 10,
+                      height: 40,
+                      width: 250,
+                      borderWidth: 1,
+                      borderColor: 'gray',
+                      paddingLeft: 20,
+                    }}
+                    onChangeText={(text) => setInviteName(text)}
+                    keyboardType="email-address"
+                    placeholder="예) petmily@gmail.com"
+                  >
+                    {inviteName}
+                  </TextInput>
+                </View>
+
+                <View
+                  borderRadius={30}
+                  style={{
+                    flex: 0.25,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: YELLOW.DEFAULT,
+                    height: 40,
+                  }}
+                >
+                  <TouchableOpacity
+                    style={{
+                      fontSize: 17,
+                      color: WHITE,
+                    }}
+                    onPress={() => {
+                      setVisible(true);
+                    }}
+                    paddingVertical={13}
+                  >
+                    <Text>초대</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </>
+          )}
         </View>
 
         <View style={styles.container_rearer}>
@@ -206,7 +217,10 @@ const ListRearerScreen = ({ petName, petId }) => {
             <View style={{ alignItems: 'flex-start' }}>
               {/* 주양육자 표시 */}
               <View style={{ alignItems: 'center' }}>
-                <Image source={require('../../../assets/crown.png')} />
+                <Image
+                  style={{ marginBottom: -9 }}
+                  source={require('../../../assets/crown.png')}
+                />
                 {mainRearer && (
                   <View style={styles.rearerItem}>
                     {renderRearer(mainRearer)}
