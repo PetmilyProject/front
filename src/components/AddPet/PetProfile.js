@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { AntDesign } from '@expo/vector-icons'
 
 const PetProfile = ({
-  key,
+  //key,
   name,
   age,
   species,

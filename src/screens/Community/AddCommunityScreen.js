@@ -1,4 +1,11 @@
-import { Text, View, StyleSheet, Image, Keyboard } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  Keyboard,
+  ScrollView,
+} from 'react-native';
 import ImagePickerComponent from '../../components/ImagePicker';
 import { GRAY, WHITE, YELLOW } from '../../colors';
 import { useState } from 'react';
@@ -7,10 +14,10 @@ import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import { ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 import axios from 'axios';
+//import defaultImage from '../../assets/defaultImage.png'
 
 const AddCommunityScreen = ({ navigation, route }) => {
   const [imgUrl, setImgUrl] = useState(null);
@@ -18,8 +25,16 @@ const AddCommunityScreen = ({ navigation, route }) => {
   const [postId, setPostId] = useState('');
   const [contents, setContents] = useState('');
   const [title, setTitle] = useState('');
-
   const [image, setImage] = useState('');
+
+  const currentDate = new Date();
+  const year = currentDate.getFullYear(); // 연도
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1, 1월은 0)
+  const date = String(currentDate.getDate()).padStart(2, '0'); // 일
+
+  const formattedDate = `${year}-${month}-${date}`;
+
+  // 이제 formattedDate 변수를 사용하여 axios 요청을 보낼 때 date 필드에 넣을 수 있습니다.
 
   // 유저네임 가져오기
   useEffect(() => {
@@ -35,27 +50,25 @@ const AddCommunityScreen = ({ navigation, route }) => {
   }, []);
 
   // 사진 전송
-  const handleImageUpload = async () => {
-    if (!imgUrl) {
-      console.log('이미지 없음');
-      return;
-    }
+  const handleImageUpload = async (postId) => {
+    const imageUrl = imgUrl ? imgUrl : `https://i.ibb.co/Twj7906/defaultimage.jpg`;
+
     try {
       const formData = new FormData();
 
       const myEmail = await AsyncStorage.getItem('email');
       const token = await AsyncStorage.getItem('token');
 
-      console.log('uri : ', imgUrl);
+      console.log('uri : ', imageUrl);
 
       formData.append('file', {
-        uri: imgUrl,
+        uri: imageUrl,
         type: 'multipart/form-data',
-        name: `${myEmail}/${postId}.jpg`,
-        postId: `${postId}`,
+        name: `${postId}.jpg`,
+        //postId: `${postId}`,
       });
 
-      console.log('id : ', postId);
+      //console.log("post할 url : ", `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/communityImage/uploadImage/${myEmail}/${postId}`)
 
       const response = await axios.post(
         `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/communityImage/uploadImage/${myEmail}/${postId}`,
@@ -69,7 +82,7 @@ const AddCommunityScreen = ({ navigation, route }) => {
         }
       );
 
-      if (response.data && response.data.imageUrl) {
+      if (response.data) {
         setImage(response.data.imageUrl);
         // getImage();
         console.log('성공 : ', response.data.imageUrl);
@@ -82,51 +95,33 @@ const AddCommunityScreen = ({ navigation, route }) => {
   };
 
   const handleCommunitySubmit = () => {
-    console.log(postId, title, contents, 'end \n');
-    AsyncStorage.getItem('email')
-      .then((myEmail) => {
-        AsyncStorage.getItem('token')
-          .then((token) => {
-            const uploadImagePromise = handleImageUpload();
-            const createCommunityPostPromise = axios.post(
-              `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/community/post/${myEmail}`,
-              {
-                community_id: postId,
-                title: title,
-                wrote: contents,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
+    const uploadCommunity = async () => {
+      const tmpEmail = await AsyncStorage.getItem('email');
+      const tmpToken = await AsyncStorage.getItem('token');
+      const response = await axios.post(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/community/post/${tmpEmail}`,
+        {
+          //communityId: postId,
+          title: title,
+          wrote: contents,
+          date: formattedDate,
+          likes: 0,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${tmpToken}`,
+          },
+        }
+      );
 
-            Promise.all([uploadImagePromise, createCommunityPostPromise])
-              .then((responses) => {
-                console.log(
-                  '이미지 업로드와 커뮤니티 글 작성이 모두 성공했습니다.'
-                );
-                console.log('이미지 업로드 응답:', responses[0]);
-                console.log('커뮤니티 글 작성 응답:', responses[1]);
-              })
-              .catch((errors) => {
-                console.error(
-                  '이미지 업로드 또는 커뮤니티 글 작성 중 오류 발생:',
-                  errors
-                );
-              })
-              .finally(() => {
-                navigation.goBack(); // 뒤로 이동
-              });
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      const postResponse = response.data;
+      console.log(postResponse);
+      handleImageUpload(postResponse.communityId);
+
+    };
+    uploadCommunity();
+    
+    navigation.goBack();
   };
 
   const InsertUrl = (url) => {
@@ -135,13 +130,9 @@ const AddCommunityScreen = ({ navigation, route }) => {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
+      //keyboardShouldPersistTaps="handled"
     >
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Keyboard.dismiss();
-        }}
-      >
+      <TouchableWithoutFeedback>
         {/* 작성자 */}
         <View style={styles.profile_container}>
           <Image
@@ -153,11 +144,14 @@ const AddCommunityScreen = ({ navigation, route }) => {
         {/* 사진 */}
         <View style={styles.photo_container}>
           {imgUrl === null ? (
-            <View style={styles.photoBox}></View>
+            <Image
+              source={{uri: `https://i.ibb.co/Twj7906/defaultimage.jpg` }}
+              style={styles.photoBox}
+            />
           ) : (
             <Image source={{ uri: imgUrl }} style={styles.image} />
           )}
-          <View style={{ marginTop: -28, marginLeft: 300 }}>
+          <View style={{ marginLeft: 300 }}>
             <ImagePickerComponent
               width={45}
               height={45}
@@ -213,14 +207,14 @@ const AddCommunityScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: WHITE,
   },
   profile_container: {
     flexDirection: 'row',
-    flex: 0.22,
+    flex: 0.25,
     alignItems: 'center',
     justifyContent: 'flex-start',
     marginHorizontal: 20,
@@ -259,7 +253,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   imagePicker: {
-    marginTop: -20,
+    //marginTop: -20,
   },
 });
 export default AddCommunityScreen;

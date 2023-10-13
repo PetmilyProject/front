@@ -156,7 +156,7 @@ const CommunityPhotoScreen = () => {
                 onPress={() => gotoDetail(index)}
                 style={styles.photoList}
               >
-                <Image source={{ uri: item }} style={styles.photoItem} />
+                <Image source={{ uri: item + '?cache=' + Math.random() }} style={styles.photoItem} />
                 <Text style={{marginLeft: 15}}>{titleOfPost[index]}</Text>
               </TouchableOpacity>
             )}

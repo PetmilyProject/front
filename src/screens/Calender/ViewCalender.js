@@ -166,7 +166,7 @@ const ViewCalender = () => {
               <TouchableOpacity
                 key={item.id}
                 style={styles.scheduleItem}
-                onPress={() => handlePress(item)}
+                //onPress={() => handlePress(item)}
               >
                 <Text style={styles.details}>{item.schedule}</Text>
                 <Text style={styles.time}>{item.hm}</Text>
