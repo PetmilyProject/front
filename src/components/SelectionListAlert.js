@@ -19,6 +19,7 @@ const SelectionListAlert = ({
   selected,
   buttonText,
   onConfirmSelection,
+  multiple,
 }) => {
   const [selectedItems, setSelectedItems] = useState(selected);
 
@@ -63,7 +64,7 @@ const SelectionListAlert = ({
         <CustomMultiPicker
           options={item}
           search={false}
-          multiple={true}
+          multiple={multiple}
           returnValue={'label'}
           callback={(res) => setSelectedItems(res)}
           rowBackgroundColor={WHITE}

@@ -297,14 +297,6 @@ const ScheduleModificationScreen = ({ route }) => {
             selectedDays={selectedExecutor}
           />
 
-          <InputText_in
-            title={'알림'}
-            titleSize={20}
-            type={'toggle'}
-            alarm={alarm}
-            onToggleAlarm={setAlarm}
-          />
-
           {/* 수정 및 삭제 버튼 */}
           <View style={styles.buttonContainer}>
             <View style={styles.buttonWrapper}>
