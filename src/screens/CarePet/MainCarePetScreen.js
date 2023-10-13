@@ -1,4 +1,4 @@
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert, ScrollView } from 'react-native';
 import CarePetList from './Component/CarePetList';
 import EmptySchduleScreen from './Schdule/EmptySchduleScreen';
 import { useEffect, useState } from 'react';
@@ -113,6 +113,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
   };
 
   return (
+    <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
     <View style={styles.container}>
       <CarePetList
         petName={petName}
@@ -127,6 +128,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
       <View style={styles.line}></View>
       <View style={styles.container2}>{renderScreen()}</View>
     </View>
+    </ScrollView>
   );
 };
 

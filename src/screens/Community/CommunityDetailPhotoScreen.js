@@ -9,6 +9,7 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -16,6 +17,8 @@ import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BLACK, RED } from '../../colors';
 import Comment from '../../components/Comment';
+import CommunityModal from './CommunityModal';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const CommunityDetailPhotoScreen = (props, route) => {
   const param = props.route.params;
@@ -25,6 +28,7 @@ const CommunityDetailPhotoScreen = (props, route) => {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [contentHeight, setContentHeight] = useState(0);
+  const [modalActive, setModalActive] = useState(false);
   const [userInfo, setUserInfo] = useState([]);
 
   // 댓글 작성 핸들러
@@ -36,13 +40,76 @@ const CommunityDetailPhotoScreen = (props, route) => {
   };
   //console.log('넘어온거 : ', param);
 
-  const LikeHandle = () => {
+  const LikeHandle = async () => {
+    const email = await AsyncStorage.getItem('email');
+    const token = await AsyncStorage.getItem('token');
+
     if (liked === BLACK.DEFAULT) {
       setLiked(RED.DEFAULT);
-      setLikes(1);
+
+      const likesResponse = await axios.get(
+        `http://43.200.8.47:8080/community/get/${param.communityinfo.community_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const likesData = likesResponse.data;
+      let nowLikes = likesData.likes;
+      const addLikes = await axios.put(
+        `http://43.200.8.47:8080/community/updateLikes/${email}`,
+        {
+          communityId: likesData.communityId,
+          date: likesData.date,
+          email: likesData.email,
+          likes: nowLikes + 1,
+          title: likesData.title,
+          wrote: likesData.wrote,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      //console.log(addLikes.data);
+
+      setLikes(nowLikes + 1);
     } else if (liked === RED.DEFAULT) {
       setLiked(BLACK.DEFAULT);
-      setLikes(0);
+
+      const likesResponse = await axios.get(
+        `http://43.200.8.47:8080/community/get/${param.communityinfo.community_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const likesData = likesResponse.data;
+      let nowLikes = likesData.likes;
+      const minusLikes = await axios.put(
+        `http://43.200.8.47:8080/community/updateLikes/${email}`,
+        {
+          communityId: likesData.communityId,
+          date: likesData.date,
+          email: likesData.email,
+          likes: nowLikes - 1,
+          title: likesData.title,
+          wrote: likesData.wrote,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      //console.log(minusLikes.data);
+
+      setLikes(nowLikes - 1);
     }
   };
 
@@ -50,19 +117,57 @@ const CommunityDetailPhotoScreen = (props, route) => {
     const email = await AsyncStorage.getItem('email');
     const token = await AsyncStorage.getItem('token');
 
-    const userResponse = await axios.get(`http://43.200.8.47:8080/users/${param.communityinfo.email}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    const userResponse = await axios.get(
+      `http://43.200.8.47:8080/users/${param.communityinfo.email}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    });
-    
+    );
+
     //console.log(userResponse.data);
     setUserInfo(userResponse.data);
   };
 
+  const setInitialLikes = async () => {
+    const email = await AsyncStorage.getItem('email');
+    const token = await AsyncStorage.getItem('token');
+
+    const likesResponse = await axios.get(
+      `http://43.200.8.47:8080/community/get/${param.communityinfo.community_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const likesData = likesResponse.data.likes;
+    const likedBy = likesResponse.data.likedBy;
+
+    for (let i = 0; i < likedBy.length; i++) {
+      if (likedBy[i] === email) {
+        //console.log("좋아요 이미 누름");
+        setLiked(RED.DEFAULT);
+        break;
+      }
+    }
+
+    setLikes(likesData);
+  };
+
+  const openModal = () => {
+    setModalActive(true);
+  };
+
+  const closeModal = () => {
+    setModalActive(false);
+  };
+
   useEffect(() => {
+    setInitialLikes();
     getUserInfo();
-  }, [])
+  }, []);
 
   return (
     <View style={styles.main_style}>
@@ -71,18 +176,24 @@ const CommunityDetailPhotoScreen = (props, route) => {
           {/* 헤더 영역 */}
           <View style={styles.header_container}>
             <View style={{ flexDirection: 'row', marginLeft: 10 }}>
-              <Image 
-                source={{ uri: `http://43.200.8.47:8080/profile/get/${userInfo.email}/${userInfo.email}.jpg`}}
-                style={ styles.profile_image }
+              <Image
+                source={{
+                  uri: `http://43.200.8.47:8080/profile/get/${userInfo.email}/${userInfo.email}.jpg`,
+                }}
+                style={styles.profile_image}
               />
               <View style={{ flex: 1, marginTop: 10, marginLeft: 10 }}>
                 <Text>{userInfo.userName}</Text>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={openModal}>
                 <MaterialCommunityIcons
                   name="dots-vertical"
                   size={30}
                   style={{ margin: 5, marginRight: 0 }}
+                />
+                <CommunityModal
+                  modalActive={modalActive}
+                  onClose={closeModal}
                 />
               </TouchableOpacity>
             </View>
@@ -130,7 +241,7 @@ const CommunityDetailPhotoScreen = (props, route) => {
           {/* 댓글 영역 */}
           <View style={[styles.downside_style, styles.give_margin]}>
             <View>
-              <Comment />
+              <Comment communityId={param.communityinfo.community_id} />
             </View>
             <View style={styles.comment_container}>
               {/* 댓글 입력 */}
@@ -193,7 +304,7 @@ const styles = StyleSheet.create({
     flex: 0.1,
     alignContent: 'flex-end',
     backgroundColor: 'white',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   image_container: {
     flex: 0.6,
@@ -219,24 +330,24 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'bold',
     marginBottom: 8,
-    marginLeft: 10
+    marginLeft: 10,
   },
   content: {
     fontSize: 15,
     marginBottom: 5,
-    marginLeft: 10
+    marginLeft: 10,
   },
   date: {
     fontSize: 12,
     color: 'gray',
-    marginLeft: 10
+    marginLeft: 10,
   },
-  profile_image: { 
+  profile_image: {
     width: 40,
     height: 40,
     borderRadius: 30,
     marginBottom: 0,
-  }
+  },
 });
 
 export default CommunityDetailPhotoScreen;
