@@ -126,6 +126,7 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
         });
         const responseData = rawResponseData.data;
 
+        setName(responseData.petName);
         setAge(responseData.petAge);
         setCharater(responseData.detailInfo);
       } catch (error) {
@@ -159,7 +160,7 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
       }
     );
 
-    console.log(putData.data);
+    console.log('완료?', putData.data);
 
     const route = [petName, petId];
 
@@ -236,6 +237,11 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
     }
   };
 
+  const setName1 = (newName) => {
+    console.log('ddd : ', newName);
+    setName(newName);
+  };
+
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
@@ -291,6 +297,13 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
           </View>
         </TouchableOpacity>
         <View style={styles.container_info}>
+          <InputText_in
+            title={'이름'}
+            titleSize={20}
+            value={name}
+            onChangeText={setName1}
+            type={'input'}
+          />
           <InputText_in
             title={'나이'}
             titleSize={20}

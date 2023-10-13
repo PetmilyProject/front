@@ -48,6 +48,6 @@ export const CommunityRoutes = {
 
 export const UserInfoRoutes = {
   MAIN_USER: 'UserInfoScreen',
-
   WITHDRAWAL: 'UserWithdrawalScreen',
+  USER_EDIT: 'UserInfoEditScreen',
 };

@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  PermissionsAndroid,
   ScrollView,
   RefreshControl,
 } from 'react-native';
@@ -222,6 +221,9 @@ const UserInfoScreen = () => {
             backgrouncolor={YELLOW.DEFAULT}
             color={WHITE}
             text={'수정'}
+            onPress={() => {
+              navigation.navigate(UserInfoRoutes.USER_EDIT);
+            }}
             width={350}
           />
           <Button2
