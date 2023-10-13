@@ -8,7 +8,7 @@ import {
 import { Text, View } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { WHITE, YELLOW } from '../../../colors';
+import { RED, WHITE, YELLOW } from '../../../colors';
 import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
 import SelectionListAlert from '../../../components/SelectionListAlert';
@@ -16,20 +16,32 @@ import { useEffect } from 'react';
 
 const AddScheduleScreen = ({ navigation, route }) => {
   const { petName, petId } = route.params;
+  useEffect(() => {
+    // 현재 시간 받아와 time 기본값 설정
+    const today = new Date();
+    const hours = String(today.getHours()).padStart(2, '0');
+    const minutes = String(today.getMinutes()).padStart(2, '0');
+    setTime(`${hours}:${minutes}`);
+  }, []);
 
+  //양육자 목록
+  const [rearer, setRearer] = useState(null);
+  //입력란 useState
   const [schedule, setSchedule] = useState('');
   const [time, setTime] = useState('');
   const [date, setDate] = useState('');
   const [repeat, setRepeat] = useState(0);
-  const [alarm, setAlarm] = useState(0);
+  const [executor, setExecutor] = useState([]);
+  const [executorStr, setExecutorStr] = useState('');
+
   const [aaa, setaaa] = useState(0);
   const [visible, setVisible] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
+  //수행자 모달 관리
   const [executorVisible, setExecutorVisible] = useState(false);
-  const [executor, setExecutor] = useState([]);
-
-  const [rearer, setRearer] = useState(null);
+  //랜더링된 owner 리스트
+  const [executorList, setExecutorList] = useState({});
 
   const fetchPetLink = async () => {
     try {
@@ -52,27 +64,16 @@ const AddScheduleScreen = ({ navigation, route }) => {
     fetchPetLink();
   }, []);
 
-  //수행자 랜더링
-  useEffect(() => {
-    if (rearer) {
-      const newExecutor = {};
-      rearer.forEach((item) => {
-        // rearer의 각 항목을 반복
-        newExecutor[item.ownerName] = item.ownerName;
-      });
-      setExecutorList(newExecutor);
-    }
-  }, [rearer]);
-
-  // 랜더링된 수행자 리스트
-  const [executorList, setExecutorList] = useState({});
-
-  //수행자 리스트 확인 버튼을 눌렀을 때 호출되는 함수
-  const handleExecutorSelection = (selectedItems) => {
-    setExecutor(selectedItems);
-    setExecutorVisible(false);
+  {
+    /* --------------------------------시간-----------------------------*/
+  }
+  //시간 변경 함수
+  const handleTimeChange = (selectedTime) => {
+    setTime(selectedTime);
   };
-
+  {
+    /* --------------------------------주기-----------------------------*/
+  }
   // 주기(요일) 리스트 아이템
   const item = {
     0: '일',
@@ -111,23 +112,36 @@ const AddScheduleScreen = ({ navigation, route }) => {
     // console.log(cnt);
     setSelectedDays(selectedDays);
   };
-  const handleTimeChange = (selectedTime) => {
-    setTime(selectedTime);
+
+  /* --------------------------------수행자--------------------------------*/
+
+  //수행자 랜더링
+  useEffect(() => {
+    if (rearer) {
+      const newExecutor = {};
+      rearer.forEach((item) => {
+        // rearer의 각 항목을 반복
+        newExecutor[item.ownerName] = item.ownerName;
+      });
+      setExecutorList(newExecutor);
+    }
+  }, [rearer]);
+
+  //수행자 리스트 확인 버튼을 눌렀을 때 호출되는 함수
+  const handleExecutorSelection = (selectedItems) => {
+    setExecutor(selectedItems);
+    setExecutorStr(selectedItems.join(', '));
+    setExecutorVisible(false);
   };
 
+  /* --------------------------------등록하기-------------------------------*/
+
+  //등록하기 함수
   const handleScheduleSubmit = () => {
     setSubmit(true);
+
     if (schedule != '') {
-      console.log(
-        petName,
-        schedule,
-        date,
-        time,
-        repeat,
-        alarm,
-        executor,
-        'end \n'
-      );
+      console.log(petName, schedule, date, time, repeat, executor, 'end \n');
 
       AsyncStorage.getItem('email')
         .then((myEmail) => {
@@ -141,7 +155,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
                     date: date,
                     hm: time,
                     period: repeat,
-                    notice: alarm,
+                    executer: executorStr,
                     isCompleted: 0,
                   },
                   {
@@ -174,6 +188,9 @@ const AddScheduleScreen = ({ navigation, route }) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView behavior={'padding'} style={styles.container}>
         <View>
+          {submit === true && schedule === '' ? (
+            <Text style={{ color: RED.DEFAULT }}>*일정명 필수입력</Text>
+          ) : null}
           {/* 일정 입력 */}
           <InputText_in
             title={'일정'}
@@ -187,7 +204,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
           <InputText_in
             title={'시간'}
             titleSize={20}
-            value={time}
             time={time}
             onChangeText={handleTimeChange}
             type={'time'}
@@ -206,13 +222,13 @@ const AddScheduleScreen = ({ navigation, route }) => {
             title={'반복'}
             titleSize={20}
             type={'toggle'}
-            alarm={alarm}
             onToggleAlarm={setaaa}
           />
           {/* 주기(요일) 선택 리스트 Alert*/}
           <SelectionListAlert
             visible={visible}
             onClose={() => setVisible(false)}
+            multiple={true}
             item={item}
             width={220}
             scrollViewHeight={170}
@@ -237,6 +253,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
           <SelectionListAlert
             visible={executorVisible}
             onClose={() => setExecutorVisible(false)}
+            multiple={false}
             item={executorList}
             width={220}
             scrollViewHeight={150}
@@ -254,15 +271,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
             onPress={() => setExecutorVisible(true)}
             selectedDays={executor}
           />
-
-          <InputText_in
-            title={'알림'}
-            titleSize={20}
-            type={'toggle'}
-            alarm={alarm}
-            onToggleAlarm={setAlarm}
-          />
-
           {/* 등록 버튼 */}
           <View style={{ marginTop: 50 }}>
             <Button2
@@ -273,9 +281,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
               width={'100%'}
             />
           </View>
-          {submit === true && schedule === '' ? (
-            <Text>일정명을 등록해주세요</Text>
-          ) : null}
         </View>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
