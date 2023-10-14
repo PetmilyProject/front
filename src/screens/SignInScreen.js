@@ -1,19 +1,13 @@
+import React from 'react';
 import {
-  Button,
   Keyboard,
   KeyboardAvoidingView,
   StyleSheet,
-  Text,
   TouchableWithoutFeedback,
-  View,
 } from 'react-native';
 
-import Input, {
-  InputTypes,
-  KeyboardTypes,
-  ReturnKeyTypes,
-} from '../components/Input';
-import { useRef, useState } from 'react';
+import Input, { InputTypes, ReturnKeyTypes } from '../components/Input';
+import { useState } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SquareButton, { ColorTypes } from '../components/Button';
@@ -25,7 +19,7 @@ const SignInScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { signIn, isSignedIn } = useContext(AuthContext); // isSignedIn 가져오기
+  const { signIn, isSignedIn } = useContext(AuthContext);
 
   const handleSignIn = () => {
     AsyncStorage.setItem('email', email);
@@ -46,8 +40,6 @@ const SignInScreen = () => {
         AsyncStorage.setItem('token', token)
           .then(() => {
             console.log('로그인 토큰 저장 완료:', token);
-
-            // 다음 화면으로 이동
             signIn();
           })
           .catch((error) => {
@@ -57,7 +49,6 @@ const SignInScreen = () => {
       .catch((error) => {
         console.error('로그인 실패:', error);
       });
-    //signIn();
   };
 
   const dismissKeyboard = () => {
@@ -66,7 +57,7 @@ const SignInScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <KeyboardAvoidingView style={styles.container} behavior="height">
         <Input
           styles={{
             container: { marginBottom: 20, paddingHorizontal: 20 },

@@ -19,8 +19,6 @@ const DetailPhotoScreen = ({ Navigation, route }) => {
       setLikedCounter(likedCounter - 1);
     }
   };
-
-  console.log('par : ', param);
   return (
     <View style={styles.container}>
       {/* 작성자 */}

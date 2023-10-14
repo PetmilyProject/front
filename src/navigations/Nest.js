@@ -30,6 +30,7 @@ import ScheduleModificationScreen from '../screens/CarePet/Schdule/ScheduleModif
 import AddCommunityScreen from '../screens/Community/AddCommunityScreen';
 import DetailRearerScreen from '../screens/CarePet/Rearer/DetailRearerScreen';
 import ListRearerScreen from '../screens/CarePet/Rearer/ListRearerScreen';
+import UserInfoEditScreen from '../screens/UserInfo/UserInfoEditScreen';
 
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
@@ -184,6 +185,11 @@ const UserInfoStackScreen = () => {
         name={UserInfoRoutes.WITHDRAWAL}
         component={UserWithdrawalScreen}
         options={{ title: '계정삭제' }}
+      />
+      <UserInfoStack.Screen
+        name={UserInfoRoutes.USER_EDIT}
+        component={UserInfoEditScreen}
+        options={{ title: '회원 정보 수정' }}
       />
     </UserInfoStack.Navigator>
   );
