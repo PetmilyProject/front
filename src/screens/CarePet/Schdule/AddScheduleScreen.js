@@ -155,7 +155,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
                     date: date,
                     hm: time,
                     period: repeat,
-                    executer: executorStr,
+                    executor: executorStr,
                     isCompleted: 0,
                   },
                   {
@@ -178,6 +178,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
         .catch((error) => {
           console.error(error, 3);
         });
+      navigation.navigate('ScheduleList', { updated: true });
     } else {
       return 1;
     }
