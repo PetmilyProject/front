@@ -13,29 +13,19 @@ import { GRAY, WHITE, YELLOW } from '../../../colors';
 import { AntDesign } from '@expo/vector-icons';
 import { CarePetRoutes } from '../../../navigations/routes';
 import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ScheduleListScreen = ({ petName, petId }) => {
   const [responseData, setResponseData] = useState([]);
-  const [executeArray, setExecuteArray] = useState([]);
-  const [executeColor, setExecuteColor] = useState(GRAY.LIGHTER);
   const [selectedItemIndices, setSelectedItemIndices] = useState([]);
   const [currentDate, setCurrentDate] = useState(
     new Date().toISOString().split('T')[0]
   );
-  const [currentDay, setCurrentDay] = useState(new Date().getDay());
-  const [selectedScheduleIds, setSelectedScheduleIds] = useState([]);
-  const [time, setTime] = useState('');
 
   const navigation = useNavigation();
 
-  const onSchedulePress = (id) => {
-    navigation.navigate(CarePetRoutes.VIEW_ScheduleModification, {
-      petName: petName,
-      id: id,
-    });
-  };
-
-  useEffect(() => {
+  // 스케줄 가져오기
+  const fetchScheduleData = () => {
     AsyncStorage.getItem('email')
       .then((myEmail) => {
         AsyncStorage.getItem('token')
@@ -68,7 +58,6 @@ const ScheduleListScreen = ({ petName, petId }) => {
                 }
 
                 setResponseData(newResponseData);
-                setExecuteArray(Array(response.data.length).fill(false));
               })
               .catch((error) => {
                 console.error(error);
@@ -81,28 +70,24 @@ const ScheduleListScreen = ({ petName, petId }) => {
       .catch((error) => {
         console.error(error);
       });
+  };
+
+  useEffect(() => {
+    fetchScheduleData(); // 컴포넌트가 처음 렌더링될 때 데이터를 가져옵니다.
   }, [currentDate]);
 
-  // const handleLongPress = (index) => {
-  //   if (selectedItemIndices.includes(index)) {
-  //     // If the item is already selected, remove it from the selection
-  //     setSelectedItemIndices(selectedItemIndices.filter((i) => i !== index));
-  //   } else {
-  //     // If the item is not selected, add it to the selection
-  //     setSelectedItemIndices([...selectedItemIndices, index]);
-  //   }
-  // };
+  // 렌더링 되는 스케줄 아이템
   const renderItem = ({ item, index }) => {
     const isSelected = selectedItemIndices.includes(index.id);
-    const backgroundColor = executeArray[index]
+    const backgroundColor = item.isCompleted
       ? YELLOW.DEFAULT_LIGHT
       : GRAY.LIGHTER;
+
+    const executorProfileURL = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${item.complete}/${item.complete}.jpg`;
 
     return (
       <TouchableOpacity
         onPress={() => onSchedulePress(item.id)}
-        // onLongPress={() => handleLongPress(index)}
-        // delayLongPress={300}
         style={[
           styles.scheduleItem,
           {
@@ -112,11 +97,11 @@ const ScheduleListScreen = ({ petName, petId }) => {
         ]}
       >
         <TouchableOpacity onPress={() => handleCompleted(index)}>
-          {isSelected ? (
-            <AntDesign name="circledown" size={24} color="#34D399" />
-          ) : executeArray[index] ? (
+          {item.isCompleted ? (
             <Image
-              source={require('../../../assets/pet_icon.png')}
+              source={{
+                uri: executorProfileURL,
+              }}
               style={styles.executor_profile}
             />
           ) : (
@@ -131,83 +116,79 @@ const ScheduleListScreen = ({ petName, petId }) => {
           <Text style={styles.time}>{item.hm}</Text>
         </View>
         <View style={styles.container_executor}>
-          <Text style={styles.executor}>{item.executer}</Text>
+          <Text style={styles.executor}>{item.executor}</Text>
         </View>
       </TouchableOpacity>
     );
   };
 
-  //is_Completed
-  const handleCompleted = (index) => {
-    const newExecuteArray = [...executeArray];
-    newExecuteArray[index] = !newExecuteArray[index];
-    setExecuteArray(newExecuteArray);
-
-    // if (schedule != '') {
-    //   console.log(
-    //     petName,
-    //     schedule,
-    //     date,
-    //     time,
-    //     repeat,
-    //     alarm,
-    //     executor,
-    //     'end \n'
-    //   );
-
-    //   AsyncStorage.getItem('email')
-    //     .then((myEmail) => {
-    //       AsyncStorage.getItem('token')
-    //         .then((token) => {
-    //           axios
-    //             .post(
-    //               `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/add/${petId}`,
-    //               {
-    //                 schedule: schedule,
-    //                 date: date,
-    //                 hm: time,
-    //                 period: repeat,
-    //                 notice: alarm,
-    //                 isCompleted: 0,
-    //               },
-    //               {
-    //                 headers: {
-    //                   Authorization: `Bearer ${token}`,
-    //                 },
-    //               }
-    //             )
-    //             .then((response) => {
-    //               console.log(response.data);
-    //             })
-    //             .catch((error) => {
-    //               console.error(error);
-    //             });
-    //         })
-    //         .catch((error) => {
-    //           console.error(error, 2);
-    //         });
-    //     })
-    //     .catch((error) => {
-    //       console.error(error, 3);
-    //     });
-    // } else {
-    //   return 1;
-    // }
-    // navigation.goBack();
+  // 일정 선택 함수
+  const onSchedulePress = (id) => {
+    navigation.navigate(CarePetRoutes.VIEW_ScheduleModification, {
+      petName: petName,
+      id: id,
+    });
   };
-  //날짜 선택 화살표
+
+  // 일정 수행 함수
+  const handleCompleted = (index) => {
+    AsyncStorage.getItem('email')
+      .then((myEmail) => {
+        if (myEmail) {
+          const updatedSchedule = responseData[index];
+          updatedSchedule.isCompleted =
+            updatedSchedule.isCompleted === 0 ? 1 : 0;
+          const completeUser =
+            updatedSchedule.isCompleted === 1 ? myEmail : null;
+
+          AsyncStorage.getItem('token')
+            .then((token) => {
+              axios
+                .put(
+                  `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/complete/${petId}/${updatedSchedule.id}`,
+                  {
+                    complete: completeUser,
+                    isCompleted: updatedSchedule.isCompleted,
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  }
+                )
+                .then((response) => {
+                  console.log('Schedule updated successfully');
+
+                  // responseData를 업데이트하지 않고 대신 화면을 다시 렌더링
+                  // 데이터를 변경하면 컴포넌트가 다시 렌더링되므로 변경된 데이터를 화면에 반영
+                  // 다시 렌더링하려면 화면 상태를 다시 가져와야함
+                  fetchScheduleData(); // fetchScheduleData는 데이터를 다시 가져오는 함수
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  // 날짜 선택 화살표 함수
   const handleLeftArrowPress = () => {
     const currentDateObj = new Date(currentDate);
     currentDateObj.setDate(currentDateObj.getDate() - 1);
-    setCurrentDay(currentDateObj.getDay());
-    setCurrentDate(currentDateObj.toISOString().split('T')[0]); // 다시 'YYYY-MM-DD' 형식으로 변환합니다.
+    setCurrentDate(currentDateObj.toISOString().split('T')[0]);
   };
 
   const handleRightArrowPress = () => {
     const currentDateObj = new Date(currentDate);
     currentDateObj.setDate(currentDateObj.getDate() + 1);
-    setCurrentDay(currentDateObj.getDay());
-    setCurrentDate(currentDateObj.toISOString().split('T')[0]); // 다시 'YYYY-MM-DD' x형식으로 변환합니다.
+    setCurrentDate(currentDateObj.toISOString().split('T')[0]);
   };
 
   return (
@@ -250,7 +231,7 @@ const styles = StyleSheet.create({
   select_date: {
     fontSize: 22,
   },
-  schdule_container: {
+  schedule_container: {
     flex: 1,
     width: '90%',
     marginLeft: 5,
@@ -264,7 +245,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
     borderRadius: 30,
-    backgroundColor: GRAY.LIGHTER,
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
@@ -283,7 +263,7 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 20,
-    fontWeight: 500,
+    fontWeight: '500',
   },
   container_executor: {
     flex: 1,
@@ -305,17 +285,6 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 25,
     backgroundColor: WHITE,
-  },
-  deleteButton: {
-    backgroundColor: 'red',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
-    alignItems: 'center',
-  },
-  deleteButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
   },
 });
 
