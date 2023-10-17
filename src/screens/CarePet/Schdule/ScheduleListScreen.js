@@ -125,7 +125,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
   // 일정 선택 함수
   const onSchedulePress = (id) => {
     navigation.navigate(CarePetRoutes.VIEW_ScheduleModification, {
-      petName: petName,
+      petId: petId,
       id: id,
     });
   };
@@ -207,7 +207,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
       <FlatList
         data={responseData}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         style={styles.schedule_container}
       />
     </View>

@@ -14,7 +14,7 @@ import axios from 'axios';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { CarePetRoutes } from '../../../navigations/routes';
 
-const ListPhotoScreen = ({ Navigation, petName }) => {
+const ListPhotoScreen = ({ Navigation, petName, petId }) => {
   const [imageList, setImageList] = useState([]); // 이미지 목록을 저장할 상태 변수
   const [email, setEmail] = useState(''); // 이메일을 저장할 상태 변수
   const [isLoading, setIsLoading] = useState(true); // 데이터 로딩 상태를 저장할 상태 변수
@@ -25,8 +25,6 @@ const ListPhotoScreen = ({ Navigation, petName }) => {
     const getPhotoImage = async () => {
       const storedEmail = await AsyncStorage.getItem('email');
       setEmail(storedEmail);
-      setSharedPets([]);
-
       const sharedPetInfo = (
         await axios.get(
           `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/shared/get-all/${storedEmail}`
@@ -38,7 +36,7 @@ const ListPhotoScreen = ({ Navigation, petName }) => {
       const newImageList = []; // 새로운 이미지 목록을 담을 배열 생성
 
       for (let i = 0; i < sharedPetInfo.length; i++) {
-        const sharedUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/shared-images/${storedEmail}/downloadImage/${sharedPetInfo[i].sharedPetId}.jpg`;
+        const sharedUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/shared-images/${storedEmail}/downloadImage/${sharedPetInfo[i].petId}.jpg`;
 
         try {
           const response = await fetch(sharedUrl); // 이미지 데이터를 가져오기 위해 fetch 요청
@@ -47,8 +45,8 @@ const ListPhotoScreen = ({ Navigation, petName }) => {
             const base64Data = await convertBlobToBase64(imageData); // Blob을 base64로 변환
             // 이미지 정보 말고도 다양한 정보를 추가로 넣을 수 있다
 
-            //펫 네임이 동일한 경우에만 이미지 추가
-            if (petName === sharedPetInfo[i].petName) {
+            //펫 아이디가 동일한 경우에만 이미지 추가
+            if (petId === sharedPetInfo[i].petId) {
               newImageList.push({
                 id: sharedPetInfo[i].sharedPetId,
                 image: base64Data,
@@ -109,33 +107,10 @@ const ListPhotoScreen = ({ Navigation, petName }) => {
         });
       }
     };
-    //수정, 삭제
-    const handleLongPress = () => {
-      Alert.alert(
-        '작업 선택',
-        '이미지를 수정하거나 삭제하시겠습니까?',
-        [
-          {
-            text: '수정',
-            onPress: () => {},
-          },
-          {
-            text: '삭제',
-            onPress: () => {},
-          },
-          {
-            text: '취소',
-            style: 'cancel',
-          },
-        ],
-        { cancelable: true }
-      );
-    };
 
     return (
-      <Pressable onPress={handlePress} onLongPress={handleLongPress}>
+      <Pressable onPress={handlePress}>
         <Image source={{ uri: item.image }} style={styles.image} />
-        <Text>{item.id}</Text>
       </Pressable>
     );
   };

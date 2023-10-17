@@ -11,14 +11,29 @@ import {
 import { ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
+import axios from 'axios';
 
 const AddphotoScreen = ({ navigation, route }) => {
-  const [imgUrl, setImgUrl] = useState(null);
+  const { petName, petId } = route.params;
+  //사용자 정보 useState
   const [userName, setUserName] = useState('');
+  const [userImage, setUserImage] = useState('');
+  const [email, setEmail] = useState('');
+  //이미지 useState
+  const [image, setImage] = useState(null);
+  const [uploadImage, setUploadImage] = useState('');
+  //내용 useState
   const [contents, setContents] = useState('');
   const [title, setTitle] = useState('');
   //등록일
-  const [date, setDate] = useState('');
+
+  const currentDate = new Date();
+  const year = currentDate.getFullYear(); // 연도
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1, 1월은 0)
+  const date = String(currentDate.getDate()).padStart(2, '0'); // 일
+
+  const formattedDate = `${year}-${month}-${date}`;
+
   // 난수생성
   const generateSharedPetId = () => {
     const randomId = Math.floor(Math.random() * 100000); // 랜덤한 숫자 생성
@@ -26,60 +41,105 @@ const AddphotoScreen = ({ navigation, route }) => {
   };
   const [sharedPetId, setSharedPetId] = useState(generateSharedPetId());
 
+  //사용자 정보, 프로필 가져오기
   useEffect(() => {
-    // AsyncStorage에서 userName 가져오기
-    AsyncStorage.getItem('userName')
-      .then((storedUserName) => {
-        if (storedUserName) {
-          setUserName(storedUserName);
-        }
-      })
-      .catch((error) => {
-        console.log('Error fetching userName:', error);
-      });
-  }, []);
+    const fetchData = async () => {
+      try {
+        const myEmail = await AsyncStorage.getItem('email');
+        const token = await AsyncStorage.getItem('token');
+        setUserImage(
+          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${myEmail}/${myEmail}.jpg`
+        );
+        console.log('사용자 프로필 url : ', userImage);
 
-  console.log('ddd : ', sharedPetId);
+        if (myEmail && token) {
+          const response = await axios.get(
+            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setEmail(response.data.email);
+          setUserName(response.data.userName);
+        }
+      } catch (error) {
+        console.error('사용자 데이터 가져오기 오류:', error);
+      }
+    };
+    fetchData();
+  }, [email]);
 
   // 이미지 업로드
-  const handleImageUpload = async () => {
-    if (!imgUrl) {
-      console.log('이미지 없음');
-      return;
-    }
-    const email = await AsyncStorage.getItem('email');
-    const apiUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080`; // 백엔드 API와 일치하도록 이 URL을 업데이트하세요
-
-    const formData = new FormData();
-    formData.append('file', {
-      uri: imgUrl,
-      type: 'image/jpeg', // 필요한 경우 이미지 유형 변경
-      name: 'image.jpg', // 필요한 경우 이름 변경
-    });
-
+  const handleImageUpload = async (petId) => {
     try {
-      const response = await fetch(
-        `${apiUrl}/shared-images/${email}/uploadImage/${sharedPetId}`,
+      const formData = new FormData();
+      const token = await AsyncStorage.getItem('token');
+
+      const postResponse = response.data;
+      const photoId = postResponse.photoId;
+
+      console.log('uri : ', image);
+
+      formData.append('file', {
+        uri: image,
+        type: 'multipart/form-data',
+        name: `${photoId}.jpg`,
+      });
+
+      const response = await axios.post(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/shared-images/${email}/uploadImage/${petId}`,
+        formData,
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'multipart/form-data' },
-          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-
-      if (response.ok) {
-        console.log('사진 등록 성공');
-        navigation.goBack(); // 업로드 성공 후 뒤로 이동
+      if (response.data) {
+        setUploadImage(response.data.imageUrl);
+        console.log('성공 : ', response.data.imageUrl);
       } else {
-        console.log('사진 등록 실패');
+        console.log('오류이유 : ', response);
       }
     } catch (error) {
-      console.log('사진 등록 요청 실패' + error);
+      console.error('이미지 업로드 오류:', error);
     }
   };
 
+  const handleSubmit = () => {
+    const uploadPhoto = async () => {
+      const tmpToken = await AsyncStorage.getItem('token');
+      const response = await axios.post(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/sharedPetGallery/post/${email}`,
+        {
+          //communityId: postId,
+          title: title,
+          wrote: contents,
+          date: formattedDate,
+          likes: 0,
+          petId: petId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${tmpToken}`,
+          },
+        }
+      );
+
+      const postResponse = response.data;
+      console.log(postResponse);
+      handleImageUpload(postResponse.photoId);
+    };
+    uploadPhoto();
+
+    navigation.goBack();
+  };
+
   const InsertUrl = (url) => {
-    setImgUrl(url);
+    setImage(url);
   };
   return (
     <ScrollView
@@ -93,18 +153,15 @@ const AddphotoScreen = ({ navigation, route }) => {
       >
         {/* 작성자 */}
         <View style={styles.profile_container}>
-          <Image
-            source={require('../../../assets/pet_icon.png')}
-            style={styles.profile}
-          />
+          <Image source={{ uri: userImage }} style={styles.profile} />
           <Text style={{ marginLeft: 10, fontSize: 16 }}>{userName}</Text>
         </View>
         {/* 사진 */}
         <View style={styles.photo_container}>
-          {imgUrl === null ? (
+          {image === null ? (
             <View style={styles.photoBox}></View>
           ) : (
-            <Image source={{ uri: imgUrl }} style={styles.image} />
+            <Image source={{ uri: image }} style={styles.image} />
           )}
           <View style={{ marginTop: -28, marginLeft: 300 }}>
             <ImagePickerComponent
@@ -151,7 +208,7 @@ const AddphotoScreen = ({ navigation, route }) => {
             <SquareButton
               colorType={ColorTypes.YELLOW}
               text="등록하기"
-              onPress={handleImageUpload}
+              onPress={handleSubmit}
             />
           </View>
         </View>
