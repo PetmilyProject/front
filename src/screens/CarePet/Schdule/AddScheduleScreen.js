@@ -184,7 +184,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
         .catch((error) => {
           console.error(error, 3);
         });
-      navigation.navigate('ScheduleList', { updated: true });
     } else {
       return 1;
     }

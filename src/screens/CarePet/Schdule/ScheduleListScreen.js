@@ -157,7 +157,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
   // 일정 선택 함수
   const onSchedulePress = (id) => {
     navigation.navigate(CarePetRoutes.VIEW_ScheduleModification, {
-      petName: petName,
+      petId: petId,
       id: id,
     });
   };

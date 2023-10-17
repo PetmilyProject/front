@@ -23,12 +23,13 @@ const CarePetList = ({
   onSchedulePress,
   onPhotoPress,
   onRearerPress,
-  onDeletePress,
-  petId
+  onStatisticsPress,
+  petId,
 }) => {
   const [schedueltextColor, setScheduleTextColor] = useState(YELLOW.DARK);
   const [phototextColor, setPhotoTextColor] = useState(BLACK);
   const [rearertextColor, setRearerTextColor] = useState(BLACK);
+  const [statisticstextColor, setStatisticstextColor] = useState(BLACK);
   const [petProfiles, setPetProfiles] = useState([]);
   const [responseData, setResponseData] = useState([]);
   const [myEmail, setMyEmail] = useState('');
@@ -40,6 +41,7 @@ const CarePetList = ({
     setScheduleTextColor(YELLOW.DARK);
     setPhotoTextColor(BLACK);
     setRearerTextColor(BLACK);
+    setStatisticstextColor(BLACK);
     onSchedulePress();
   };
 
@@ -47,13 +49,22 @@ const CarePetList = ({
     setScheduleTextColor(BLACK);
     setPhotoTextColor(YELLOW.DARK);
     setRearerTextColor(BLACK);
+    setStatisticstextColor(BLACK);
     onPhotoPress();
   };
   const handleRearerPress = () => {
     setScheduleTextColor(BLACK);
     setPhotoTextColor(BLACK);
+    setStatisticstextColor(BLACK);
     setRearerTextColor(YELLOW.DARK);
     onRearerPress();
+  };
+  const handleStatisticsPress = () => {
+    setScheduleTextColor(BLACK);
+    setPhotoTextColor(BLACK);
+    setRearerTextColor(BLACK);
+    setStatisticstextColor(YELLOW.DARK);
+    onStatisticsPress();
   };
   // update 버튼 누를 시 작동. 추후 수정 바람.
   const onUpdatePress = () => {};
@@ -94,9 +105,11 @@ const CarePetList = ({
       });
 
       const myEmail = await AsyncStorage.getItem('email');
-      const linkResponse = await axios.get(`http:43.200.8.47:8080/pet/get-pet/${myEmail}/${petId}`);
+      const linkResponse = await axios.get(
+        `http:43.200.8.47:8080/pet/get-pet/${myEmail}/${petId}`
+      );
       const inviter = linkResponse.data.inviter;
-      
+
       setInviterEmail(inviter);
     } catch (error) {
       console.log('Error fetching pet data:', error);
@@ -133,7 +146,12 @@ const CarePetList = ({
           {/* 이미지 */}
           <TouchableOpacity onPress={onPetPress}>
             <Image
-              source={{ uri : `http://43.200.8.47:8080/pet/${inviterEmail}/downloadImage/${petId}.jpg` + '?cache=' + Math.random() }}
+              source={{
+                uri:
+                  `http://43.200.8.47:8080/pet/${inviterEmail}/downloadImage/${petId}.jpg` +
+                  '?cache=' +
+                  Math.random(),
+              }}
               style={styles.image}
             />
             <View style={styles.editIconContainer}>
@@ -160,6 +178,10 @@ const CarePetList = ({
               <Pressable onPress={handleRearerPress}>
                 <Text style={{ color: rearertextColor }}> 양 육 자 </Text>
               </Pressable>
+              <Text> | </Text>
+              <Pressable onPress={handleStatisticsPress}>
+                <Text style={{ color: statisticstextColor }}> 통 계 </Text>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -167,7 +189,6 @@ const CarePetList = ({
         <View style={styles.componentAMD}>
           <ComponentAMD
             onAddPress={onAddPress}
-            onDeletePress={onDeletePress}
             navigation={navigation}
             petName={petName}
           />

@@ -75,6 +75,7 @@ const UserInfoScreen = () => {
 
           setEmail(response.data.email);
           setUserName(response.data.userName);
+          console.log(response.data.userName);
         }
       } catch (error) {
         console.error('사용자 데이터 가져오기 오류:', error);
