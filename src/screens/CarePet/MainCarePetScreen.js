@@ -43,7 +43,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
     if (content === '일정') {
       navigation.navigate(CarePetRoutes.ADD_SCHDULE, { petName, petId });
     } else if (content === '사진첩') {
-      navigation.navigate(CarePetRoutes.ADD_PHOTO, petName, petId);
+      navigation.navigate(CarePetRoutes.ADD_PHOTO, { petName, petId });
     }
   };
 
@@ -89,7 +89,7 @@ const MainCarePetScreen = ({ navigation, route }) => {
       return photo === null ? (
         <EmptyPhotoSceen />
       ) : (
-        <ListPhotoScreen petName={petName} />
+        <ListPhotoScreen petName={petName} petId={petId} />
       );
     } else if (content === '양육자') {
       return <ListRearerScreen petName={petName} petId={petId} />;

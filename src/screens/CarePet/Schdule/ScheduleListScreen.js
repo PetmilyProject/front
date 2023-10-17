@@ -207,7 +207,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
       <FlatList
         data={responseData}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         style={styles.schedule_container}
       />
     </View>
