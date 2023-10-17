@@ -85,7 +85,10 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   const getImageUrl = async (inviter, id) => {
     try {
       const email = await AsyncStorage.getItem('email');
-      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg` + '?cache=' + Math.random();
+      const url =
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg` +
+        '?cache=' +
+        Math.random();
       setPetProfiles((prevProfiles) =>
         prevProfiles.map((profile) => {
           if (profile.id === id) {
@@ -143,19 +146,22 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {petProfiles.map((profile) => (
-          <PetProfile
-            key={profile.id}
-            name={profile.petName}
-            age={profile.petAge}
-            species={profile.detailInfo}
-            imgurl={profile.imgurl}
-            handleLongPressed={handleLongPressed}
-            onPress={() => onPress(profile.petName, profile.id)}
-            select={select}
-            id={profile.id}
-          />
-        ))}
+        {petProfiles.map((profile) =>
+          // Add a check for null or undefined here
+          profile && profile.petName ? (
+            <PetProfile
+              key={profile.id}
+              name={profile.petName}
+              age={profile.petAge}
+              species={profile.detailInfo}
+              imgurl={profile.imgurl}
+              handleLongPressed={handleLongPressed}
+              onPress={() => onPress(profile.petName, profile.id)}
+              select={select}
+              id={profile.id}
+            />
+          ) : null
+        )}
       </ScrollView>
     </View>
   );

@@ -59,6 +59,7 @@ const PetRegisterScreen = ({ navigation, route }) => {
           addPetUrl,
           {
             petName: name,
+            petCode: name + ' ' + myEmail,
             detailInfo: character,
             petAge: age,
             inviter: userInviter,
