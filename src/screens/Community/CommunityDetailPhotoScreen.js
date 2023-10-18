@@ -15,10 +15,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { BLACK, RED } from '../../colors';
+import { BLACK, RED, YELLOW } from '../../colors';
 import Comment from '../../components/Comment';
 import CommunityModal from './CommunityModal';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import {
+  TouchableWithoutFeedback,
+  ScrollView as GestureHandlerScrollView,
+} from 'react-native-gesture-handler';
 
 const CommunityDetailPhotoScreen = (props, route) => {
   const param = props.route.params;
@@ -164,9 +167,69 @@ const CommunityDetailPhotoScreen = (props, route) => {
     setModalActive(false);
   };
 
+  const getComments = async () => {
+    const myToken = await AsyncStorage.getItem('token');
+
+    try {
+      const commentsResponse = await axios.get(
+        `http://43.200.8.47:8080/comment/getAll/${param.communityinfo.community_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${myToken}`,
+          },
+        }
+      );
+      const commentsData = commentsResponse.data;
+      setComments(commentsData);
+    } catch (error) {
+      console.error('Error while fetching comments:', error);
+    }
+  };
+
+  const sendComment = async () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const date = String(currentDate.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${date}`;
+
+    const myEmail = await AsyncStorage.getItem('email');
+    const myToken = await AsyncStorage.getItem('token');
+    const commentPostUrl = `http://43.200.8.47:8080/comment/post/${myEmail}`;
+    const formData = {
+      communityId: param.communityinfo.community_id,
+      email: myEmail,
+      commentInfo: comment,
+      date: formattedDate,
+    };
+    const commentResponse = await axios.post(commentPostUrl, formData, {
+      Authorization: `Bearer ${myToken}`,
+    });
+    const commentResponseData = commentResponse.data;
+
+    // 2023-10-18 추가
+    const updatedCommentsResponse = await axios.get(
+      `http://43.200.8.47:8080/comment/getAll/${param.communityinfo.community_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${myToken}`,
+        },
+      }
+    );
+    const updatedCommentsData = updatedCommentsResponse.data;
+
+    setComments(updatedCommentsData);
+    setComment('');
+    console.log(commentResponseData);
+  };
+
   useEffect(() => {
     setInitialLikes();
     getUserInfo();
+  }, [comments]);
+
+  useEffect(() => {
+    getComments();
   }, []);
 
   return (
@@ -240,10 +303,15 @@ const CommunityDetailPhotoScreen = (props, route) => {
           </View>
           {/* 댓글 영역 */}
           <View style={[styles.downside_style, styles.give_margin]}>
+            <GestureHandlerScrollView style={styles.comment_container}>
+              <View>
+                <Comment
+                  communityId={param.communityinfo.community_id}
+                  comments={comments}
+                />
+              </View>
+            </GestureHandlerScrollView>
             <View>
-              <Comment communityId={param.communityinfo.community_id} />
-            </View>
-            <View style={styles.comment_container}>
               {/* 댓글 입력 */}
               <View
                 style={{
@@ -264,11 +332,10 @@ const CommunityDetailPhotoScreen = (props, route) => {
                     padding: 5,
                   }}
                 />
-                <TouchableOpacity
-                  onPress={handleComment}
-                  style={{ alignItems: 'flex-end', marginRight: 10 }}
-                >
-                  <Text>게시</Text>
+                <TouchableOpacity onPress={() => { handleComment(), sendComment() }} style={styles.submit}>
+                  <Text style={{ fontWeight: 'bold' }}>
+                    전송
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -299,6 +366,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     width: '100%',
     //height: 300,
+    flex: 0.3,
   },
   header_container: {
     flex: 0.1,
@@ -315,7 +383,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     height: 0,
   },
-  comment_container: {},
+  comment_container: {
+    flex: 1,
+  },
   give_margin: {
     margin: 10,
   },
@@ -347,6 +417,13 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 30,
     marginBottom: 0,
+  },
+  submit: {
+    alignItems: 'flex-end',
+    marginRight: 10,
+    padding: 9,
+    backgroundColor: YELLOW.DEFAULT,
+    borderRadius: 5,
   },
 });
 

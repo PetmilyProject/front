@@ -92,7 +92,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
       if (!newScheduleMap[key]) {
         newScheduleMap[key] = [];
       }
-      newScheduleMap[key].push(email);
+      newScheduleMap[key].push(data.email);
     });
 
     // scheduleMap 업데이트
@@ -117,7 +117,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
     const backgroundColor = scheduleMap[key]
       ? YELLOW.DEFAULT_LIGHT
       : GRAY.LIGHTER;
-    const executorProfileURL = `http://43.200.8.47:8080/profile/get/${item.executorEmail}/${item.executorEmail}.jpg`;
+    const executorProfileURL = `http://43.200.8.47:8080/profile/get/${scheduleMap[key]}/${scheduleMap[key]}.jpg`;
     //console.log(executorProfileURL);
 
     return (
@@ -132,7 +132,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
         ]}
       >
         <TouchableOpacity onPress={() => handleCompleted(index)}>
-          {item.executorEmail ? (
+          {scheduleMap[`${currentDate}-${item.scheduleId}`] ? (
             <Image
               source={{
                 uri: executorProfileURL + '?cache=' + Math.random(),

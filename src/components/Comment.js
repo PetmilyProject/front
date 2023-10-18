@@ -14,6 +14,7 @@ import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const Comment = (param) => {
+  //console.log(param);
   const communityId = param.communityId;
   const [contentHeight, setContentHeight] = useState(0);
   const [commentHeight, setCommentHeight] = useState(0);
@@ -48,8 +49,24 @@ const Comment = (param) => {
   };
 
   useEffect(() => {
+    const fetchComments = async () => {
+      const email = await AsyncStorage.getItem('email');
+      const token = await AsyncStorage.getItem('token');
+      const commentResponse = await axios.get(
+        `http://43.200.8.47:8080/comment/getAll/${param.communityId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const commentResponseData = commentResponse.data;
+      setCommentContent(commentResponseData);
+    };
+    //console.log(param)
+    fetchComments();
     commentInit();
-  }, []); // 컴포넌트가 마운트될 때만 호출
+  }, [param]);
 
   useEffect(() => {
     const fetchUserNames = async () => {
