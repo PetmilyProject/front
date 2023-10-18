@@ -80,11 +80,11 @@ const ScheduleListScreen = ({ petName, petId }) => {
     const getAllUrl = `http://43.200.8.47:8080/executed/getAll`;
     const getAllResponse = await axios.get(getAllUrl, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
     const getAllResponseData = getAllResponse.data;
-  
+
     // scheduleMap 초기화
     const newScheduleMap = {};
     getAllResponseData.forEach((data) => {
@@ -94,16 +94,19 @@ const ScheduleListScreen = ({ petName, petId }) => {
       }
       newScheduleMap[key].push(email);
     });
-  
+
     // scheduleMap 업데이트
     setScheduleMap(newScheduleMap);
-  }
-  
+  };
 
   useEffect(() => {
     fetchScheduleData(); // 컴포넌트가 처음 렌더링될 때 데이터를 가져옵니다.
     fetchEtcData();
   }, [currentDate]);
+
+  useEffect(() => {
+    //console.log('scheduleMap updating...');
+  }, [scheduleMap]);
 
   // 렌더링 되는 스케줄 아이템
   const renderItem = ({ item, index }) => {
@@ -115,7 +118,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
       ? YELLOW.DEFAULT_LIGHT
       : GRAY.LIGHTER;
     const executorProfileURL = `http://43.200.8.47:8080/profile/get/${item.executorEmail}/${item.executorEmail}.jpg`;
-    console.log(executorProfileURL);
+    //console.log(executorProfileURL);
 
     return (
       <TouchableOpacity
@@ -168,60 +171,41 @@ const ScheduleListScreen = ({ petName, petId }) => {
 
     const email = await AsyncStorage.getItem('email');
     const token = await AsyncStorage.getItem('token');
-    const executeUrl = `http://43.200.8.47:8080/executed/${email}/${responseData[index].scheduleId}/${currentDate}`;
-    
+    const scheduleId = responseData[index].scheduleId;
+    const data = responseData[index];
+    const executeUrl = `http://43.200.8.47:8080/executed/${email}/${scheduleId}/${currentDate}`;
+    const deleteExecutionUrl = `http://43.200.8.47:8080/executed/delete/${scheduleId}/${currentDate}`;
+    const key = `${currentDate}-${data.scheduleId}`;
+
+    if (!scheduleMap[key]) {
+      const executeResponse = await axios.get(executeUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const executeResponseData = executeResponse.data;
+
+      const newScheduleMap = { ...scheduleMap }; // 새로운 객체 생성
+      newScheduleMap[key] = email; // 새로운 객체에 값을 할당
+
+      setScheduleMap(newScheduleMap); // 상태 업데이트
+
+      console.log(executeResponseData, 'added');
+    } else {
+      const deleteResponse = await axios.delete(deleteExecutionUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const deleteResponseData = deleteResponse.data;
+      const newScheduleMap = { ...scheduleMap };
+      delete newScheduleMap[key]; // 해당 키를 제거
+
+      setScheduleMap(newScheduleMap);
+      console.log(deleteResponseData, 'deleted');
+    }
+
     //console.log(executeUrl);
-    const executeResponse = await axios.get(executeUrl, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const executeResponseData = executeResponse.data;
-    console.log(executeResponseData);
-    // AsyncStorage.getItem('email')
-    //   .then((myEmail) => {
-    //     if (myEmail) {
-    //       const updatedSchedule = responseData[index];
-    //       updatedSchedule.isCompleted =
-    //         updatedSchedule.isCompleted === 0 ? 1 : 0;
-    //       const completeUser =
-    //         updatedSchedule.isCompleted === 1 ? myEmail : null;
-
-    //       AsyncStorage.getItem('token')
-    //         .then((token) => {
-    //           axios
-    //             .put(
-    //               `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/complete/${petId}/${updatedSchedule.id}`,
-    //               {
-    //                 complete: completeUser,
-    //                 isCompleted: updatedSchedule.isCompleted,
-    //               },
-    //               {
-    //                 headers: {
-    //                   Authorization: `Bearer ${token}`,
-    //                 },
-    //               }
-    //             )
-    //             .then((response) => {
-    //               console.log('Schedule updated successfully');
-
-    //               // responseData를 업데이트하지 않고 대신 화면을 다시 렌더링
-    //               // 데이터를 변경하면 컴포넌트가 다시 렌더링되므로 변경된 데이터를 화면에 반영
-    //               // 다시 렌더링하려면 화면 상태를 다시 가져와야함
-    //               fetchScheduleData(); // fetchScheduleData는 데이터를 다시 가져오는 함수
-    //             })
-    //             .catch((error) => {
-    //               console.error(error);
-    //             });
-    //         })
-    //         .catch((error) => {
-    //           console.error(error);
-    //         });
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
   };
 
   // 날짜 선택 화살표 함수
