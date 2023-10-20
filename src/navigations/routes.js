@@ -44,6 +44,9 @@ export const CarePetRoutes = {
 
 export const CommunityRoutes = {
   ADD_COMMUNITY: 'AddCommunityScreen',
+  UPDATE_COMMUNITY: 'CommunityUpdateScreen',
+  PHOTO_COMMUNITY: 'CommunityPhotoScreen',
+  DETAIL_COMMUNITY: 'CommunityDetailPhotoScreen',
 };
 
 export const UserInfoRoutes = {
