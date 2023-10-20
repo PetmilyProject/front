@@ -53,15 +53,18 @@ const CommunityPhotoScreen = () => {
 
       for (let i = 0; i < sorted.length; i++) {
         const num = sorted[i].split('/')[5].slice(0, -4);
-        const tmp = await axios.get(`http://43.200.8.47:8080/community/get/${num}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const tmp = await axios.get(
+          `http://43.200.8.47:8080/community/get/${num}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
         tmpTitle.push(tmp.data.title);
       }
-      
-      setTitleOfPost(tmpTitle);      
+
+      setTitleOfPost(tmpTitle);
       setIsRefreshing(false);
     } catch (error) {
       console.log('Error fetching pet data:', error);
@@ -156,8 +159,15 @@ const CommunityPhotoScreen = () => {
                 onPress={() => gotoDetail(index)}
                 style={styles.photoList}
               >
-                <Image source={{ uri: item + '?cache=' + Math.random() }} style={styles.photoItem} />
-                <Text style={{marginLeft: 15}}>{titleOfPost[index]}</Text>
+                <View style={{ alignItems: 'center' }}>
+                  <Image
+                    source={{ uri: item + '?cache=' + Math.random() }}
+                    style={styles.photoItem}
+                  />
+                </View>
+                <Text style={{ marginTop: 10, marginLeft: 10, fontSize: 16 }}>
+                  {titleOfPost[index]}
+                </Text>
               </TouchableOpacity>
             )}
             numColumns={2}
@@ -188,14 +198,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   photoList: {
-    width: '47%',
-    marginTop: '2%',
-    marginLeft: '2%',
+    width: '50%',
+    marginTop: '10%',
   },
   photoItem: {
-    width: '80%',
+    width: '90%',
     aspectRatio: 1,
-    margin: 15,
+    // margin: 20,
   },
 });
 

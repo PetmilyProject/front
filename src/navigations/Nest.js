@@ -11,6 +11,7 @@ import {
   AddPetRoutes,
   AuthRoutes,
   CarePetRoutes,
+  CommunityRoutes,
   UserInfoRoutes,
 } from './routes';
 import PetProfileListScreen from '../screens/AddPet/PetProfileListScreen';
@@ -31,6 +32,7 @@ import AddCommunityScreen from '../screens/Community/AddCommunityScreen';
 import DetailRearerScreen from '../screens/CarePet/Rearer/DetailRearerScreen';
 import ListRearerScreen from '../screens/CarePet/Rearer/ListRearerScreen';
 import UserInfoEditScreen from '../screens/UserInfo/UserInfoEditScreen';
+import CommunityUpdateScreen from '../screens/Community/CommunityUpdateScreen';
 
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
@@ -155,18 +157,23 @@ const PhotoStackScreen = () => {
         options={{ headerShown: false }}
       /> */}
       <PhotoStack.Screen
-        name={'CommunityPhotoScreen'}
+        name={CommunityRoutes.PHOTO_COMMUNITY}
         component={CommunityPhotoScreen}
         options={{ headerShown: false }}
       />
       <PhotoStack.Screen
-        name={'CommunityDetailPhotoScreen'}
+        name={CommunityRoutes.DETAIL_COMMUNITY}
         component={CommunityDetailPhotoScreen}
         options={{ headerShown: false }}
       />
       <PhotoStack.Screen
-        name={'AddCommunityScreen'}
+        name={CommunityRoutes.ADD_COMMUNITY}
         component={AddCommunityScreen}
+        options={{ headerShown: false }}
+      />
+      <PhotoStack.Screen
+        name={CommunityRoutes.UPDATE_COMMUNITY}
+        component={CommunityUpdateScreen}
         options={{ headerShown: false }}
       />
     </PhotoStack.Navigator>
