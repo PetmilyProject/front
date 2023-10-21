@@ -18,10 +18,13 @@ import { YELLOW } from '../colors';
 const Comment = (param) => {
   //console.log(param);
   const communityId = param.communityId;
+  const [commentWriter, setCommentWriter] = useState('');
+
   const [contentHeight, setContentHeight] = useState(0);
   const [commentHeight, setCommentHeight] = useState(0);
   const [commentContent, setCommentContent] = useState([]);
   const [userNames, setuserNames] = useState([]);
+  const [email, setEmail] = useState('');
 
   const [modalActive, setModalActive] = useState(false);
 
@@ -35,6 +38,7 @@ const Comment = (param) => {
 
   const commentInit = async () => {
     const email = await AsyncStorage.getItem('email');
+    setEmail(email);
     const token = await AsyncStorage.getItem('token');
     const commentResponse = await axios.get(
       `http://43.200.8.47:8080/comment/getAll/${communityId}`,
@@ -75,7 +79,7 @@ const Comment = (param) => {
       const commentResponseData = commentResponse.data;
       setCommentContent(commentResponseData);
     };
-    //console.log(param)
+
     fetchComments();
     commentInit();
   }, [param]);
@@ -109,7 +113,6 @@ const Comment = (param) => {
   };
 
   const getComment = (comment, index) => {
-    console.log('코멘트', comment, '인덱스', index);
     return (
       <View style={styles.comment_container} onLayout={handleLayout}>
         <View style={{ width: 50, height: 65 }}>
@@ -156,6 +159,8 @@ const Comment = (param) => {
                   modalActive={modalActive}
                   onClose={closeModal}
                   commentId={comment.commentId}
+                  commentWriter={comment.email}
+                  email={email}
                 />
               </TouchableOpacity>
             </View>

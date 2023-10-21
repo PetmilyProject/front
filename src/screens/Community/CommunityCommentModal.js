@@ -24,18 +24,13 @@ const CommunityCommnetModal = (params) => {
   const modalActive = params.modalActive;
   const onClose = params.onClose;
   const commentId = params.commentId;
-
-  //console.log(modalActive);
-
-  //삭제
-  const handleDeleteClick = () => {
-    setIsConfirmingDeletion(true); // '삭제' 버튼 클릭 시 상태 업데이트
-  };
+  const commentWriter = params.commentWriter;
+  const email = params.email;
 
   const handleCancelDelete = () => {
     setIsConfirmingDeletion(false); // '아니오' 클릭 시 상태 업데이트
   };
-  //삭제
+  //<------------------------------------------------삭제--------------------------------------------------------->
   const performDelete = () => {
     AsyncStorage.getItem('token').then((token) => {
       axios
@@ -66,7 +61,17 @@ const CommunityCommnetModal = (params) => {
 
   //삭제 최종확인
   const handleConfirmDelete = () => {
-    performDelete();
+    console.log('작성자', commentWriter, '사용자', email);
+    if (commentWriter === email) {
+      performDelete();
+      onClose();
+    } else {
+      onClose();
+    }
+  };
+
+  //<------------------------------------------------수정--------------------------------------------------------->
+  const handleUpdate = () => {
     onClose();
   };
 
@@ -81,11 +86,11 @@ const CommunityCommnetModal = (params) => {
         <View style={styles.modalBackground}>
           <View style={styles.container}>
             <View style={styles.modal_view}>
-              <TouchableOpacity onPress={performDelete}>
+              <TouchableOpacity onPress={handleConfirmDelete}>
                 <Text style={styles.delete}>삭제</Text>
               </TouchableOpacity>
               <View style={styles.separator}></View>
-              <TouchableOpacity onPress={onClose}>
+              <TouchableOpacity onPress={handleUpdate}>
                 <Text style={styles.update_and_cancel}>수정</Text>
               </TouchableOpacity>
               <View style={styles.separator}></View>
