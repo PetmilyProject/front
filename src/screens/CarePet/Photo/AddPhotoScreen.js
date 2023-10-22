@@ -72,15 +72,14 @@ const AddphotoScreen = ({ navigation, route }) => {
   }, [email]);
 
   // 이미지 업로드
-  const handleImageUpload = async (petId) => {
+  const handleImageUpload = async (photoId, petId) => {
     try {
       const formData = new FormData();
+      const myEmail = await AsyncStorage.getItem('email');
       const token = await AsyncStorage.getItem('token');
 
-      const postResponse = response.data;
-      const photoId = postResponse.photoId;
-
       console.log('uri : ', image);
+      console.log(photoId, petId);
 
       formData.append('file', {
         uri: image,
@@ -89,7 +88,7 @@ const AddphotoScreen = ({ navigation, route }) => {
       });
 
       const response = await axios.post(
-        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/shared-images/${email}/uploadImage/${photoId}`,
+        `http://43.200.8.47:8080/shared-images/${petId}/uploadImage/${myEmail}/${photoId}`,
         formData,
         {
           headers: {
@@ -98,6 +97,8 @@ const AddphotoScreen = ({ navigation, route }) => {
           },
         }
       );
+      const postResponse = response.data;
+
       if (response.data) {
         setUploadImage(response.data.imageUrl);
         console.log('성공 : ', response.data.imageUrl);
@@ -132,7 +133,7 @@ const AddphotoScreen = ({ navigation, route }) => {
 
       const postResponse = response.data;
       console.log(postResponse);
-      handleImageUpload(postResponse.photoId);
+      handleImageUpload(postResponse.photoId, postResponse.petId);
     };
     uploadPhoto();
 
@@ -149,7 +150,7 @@ const AddphotoScreen = ({ navigation, route }) => {
     >
       <TouchableWithoutFeedback
         onPress={() => {
-          Keyboard.dismiss();
+          //Keyboard.dismiss();
         }}
       >
         {/* 작성자 */}
@@ -220,14 +221,17 @@ const AddphotoScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: WHITE,
   },
+  contents_container: {
+    flex: 1,
+  },  
   profile_container: {
     flexDirection: 'row',
-    flex: 0.22,
+    //flex: 0.22,
     alignItems: 'center',
     justifyContent: 'flex-start',
     marginHorizontal: 20,

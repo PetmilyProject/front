@@ -101,20 +101,22 @@ const MainCarePetScreen = ({ navigation, route }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <CarePetList
-        petName={petName}
-        onAddPress={onAddPress}
-        onSchedulePress={onSchedulePress}
-        onPhotoPress={onPhotoPress}
-        onRearerPress={onRearerPress}
-        onStatisticsPress={onStatisticsPress}
-        navigation={navigation}
-        petId={petId}
-      />
-      <View style={styles.line}></View>
-      <View style={styles.container2}>{renderScreen()}</View>
-    </View>
+    <ScrollView style={{backgroundColor: 'white'}}>
+      <View style={styles.container}>
+        <CarePetList
+          petName={petName}
+          onAddPress={onAddPress}
+          onSchedulePress={onSchedulePress}
+          onPhotoPress={onPhotoPress}
+          onRearerPress={onRearerPress}
+          onStatisticsPress={onStatisticsPress}
+          navigation={navigation}
+          petId={petId}
+        />
+        <View style={styles.line}></View>
+        <View style={styles.container2}>{renderScreen()}</View>
+      </View>
+    </ScrollView>
   );
 };
 

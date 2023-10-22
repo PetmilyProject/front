@@ -14,6 +14,7 @@ import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
 import SelectionListAlert from '../../../components/SelectionListAlert';
 import ScheduleListScreen from './ScheduleListScreen';
+import { CarePetRoutes } from '../../../navigations/routes';
 
 const ScheduleModificationScreen = ({ navigation, route }) => {
   const params = route.params;
@@ -181,7 +182,9 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
       'hm:',
       time,
       'period:',
-      period,
+      selectedDays,
+      'repeat:',
+      repeat,
       'executor:',
       executor,
       'isCompleted:',
@@ -189,6 +192,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
       'complete:',
       complete
     );
+    
     AsyncStorage.getItem('email')
       .then((myEmail) => {
         AsyncStorage.getItem('token')
@@ -213,9 +217,10 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
               )
               .then((response) => {
                 console.log(response.data);
+                navigation.popToTop();
               })
               .catch((error) => {
-                console.error(error);
+                console.error("펫 일정 업데이트 실패 : 에러 : ", error);
               });
           })
           .catch((error) => {
@@ -239,7 +244,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
 
             axios
               .delete(
-                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/delete/${petId}/${scheduleId}`,
+                `http://43.200.8.47:8080/schedule/${myEmail}/delete/${petId}/${scheduleId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -247,6 +252,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
                 }
               )
               .then((response) => {
+                console.log(response.data)
                 if (response.status === 200) {
                   console.log('일정이 성공적으로 삭제되었습니다');
                   navigation.goBack();
@@ -332,6 +338,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
           <SelectionListAlert
             visible={visible}
             onClose={() => setVisible(false)}
+            multiple={true} // 2023-10-21 추가
             item={item}
             width={220}
             scrollViewHeight={170}

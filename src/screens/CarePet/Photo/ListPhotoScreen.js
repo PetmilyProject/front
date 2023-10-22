@@ -22,56 +22,28 @@ const ListPhotoScreen = ({ Navigation, petName, petId }) => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const getPhotoImage = async () => {
-      const storedEmail = await AsyncStorage.getItem('email');
-      setEmail(storedEmail);
-      const sharedPetInfo = (
-        await axios.get(
-          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/shared/get-all/${storedEmail}`
-        )
-      ).data;
-      setSharedPets((prevPetInfo) => prevPetInfo.concat(sharedPetInfo));
-      // console.log(sharedPetInfo);
-
-      const newImageList = []; // 새로운 이미지 목록을 담을 배열 생성
-
-      for (let i = 0; i < sharedPetInfo.length; i++) {
-        const sharedUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/shared-images/${storedEmail}/downloadImage/${sharedPetInfo[i].petId}.jpg`;
-
-        try {
-          const response = await fetch(sharedUrl); // 이미지 데이터를 가져오기 위해 fetch 요청
-          if (response.ok) {
-            const imageData = await response.blob(); // 응답을 Blob 객체로 변환
-            const base64Data = await convertBlobToBase64(imageData); // Blob을 base64로 변환
-            // 이미지 정보 말고도 다양한 정보를 추가로 넣을 수 있다
-
-            //펫 아이디가 동일한 경우에만 이미지 추가
-            if (petId === sharedPetInfo[i].petId) {
-              newImageList.push({
-                id: sharedPetInfo[i].sharedPetId,
-                image: base64Data,
-              }); // 새로운 이미지를 업데이트된 이미지 목록에 추가
-            }
-          } else {
-            console.log(
-              'Error fetching image data. Response status:',
-              response.status
-            );
-          }
-        } catch (error) {
-          console.log('Error fetching image data:', error);
-        }
-      }
-
-      setImageList(newImageList); // 업데이트된 이미지 목록으로 상태 변수 업데이트
-      setIsLoading(false); // 데이터 로딩이 완료되었으므로 로딩 상태 업데이트
-    };
-
+    // AsyncStorage에서 이메일과 토큰 가져오는 코드
     const fetchData = async () => {
+      const storedEmail = await AsyncStorage.getItem('email');
+      const storedToken = await AsyncStorage.getItem('token');
+      const imgUrl = `http://43.200.8.47:8080/shared-images/${petId}/getAllImages`;
+
       try {
-        getPhotoImage();
+        const imgUrlResponse = await axios.get(imgUrl);
+        if (imgUrlResponse.status === 200) {
+          const responseData = imgUrlResponse.data;
+          setImageList(responseData);
+          setIsLoading(false);
+        } else {
+          console.error(
+            'Failed to fetch image URLs. Response status:',
+            imgUrlResponse.status
+          );
+          setIsLoading(false);
+        }
       } catch (error) {
-        console.log('Error fetching shared data:', error);
+        console.error('Error fetching image URLs:', error);
+        setIsLoading(false);
       }
     };
 
@@ -89,17 +61,32 @@ const ListPhotoScreen = ({ Navigation, petName, petId }) => {
     });
   };
 
-  // 생성되는 이미지
   const renderItem = ({ item }) => {
-    //이미지 상세보기
-    const handlePress = () => {
-      const matchedPet = sharedPets.find((pet) => pet.sharedPetId === item.id);
+    const handlePress = async () => {
+      const myEmail = await AsyncStorage.getItem('email');
+      const myToken = await AsyncStorage.getItem('token');
+      const parts = item.split('/');
+      const petNum = parts[parts.length - 2];
+      const rawScheduleNum = parts[parts.length - 1];
+      const scheduleNum = rawScheduleNum.replace(/\.[^/.]+$/, '');
+      
+      const scheduleUrl = `http://43.200.8.47:8080/sharedPetGallery/${myEmail}/get/${petNum}`;
+      console.log(scheduleUrl);
+      const scheduleResponse = await axios.get(scheduleUrl, {
+        headers: {
+          Authorization: `Bearer ${myToken}`
+        }
+      });
+      const responseData = scheduleResponse.data;
+      console.log(responseData);
 
-      console.log('it : ', item);
+      console.log(number);
+      //const matchedPet = sharedPets.find((pet) => pet.sharedPetId === item.id);
+
       if (matchedPet) {
         navigation.navigate(CarePetRoutes.DETAIL_PHOTO, {
           petInfo: {
-            pet: matchedPet,
+            pet: petNum,
             likes: matchedPet.likes,
             date: matchedPet.date,
             memo: matchedPet.memo,
@@ -110,7 +97,7 @@ const ListPhotoScreen = ({ Navigation, petName, petId }) => {
 
     return (
       <Pressable onPress={handlePress}>
-        <Image source={{ uri: item.image }} style={styles.image} />
+        <Image source={{ uri: item }} style={styles.image} />
       </Pressable>
     );
   };

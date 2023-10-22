@@ -2,14 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="21426eed-4ca1-4dfb-8065-b42b4b29367e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/eas.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/navigations/AuthStack.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigations/AuthStack.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/navigations/Nest.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigations/Nest.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/navigations/routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigations/routes.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/screens/CarePet/Schdule/WithdrawalScreen.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/screens/SignInScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/SignInScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/screens/UserInfoScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +28,9 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/iacsb/Desktop/캡스톤/backend"
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "cidr.known.project.marker": "true",
+    "last_opened_file_path": "C:/Users/이상윤/Desktop/졸업작품/frontend/android"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />

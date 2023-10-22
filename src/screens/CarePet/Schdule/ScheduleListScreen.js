@@ -122,7 +122,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
 
     return (
       <TouchableOpacity
-        onPress={() => onSchedulePress(item.id)}
+        onPress={() => onSchedulePress(item.scheduleId)}
         style={[
           styles.scheduleItem,
           {
