@@ -10,10 +10,8 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { GRAY, WHITE, YELLOW } from '../../../colors';
-import { AntDesign } from '@expo/vector-icons';
 import { CarePetRoutes } from '../../../navigations/routes';
 import { useNavigation } from '@react-navigation/native';
-import { useFocusEffect } from '@react-navigation/native';
 
 const ScheduleListScreen = ({ petName, petId }) => {
   const [responseData, setResponseData] = useState([]);
@@ -207,7 +205,8 @@ const ScheduleListScreen = ({ petName, petId }) => {
       <FlatList
         data={responseData}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        // keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         style={styles.schedule_container}
       />
     </View>
@@ -236,7 +235,7 @@ const styles = StyleSheet.create({
     width: '90%',
     marginLeft: 5,
     marginRight: 5,
-    marginTop: 20,
+    marginTop: 40,
   },
   scheduleItem: {
     width: 350,

@@ -238,7 +238,6 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
   };
 
   const setName1 = (newName) => {
-    console.log('ddd : ', newName);
     setName(newName);
   };
 

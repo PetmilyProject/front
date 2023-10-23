@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
-  View,
   Alert,
   TouchableWithoutFeedback,
   Keyboard,
@@ -9,54 +8,111 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import axios from 'axios';
-import {
-  widthPercentageToDP,
-  heightPercentageToDP,
-} from 'react-native-responsive-screen';
+import { widthPercentageToDP } from 'react-native-responsive-screen';
 import Button2 from '../../components/Button2';
 import InputText from '../../components/InputText';
 import { YELLOW, WHITE } from '../../colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserInfoEditScreen = ({ navigation }) => {
+  const [userId, setId] = useState('');
   const [password, setPassword] = useState('');
   const [userName, setUserName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const handleProfileUpdate = () => {
-    axios
-      .put(
-        'http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/auth/update-profile',
-        {
-          password: password,
-          userName: userName,
-          phoneNumber: phoneNumber,
-        }
-      )
-      .then((response) => {
-        Alert.alert('프로필 업데이트 성공', '프로필이 업데이트되었습니다.');
-        // 업데이트 후 필요한 작업 수행
-        navigation.goBack();
-      })
-      .catch((error) => {
-        console.error('프로필 업데이트 실패:', error);
-        Alert.alert('프로필 업데이트 실패', '다시 시도해주세요.');
-      });
+  useEffect(() => {
+    fetchUserInformation();
+  }, []);
 
-    // 키보드를 닫습니다.
-    Keyboard.dismiss();
+  const fetchUserInformation = async () => {
+    try {
+      const myEmail = await AsyncStorage.getItem('email');
+      const token = await AsyncStorage.getItem('token');
+
+      if (myEmail && token) {
+        axios
+          .get(
+            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .then((response) => {
+            const userData = response.data;
+            setId(userData.userId);
+            setUserName(userData.userName);
+            setPhoneNumber(userData.phoneNumber);
+            // console.log('userData : ', userData);
+          })
+          .catch((error) => {
+            console.error('유저 정보 가져오기 실패:', error);
+            Alert.alert('에러', '유저 정보를 가져오는데 실패했습니다.');
+          });
+      } else {
+        Alert.alert('에러', '이메일 또는 토큰을 찾을 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('에러:', error);
+      Alert.alert('에러', '다시 시도해주세요.');
+    }
+  };
+
+  const handleProfileUpdate = async () => {
+    try {
+      const myEmail = await AsyncStorage.getItem('email');
+      const token = await AsyncStorage.getItem('token');
+
+      if (myEmail && token) {
+        axios
+          .put(
+            'http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/update',
+            {
+              // password: password,
+              userId: userId,
+              userName: userName,
+              phoneNumber: phoneNumber,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .then((response) => {
+            Alert.alert('업데이트 성공', '프로필이 업데이트되었습니다.');
+            navigation.goBack();
+          })
+          .catch((error) => {
+            console.log('usid : ', userId);
+            console.error('업데이트 실패:', error);
+            Alert.alert('업데이트 실패', '다시 시도해주세요.');
+          });
+
+        // 키보드를 닫습니다.
+        Keyboard.dismiss();
+      } else {
+        Alert.alert('에러', '이메일 또는 토큰을 찾을 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('에러:', error);
+      Alert.alert('에러', '다시 시도해주세요.');
+    }
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
         <ScrollView contentContainerStyle={styles.container}>
-          <InputText
+          {/* <InputText
             title={'비밀번호'}
             placeholder={'비밀번호'}
             keyboardType={'visible-password'}
+            secureTextEntry={true}
             onChangeText={(text) => setPassword(text)}
             width={widthPercentageToDP('90%')}
-          />
+          /> */}
           <InputText
             title={'닉네임'}
             placeholder={'닉네임'}
@@ -74,7 +130,7 @@ const UserInfoEditScreen = ({ navigation }) => {
           <Button2
             backgrouncolor={YELLOW.DEFAULT}
             color={WHITE}
-            text={'프로필 업데이트'}
+            text={'프로필 수정'}
             onPress={handleProfileUpdate}
             width={widthPercentageToDP('90%')}
           />

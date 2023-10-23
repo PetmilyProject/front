@@ -97,7 +97,7 @@ const ListPhotoScreen = ({ Navigation, petName }) => {
     const handlePress = () => {
       const matchedPet = sharedPets.find((pet) => pet.sharedPetId === item.id);
 
-      console.log('it : ', item);
+      // console.log('it : ', item);
       if (matchedPet) {
         navigation.navigate(CarePetRoutes.DETAIL_PHOTO, {
           petInfo: {

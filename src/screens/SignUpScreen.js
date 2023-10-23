@@ -24,6 +24,30 @@ const SignUpScreen = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [inviter, setInviter] = useState('');
 
+  // 이메일 중복 확인 함수
+  const handleEmailDuplicateCheck = (myEmail) => {
+    axios
+      .get(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/auth/${myEmail}`
+        // {
+        //   email: email,
+        // }
+      )
+      .then((response) => {
+        if (response.data) {
+          Alert.alert('중복된 이메일', '다른 이메일을 사용해주세요.');
+        } else {
+          Alert.alert('사용 가능한 이메일', '계속 진행하세요.');
+        }
+      })
+      .catch((error) => {
+        console.error('이메일 중복 확인 실패:', error);
+        Alert.alert('오류', '이메일 중복 확인 중 문제가 발생했습니다.');
+      });
+  };
+
+  console.log('em : ', handleEmailDuplicateCheck.response);
+
   const handleSignup = () => {
     axios
       .post(
@@ -74,7 +98,8 @@ const SignUpScreen = ({ navigation }) => {
                 backgrouncolor={YELLOW.DEFAULT}
                 color={WHITE}
                 text={'중복확인'}
-                onPress={handleSignup}
+                // onPress={handleEmailDuplicateCheck(email)}
+                onPress={handleEmailDuplicateCheck}
                 width={widthPercentageToDP('25%')}
                 fontSize={15}
               />
@@ -83,6 +108,7 @@ const SignUpScreen = ({ navigation }) => {
               title={'비밀번호'}
               placeholder={'비밀번호'}
               keyboardType={'visible-password'}
+              secureTextEntry={true}
               onChangeText={(text) => setPassword(text)}
               width={widthPercentageToDP('90%')}
             />

@@ -1,5 +1,5 @@
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons, Entypo, Ionicons } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import { YELLOW } from '../colors';
 import { CarePetRoutes } from '../navigations/routes';
 
@@ -22,7 +22,7 @@ const ComponentAMD = ({
         </TouchableOpacity> */}
       {/* 입력 버튼 */}
       <TouchableOpacity onPress={onAddPress}>
-        <Entypo name="circle-with-plus" size={45} color={YELLOW.DEFAULT} />
+        <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
       </TouchableOpacity>
       {/*수정 버튼
         <TouchableOpacity onPress={onUpdatePress}>

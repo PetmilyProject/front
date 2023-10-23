@@ -15,6 +15,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { CarePetRoutes } from '../../../navigations/routes';
+import {
+  widthPercentageToDP,
+  heightPercentageToDP,
+} from 'react-native-responsive-screen';
 
 const CarePetList = ({
   navigation,
@@ -24,7 +28,7 @@ const CarePetList = ({
   onPhotoPress,
   onRearerPress,
   onDeletePress,
-  petId
+  petId,
 }) => {
   const [schedueltextColor, setScheduleTextColor] = useState(YELLOW.DARK);
   const [phototextColor, setPhotoTextColor] = useState(BLACK);
@@ -94,9 +98,11 @@ const CarePetList = ({
       });
 
       const myEmail = await AsyncStorage.getItem('email');
-      const linkResponse = await axios.get(`http:43.200.8.47:8080/pet/get-pet/${myEmail}/${petId}`);
+      const linkResponse = await axios.get(
+        `http:43.200.8.47:8080/pet/get-pet/${myEmail}/${petId}`
+      );
       const inviter = linkResponse.data.inviter;
-      
+
       setInviterEmail(inviter);
     } catch (error) {
       console.log('Error fetching pet data:', error);
@@ -133,7 +139,12 @@ const CarePetList = ({
           {/* 이미지 */}
           <TouchableOpacity onPress={onPetPress}>
             <Image
-              source={{ uri : `http://43.200.8.47:8080/pet/${inviterEmail}/downloadImage/${petId}.jpg` + '?cache=' + Math.random() }}
+              source={{
+                uri:
+                  `http://43.200.8.47:8080/pet/${inviterEmail}/downloadImage/${petId}.jpg` +
+                  '?cache=' +
+                  Math.random(),
+              }}
               style={styles.image}
             />
             <View style={styles.editIconContainer}>
@@ -177,44 +188,87 @@ const CarePetList = ({
   );
 };
 
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     marginTop: 70,
+//   },
+//   container_row: {
+//     flexDirection: 'row',
+//   },
+//   container_main: {
+//     flexDirection: 'row',
+//     marginRight: 50,
+//   },
+//   componentAMD: { marginTop: -15 },
+//   container_content: { justifyContent: 'center', marginLeft: 10 },
+//   container_name: {
+//     marginBottom: 10,
+//   },
+//   name: {
+//     fontSize: 30,
+//     fontWeight: 600,
+//   },
+//   image: {
+//     borderRadius: 100,
+//     alignItems: 'center',
+//     width: 110,
+//     height: 110,
+//     marginRight: 10,
+//   },
+//   editIconContainer: {
+//     position: 'absolute',
+//     bottom: 5,
+//     right: 5,
+//     borderWidth: 0.2,
+//     backgroundColor: WHITE,
+//     borderRadius: 50,
+//     padding: 5,
+//   },
+// });
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 70,
+    marginTop: heightPercentageToDP('10%'),
   },
   container_row: {
     flexDirection: 'row',
   },
   container_main: {
     flexDirection: 'row',
-    marginRight: 50,
+    marginRight: widthPercentageToDP('10%'),
   },
-  componentAMD: { marginTop: -30 },
-  container_content: { justifyContent: 'center', marginLeft: 10 },
+  componentAMD: { marginTop: heightPercentageToDP('1%') },
+  container_content: {
+    justifyContent: 'center',
+    marginLeft: widthPercentageToDP('1%'),
+  },
   container_name: {
-    marginBottom: 10,
+    marginBottom: heightPercentageToDP('2%'),
   },
   name: {
     fontSize: 30,
-    fontWeight: 600,
+    fontWeight: '600',
   },
   image: {
     borderRadius: 100,
     alignItems: 'center',
-    width: 110,
-    height: 110,
-    marginRight: 10,
+    width: widthPercentageToDP('30%'),
+    height: heightPercentageToDP('15%'),
+    marginRight: widthPercentageToDP('5%'),
   },
   editIconContainer: {
     position: 'absolute',
-    bottom: 5,
-    right: 5,
+    bottom: heightPercentageToDP('1%'),
+    right: widthPercentageToDP('1%'),
     borderWidth: 0.2,
     backgroundColor: WHITE,
-    borderRadius: 50,
-    padding: 5,
+    borderRadius: widthPercentageToDP('12%'),
+    padding: widthPercentageToDP('2%'),
   },
 });
 

@@ -7,6 +7,7 @@ const InputText = ({
   placeholder,
   keyboardType,
   onChangeText,
+  secureTextEntry,
   width,
 }) => {
   return (
@@ -17,6 +18,7 @@ const InputText = ({
           style={[styles.input, { width: width }]}
           placeholder={placeholder}
           keyboardType={keyboardType}
+          secureTextEntry={secureTextEntry}
           onChangeText={onChangeText}
         ></TextInput>
       </View>

@@ -85,7 +85,10 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
   const getImageUrl = async (inviter, id) => {
     try {
       const email = await AsyncStorage.getItem('email');
-      const url = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg` + '?cache=' + Math.random();
+      const url =
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${inviter}/downloadImage/${id}.jpg` +
+        '?cache=' +
+        Math.random();
       setPetProfiles((prevProfiles) =>
         prevProfiles.map((profile) => {
           if (profile.id === id) {
@@ -126,15 +129,18 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
       />
 
       <View style={styles.container_list}>
-        <Text style={{ fontSize: 17, paddingRight: 190, paddingTop: 15 }}>
+        {/* <Text style={{ fontSize: 17, paddingRight: 190, paddingTop: 15 }}>
           등록된 펫
-        </Text>
-        <TouchableOpacity onPress={handleAddPress} onRefresh={handleRefresh}>
-          <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleInvitePress}>
-          <Ionicons name="navigate-circle" size={43} color={YELLOW.DEFAULT} />
-        </TouchableOpacity>
+        </Text> */}
+        <Text style={styles.petHeaderText}>등록된 펫</Text>
+        <View style={styles.rightAlignedIcons}>
+          <TouchableOpacity onPress={handleAddPress} onRefresh={handleRefresh}>
+            <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleInvitePress}>
+            <Ionicons name="navigate-circle" size={43} color={YELLOW.DEFAULT} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView
@@ -171,13 +177,20 @@ const styles = StyleSheet.create({
     flex: 0.1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     marginTop: 40,
-    marginRight: 20,
+    marginHorizontal: 20,
     backgroundColor: WHITE,
+  },
+  petHeaderText: {
+    fontSize: 17,
   },
   scroll: {
     flex: 1,
+  },
+  rightAlignedIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
