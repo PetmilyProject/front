@@ -16,7 +16,8 @@ import { BLACK, GRAY, WHITE, YELLOW } from '../../../colors';
 import DangerAlert from '../../../components/DangerAlert';
 import { useNavigation } from '@react-navigation/native';
 import { CarePetRoutes } from '../../../navigations/routes';
-
+import SingleButtonAlert from '../../../components/SingleButtonAlert';
+//초대하기
 const giveInvitation = async (receiver, petId) => {
   const email = await AsyncStorage.getItem('email');
   const token = await AsyncStorage.getItem('token');
@@ -39,6 +40,9 @@ const ListRearerScreen = ({ petName, petId }) => {
   const [visible, setVisible] = useState(false); // 초대 확인 모달 관리
   const [inviteName, setInviteName] = useState('');
 
+  //기존에 있는 양육자인지 판단 모달
+  const [checkVisible, setCheckVisible] = useState(false);
+
   const [petLink, setPetLink] = useState(null);
   const [inviter, setInviter] = useState(null);
 
@@ -49,6 +53,17 @@ const ListRearerScreen = ({ petName, petId }) => {
   // const [isInviter, setIsInviter] = useState(false);
 
   const navigation = useNavigation();
+
+  //기존에 있는 양육자인지 판단
+  const handleCheckInvitation = () => {
+    if (inviteName && allRearer.some((rearer) => rearer.owner === inviteName)) {
+      console.log(`InviteName ${inviteName} already exists in allRearer`);
+      setCheckVisible(true);
+    } else {
+      // If inviteName is not in allRearer, proceed with the invitation
+      giveInvitation(inviteName, petId);
+    }
+  };
 
   // 양육자 프로필 생성
   const renderRearer = (email) => {
@@ -134,6 +149,17 @@ const ListRearerScreen = ({ petName, petId }) => {
   return (
     <ScrollView>
       <View style={styles.container}>
+        <SingleButtonAlert
+          visible={checkVisible}
+          title={'초대 불가'}
+          comment={'이미 존재하는 양육자 입니다.'}
+          BtnText={'닫기'}
+          onClose={() => {
+            setCheckVisible(false);
+            setInviteName('');
+          }}
+          BtnColor={YELLOW.DEFAULT}
+        />
         <DangerAlert
           visible={visible}
           title={`${inviteName}` + ' 님을' + '\n' + '초대하시겠습니까?'}
@@ -144,7 +170,8 @@ const ListRearerScreen = ({ petName, petId }) => {
           onRight={() => {
             setVisible(false);
             setInviteName('');
-            giveInvitation(inviteName, petId);
+            handleCheckInvitation();
+            // giveInvitation(inviteName, petId);
           }}
           leftBtnColor={GRAY.LIGHT}
           rightBtnColor={YELLOW.DEFAULT}

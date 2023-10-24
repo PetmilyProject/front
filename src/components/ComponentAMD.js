@@ -4,13 +4,7 @@ import { YELLOW } from '../colors';
 import { CarePetRoutes } from '../navigations/routes';
 
 //등록 수정 삭제 아이콘
-const ComponentAMD = ({
-  navigation,
-  petName,
-  onAddPress,
-  onDeletePress,
-  onUpdatePress,
-}) => {
+const ComponentAMD = ({ navigation, petName, onAddPress }) => {
   const onPetPress = () => {
     navigation.navigate(CarePetRoutes.VIEW_PET, petName);
   };
@@ -24,22 +18,6 @@ const ComponentAMD = ({
       <TouchableOpacity onPress={onAddPress}>
         <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
       </TouchableOpacity>
-      {/*수정 버튼
-        <TouchableOpacity onPress={onUpdatePress}>
-          <MaterialCommunityIcons
-            name="pencil-circle"
-            size={40}
-            color={YELLOW.DEFAULT}
-          />
-        </TouchableOpacity>
-        {/* 삭제 버튼 */}
-      {/* <TouchableOpacity onPress={onDeletePress}>
-          <MaterialCommunityIcons
-            name="delete-circle"
-            size={40}
-            color={YELLOW.DEFAULT}
-          />
-        </TouchableOpacity> */}
     </View>
   );
 };

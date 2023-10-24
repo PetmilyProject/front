@@ -23,18 +23,137 @@ const CommunityModal = (params) => {
 
   const modalActive = params.modalActive;
   const onClose = params.onClose;
+  const community_id = params.community_id;
+  const email = params.email;
+  const writerEmail = params.writerEmail;
+  const photoUrl = params.photoUrl;
+  const title = params.title;
+  const wrote = params.wrote;
+  const date = params.date;
+
+  const navigation = useNavigation();
+  // console.log(community_id);
+
   //console.log(modalActive);
 
+  //<----------------------------------------삭제--------------------------------------------------->
   const handleDeleteClick = () => {
-    setIsConfirmingDeletion(true); // '삭제' 버튼 클릭 시 상태 업데이트
+    // console.log('이메일', email);
+
+    if (writerEmail === email) {
+      setIsConfirmingDeletion(true); // '삭제' 버튼 클릭 시 상태 업데이트
+    } else {
+      onClose();
+    }
   };
 
   const handleCancelDelete = () => {
     setIsConfirmingDeletion(false); // '아니오' 클릭 시 상태 업데이트
   };
+  //이미지 삭제
+  const performImageDelete = () => {
+    AsyncStorage.getItem('token').then((token) => {
+      axios
+        .delete(
+          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/communityImage/delete/${email}/${community_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (response.status === 204) {
+            console.log('이미지 삭제 성공:', response);
+          } else {
+            // 다른 상태 코드에 대한 처리 추가
+            console.error('이미지 삭제 실패:', response);
+          }
+        })
+        .catch((error) => {
+          // 삭제 요청 에러 처리
+          console.error('이미지 삭제 요청 에러:', error);
+        });
+    });
+  };
+  //게시글 삭제
+  const performDelete = () => {
+    AsyncStorage.getItem('token').then((token) => {
+      // console.log(community_id);
+      axios
+        .delete(
+          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/community/delete/${community_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => {
+          if (response.status === 204) {
+            console.log('게시글 삭제 성공:', response);
+          } else {
+            // 다른 상태 코드에 대한 처리 추가
+            console.error('게시글 삭제 실패:', response);
+          }
+        })
+        .catch((error) => {
+          // 삭제 요청 에러 처리
+          console.error('게시글 삭제 요청 에러:', error);
+        });
+    });
+  };
+  //모든 댓글 삭제( 500 오류남,,, 수정 필요)
+  // const performCommentDelete = () => {
+  //   AsyncStorage.getItem('token').then((token) => {
+  //     // console.log(community_id);
+  //     axios
+  //       .delete(
+  //         `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/comment/deleteByCommunityId/${community_id}`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       )
+  //       .then((response) => {
+  //         if (response.status === 204) {
+  //           // 성공적으로 삭제되었습니다.
+  //           // 원하는 작업 수행 가능
+  //           console.log('모든 댓글 삭제 성공:', response);
+  //         } else {
+  //           // 다른 상태 코드에 대한 처리 추가
+  //           console.error('모든 댓글 삭제 실패:', response);
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         // 삭제 요청 에러 처리
+  //         console.error('모든 댓글 삭제 요청 에러:', error);
+  //       });
+  //   });
+  // };
 
+  //삭제 최종확인
   const handleConfirmDelete = () => {
+    performImageDelete();
+    performDelete();
     onClose();
+  };
+  //<------------------------------------------수정----------------------------------------------->
+  const handleUpdate = () => {
+    if (writerEmail === email) {
+      navigation.navigate('CommunityUpdateScreen', {
+        community_id,
+        writerEmail,
+        photoUrl,
+        title,
+        wrote,
+        date,
+      });
+      onClose();
+    } else {
+      onClose();
+    }
   };
 
   return (
@@ -50,11 +169,9 @@ const CommunityModal = (params) => {
             <View style={styles.modal_view}>
               {isConfirmingDeletion ? (
                 // '삭제' 버튼 클릭 시 보여질 내용
-                <>
-                  <View style={{ alignItems: 'center'}}>
-                    <Text style={styles.re_ask}>
-                      정말로 삭제하시겠습니까?
-                    </Text>
+                <View>
+                  <View style={{ alignItems: 'center' }}>
+                    <Text style={styles.re_ask}>정말로 삭제하시겠습니까?</Text>
                   </View>
                   <View style={styles.separator}></View>
                   <TouchableOpacity onPress={handleConfirmDelete}>
@@ -64,17 +181,15 @@ const CommunityModal = (params) => {
                   <TouchableOpacity onPress={handleCancelDelete}>
                     <Text style={styles.update_and_cancel}>아니오</Text>
                   </TouchableOpacity>
-                </>
+                </View>
               ) : (
                 // 기본 모달 내용
                 <>
-                  <TouchableOpacity onPress={onClose}>
-                    <Text style={styles.delete} onPress={handleDeleteClick}>
-                      삭제
-                    </Text>
+                  <TouchableOpacity onPress={handleDeleteClick}>
+                    <Text style={styles.delete}>삭제</Text>
                   </TouchableOpacity>
                   <View style={styles.separator}></View>
-                  <TouchableOpacity onPress={onClose}>
+                  <TouchableOpacity onPress={handleUpdate}>
                     <Text style={styles.update_and_cancel}>수정</Text>
                   </TouchableOpacity>
                   <View style={styles.separator}></View>
@@ -104,7 +219,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modal_view: {
-    width: '50%',
+    width: '60%',
     backgroundColor: 'white',
     margin: 20,
     borderRadius: 10,
@@ -112,10 +227,10 @@ const styles = StyleSheet.create({
     borderColor: 'lightgray',
     alignItems: 'center',
   },
-  re_ask: { 
-    fontSize: 18, 
+  re_ask: {
+    fontSize: 18,
     textAlign: 'center',
-    margin: 15
+    margin: 15,
   },
   delete: {
     //width: 150,

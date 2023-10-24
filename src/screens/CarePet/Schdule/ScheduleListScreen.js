@@ -19,6 +19,8 @@ const ScheduleListScreen = ({ petName, petId }) => {
   const [currentDate, setCurrentDate] = useState(
     new Date().toISOString().split('T')[0]
   );
+  const [profileOwner, setProfileOwner] = useState([]);
+  const [scheduleMap, setScheduleMap] = useState({});
 
   const navigation = useNavigation();
 
@@ -70,22 +72,55 @@ const ScheduleListScreen = ({ petName, petId }) => {
       });
   };
 
+  fetchEtcData = async () => {
+    const email = await AsyncStorage.getItem('email');
+    const token = await AsyncStorage.getItem('token');
+    const getAllUrl = `http://43.200.8.47:8080/executed/getAll`;
+    const getAllResponse = await axios.get(getAllUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const getAllResponseData = getAllResponse.data;
+
+    // scheduleMap 초기화
+    const newScheduleMap = {};
+    getAllResponseData.forEach((data) => {
+      const key = `${data.date}-${data.scheduleId}`;
+      if (!newScheduleMap[key]) {
+        newScheduleMap[key] = [];
+      }
+      newScheduleMap[key].push(data.email);
+    });
+
+    // scheduleMap 업데이트
+    setScheduleMap(newScheduleMap);
+  };
+
   useEffect(() => {
     fetchScheduleData(); // 컴포넌트가 처음 렌더링될 때 데이터를 가져옵니다.
+    fetchEtcData();
   }, [currentDate]);
+
+  useEffect(() => {
+    //console.log('scheduleMap updating...');
+  }, [scheduleMap]);
 
   // 렌더링 되는 스케줄 아이템
   const renderItem = ({ item, index }) => {
+    //console.log(item);
+    //console.log(`2 ${currentDate}-${item.scheduleId} ` + scheduleMap[`${currentDate}-${item.scheduleId}`])
     const isSelected = selectedItemIndices.includes(index.id);
-    const backgroundColor = item.isCompleted
+    const key = `${currentDate}-${item.scheduleId}`;
+    const backgroundColor = scheduleMap[key]
       ? YELLOW.DEFAULT_LIGHT
       : GRAY.LIGHTER;
-
-    const executorProfileURL = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${item.complete}/${item.complete}.jpg`;
+    const executorProfileURL = `http://43.200.8.47:8080/profile/get/${scheduleMap[key]}/${scheduleMap[key]}.jpg`;
+    //console.log(executorProfileURL);
 
     return (
       <TouchableOpacity
-        onPress={() => onSchedulePress(item.id)}
+        onPress={() => onSchedulePress(item.scheduleId)}
         style={[
           styles.scheduleItem,
           {
@@ -95,10 +130,10 @@ const ScheduleListScreen = ({ petName, petId }) => {
         ]}
       >
         <TouchableOpacity onPress={() => handleCompleted(index)}>
-          {item.isCompleted ? (
+          {scheduleMap[`${currentDate}-${item.scheduleId}`] ? (
             <Image
               source={{
-                uri: executorProfileURL,
+                uri: executorProfileURL + '?cache=' + Math.random(),
               }}
               style={styles.executor_profile}
             />
@@ -123,57 +158,52 @@ const ScheduleListScreen = ({ petName, petId }) => {
   // 일정 선택 함수
   const onSchedulePress = (id) => {
     navigation.navigate(CarePetRoutes.VIEW_ScheduleModification, {
-      petName: petName,
+      petId: petId,
       id: id,
     });
   };
 
   // 일정 수행 함수
-  const handleCompleted = (index) => {
-    AsyncStorage.getItem('email')
-      .then((myEmail) => {
-        if (myEmail) {
-          const updatedSchedule = responseData[index];
-          updatedSchedule.isCompleted =
-            updatedSchedule.isCompleted === 0 ? 1 : 0;
-          const completeUser =
-            updatedSchedule.isCompleted === 1 ? myEmail : null;
+  const handleCompleted = async (index) => {
+    //console.log(responseData[index]);
 
-          AsyncStorage.getItem('token')
-            .then((token) => {
-              axios
-                .put(
-                  `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/complete/${petId}/${updatedSchedule.id}`,
-                  {
-                    complete: completeUser,
-                    isCompleted: updatedSchedule.isCompleted,
-                  },
-                  {
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  }
-                )
-                .then((response) => {
-                  console.log('Schedule updated successfully');
+    const email = await AsyncStorage.getItem('email');
+    const token = await AsyncStorage.getItem('token');
+    const scheduleId = responseData[index].scheduleId;
+    const data = responseData[index];
+    const executeUrl = `http://43.200.8.47:8080/executed/${email}/${scheduleId}/${currentDate}`;
+    const deleteExecutionUrl = `http://43.200.8.47:8080/executed/delete/${scheduleId}/${currentDate}`;
+    const key = `${currentDate}-${data.scheduleId}`;
 
-                  // responseData를 업데이트하지 않고 대신 화면을 다시 렌더링
-                  // 데이터를 변경하면 컴포넌트가 다시 렌더링되므로 변경된 데이터를 화면에 반영
-                  // 다시 렌더링하려면 화면 상태를 다시 가져와야함
-                  fetchScheduleData(); // fetchScheduleData는 데이터를 다시 가져오는 함수
-                })
-                .catch((error) => {
-                  console.error(error);
-                });
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        }
-      })
-      .catch((error) => {
-        console.error(error);
+    if (!scheduleMap[key]) {
+      const executeResponse = await axios.get(executeUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+      const executeResponseData = executeResponse.data;
+
+      const newScheduleMap = { ...scheduleMap }; // 새로운 객체 생성
+      newScheduleMap[key] = email; // 새로운 객체에 값을 할당
+
+      setScheduleMap(newScheduleMap); // 상태 업데이트
+
+      console.log(executeResponseData, 'added');
+    } else {
+      const deleteResponse = await axios.delete(deleteExecutionUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const deleteResponseData = deleteResponse.data;
+      const newScheduleMap = { ...scheduleMap };
+      delete newScheduleMap[key]; // 해당 키를 제거
+
+      setScheduleMap(newScheduleMap);
+      console.log(deleteResponseData, 'deleted');
+    }
+
+    //console.log(executeUrl);
   };
 
   // 날짜 선택 화살표 함수
@@ -205,7 +235,6 @@ const ScheduleListScreen = ({ petName, petId }) => {
       <FlatList
         data={responseData}
         renderItem={renderItem}
-        // keyExtractor={(item) => item.id.toString()}
         keyExtractor={(item) => item.id}
         style={styles.schedule_container}
       />

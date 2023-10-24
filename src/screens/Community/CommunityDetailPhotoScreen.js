@@ -15,14 +15,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { BLACK, RED } from '../../colors';
+import { BLACK, GRAY, RED, WHITE, YELLOW } from '../../colors';
 import Comment from '../../components/Comment';
 import CommunityModal from './CommunityModal';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import {
+  TouchableWithoutFeedback,
+  ScrollView as GestureHandlerScrollView,
+} from 'react-native-gesture-handler';
 
 const CommunityDetailPhotoScreen = (props, route) => {
   const param = props.route.params;
   const photoUrl = param.detailUrl;
+  const community_id = param.communityinfo.community_id;
+  const writerEmail = param.communityinfo.email;
+  const title = param.communityinfo.title;
+  const wrote = param.communityinfo.wrote;
+  const date = param.communityinfo.date;
+
   const [liked, setLiked] = useState(BLACK.DEFAULT);
   const [likes, setLikes] = useState(0);
   const [comment, setComment] = useState('');
@@ -30,18 +39,31 @@ const CommunityDetailPhotoScreen = (props, route) => {
   const [contentHeight, setContentHeight] = useState(0);
   const [modalActive, setModalActive] = useState(false);
   const [userInfo, setUserInfo] = useState([]);
+  const [email, setEmail] = useState('');
 
-  // 댓글 작성 핸들러
-  const handleComment = () => {
-    if (comment !== '') {
-      setComments([...comments, comment]);
-      setComment('');
-    }
+  //<---------------------------------------사용자 정보 가져옴 ------------------------------------------------->
+  const getUserInfo = async () => {
+    const email = await AsyncStorage.getItem('email');
+    setEmail(email);
+    const token = await AsyncStorage.getItem('token');
+
+    const userResponse = await axios.get(
+      `http://43.200.8.47:8080/users/${param.communityinfo.email}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    //console.log(userResponse.data);
+    setUserInfo(userResponse.data);
   };
-  //console.log('넘어온거 : ', param);
 
+  //<-----------------------------------------------------좋아요---------------------------------------------------->
   const LikeHandle = async () => {
     const email = await AsyncStorage.getItem('email');
+
     const token = await AsyncStorage.getItem('token');
 
     if (liked === BLACK.DEFAULT) {
@@ -74,8 +96,6 @@ const CommunityDetailPhotoScreen = (props, route) => {
         }
       );
 
-      //console.log(addLikes.data);
-
       setLikes(nowLikes + 1);
     } else if (liked === RED.DEFAULT) {
       setLiked(BLACK.DEFAULT);
@@ -106,28 +126,8 @@ const CommunityDetailPhotoScreen = (props, route) => {
           },
         }
       );
-
-      //console.log(minusLikes.data);
-
       setLikes(nowLikes - 1);
     }
-  };
-
-  const getUserInfo = async () => {
-    const email = await AsyncStorage.getItem('email');
-    const token = await AsyncStorage.getItem('token');
-
-    const userResponse = await axios.get(
-      `http://43.200.8.47:8080/users/${param.communityinfo.email}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    //console.log(userResponse.data);
-    setUserInfo(userResponse.data);
   };
 
   const setInitialLikes = async () => {
@@ -156,18 +156,92 @@ const CommunityDetailPhotoScreen = (props, route) => {
     setLikes(likesData);
   };
 
-  const openModal = () => {
-    setModalActive(true);
+  //<----------------------------------------------댓글--------------------------------------------->
+  // 댓글 작성 핸들러
+  const handleComment = () => {
+    if (comment !== '') {
+      setComments([...comments, comment]);
+      setComment('');
+    }
   };
 
-  const closeModal = () => {
-    setModalActive(false);
+  //모든 댓글 가져오기
+  const getComments = async () => {
+    const myToken = await AsyncStorage.getItem('token');
+
+    try {
+      const commentsResponse = await axios.get(
+        `http://43.200.8.47:8080/comment/getAll/${param.communityinfo.community_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${myToken}`,
+          },
+        }
+      );
+      const commentsData = commentsResponse.data;
+      setComments(commentsData);
+    } catch (error) {
+      console.error('Error while fetching comments:', error);
+    }
+  };
+
+  //댓글 등록
+  const sendComment = async () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const date = String(currentDate.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${date}`;
+
+    const myEmail = await AsyncStorage.getItem('email');
+    const myToken = await AsyncStorage.getItem('token');
+    const commentPostUrl = `http://43.200.8.47:8080/comment/post/${myEmail}`;
+    const formData = {
+      communityId: param.communityinfo.community_id,
+      email: myEmail,
+      commentInfo: comment,
+      date: formattedDate,
+    };
+    const commentResponse = await axios.post(commentPostUrl, formData, {
+      Authorization: `Bearer ${myToken}`,
+    });
+    const commentResponseData = commentResponse.data;
+
+    // 2023-10-18 추가
+    const updatedCommentsResponse = await axios.get(
+      `http://43.200.8.47:8080/comment/getAll/${param.communityinfo.community_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${myToken}`,
+        },
+      }
+    );
+    const updatedCommentsData = updatedCommentsResponse.data;
+
+    setComments(updatedCommentsData);
+    setComment('');
+    // console.log(commentResponseData);
   };
 
   useEffect(() => {
     setInitialLikes();
     getUserInfo();
+  }, [comments]);
+
+  useEffect(() => {
+    getComments();
   }, []);
+
+  //<------------------------------------------------수정/삭제 모달 관리---------------------------->
+
+  //모달 열기
+  const openModal = () => {
+    setModalActive(true);
+  };
+  //모달 닫기
+  const closeModal = () => {
+    setModalActive(false);
+  };
 
   return (
     <View style={styles.main_style}>
@@ -194,6 +268,13 @@ const CommunityDetailPhotoScreen = (props, route) => {
                 <CommunityModal
                   modalActive={modalActive}
                   onClose={closeModal}
+                  community_id={community_id}
+                  email={email}
+                  writerEmail={writerEmail}
+                  photoUrl={photoUrl}
+                  title={title}
+                  date={date}
+                  wrote={wrote}
                 />
               </TouchableOpacity>
             </View>
@@ -232,46 +313,53 @@ const CommunityDetailPhotoScreen = (props, route) => {
             </View>
             {/* 설명 부분 */}
             <View>
-              <Text style={styles.title}>{param.communityinfo.title}</Text>
-              <Text style={styles.content}>{param.communityinfo.wrote}</Text>
-              <Text style={styles.date}>{param.communityinfo.date}</Text>
+              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.content}>{wrote}</Text>
+              <Text style={styles.date}>{date}</Text>
               <View style={styles.separator} />
             </View>
           </View>
+          {/* 댓글 입력 */}
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginHorizontal: 5,
+              marginBottom: 5,
+            }}
+          >
+            <TextInput
+              placeholder="댓글 작성"
+              value={comment}
+              onChangeText={(text) => setComment(text)}
+              style={{
+                flex: 1,
+                marginRight: 5,
+                borderWidth: 1,
+                borderRadius: 20,
+                padding: 5,
+              }}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                handleComment(), sendComment();
+              }}
+              style={styles.submit}
+            >
+              <Text style={{ fontWeight: 'bold' }}>전송</Text>
+            </TouchableOpacity>
+          </View>
           {/* 댓글 영역 */}
           <View style={[styles.downside_style, styles.give_margin]}>
-            <View>
-              <Comment communityId={param.communityinfo.community_id} />
-            </View>
+            {/* <GestureHandlerScrollView style={styles.comment_container}> */}
             <View style={styles.comment_container}>
-              {/* 댓글 입력 */}
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingRight: 10,
-                }}
-              >
-                <TextInput
-                  placeholder="댓글 작성"
-                  value={comment}
-                  onChangeText={(text) => setComment(text)}
-                  style={{
-                    flex: 1,
-                    marginRight: 10,
-                    borderWidth: 1,
-                    borderRadius: 5,
-                    padding: 5,
-                  }}
-                />
-                <TouchableOpacity
-                  onPress={handleComment}
-                  style={{ alignItems: 'flex-end', marginRight: 10 }}
-                >
-                  <Text>게시</Text>
-                </TouchableOpacity>
-              </View>
+              <Comment
+                communityId={param.communityinfo.community_id}
+                comments={comments}
+              />
             </View>
+            {/* </GestureHandlerScrollView> */}
+            <View></View>
           </View>
         </View>
       </ScrollView>
@@ -299,6 +387,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     width: '100%',
     //height: 300,
+    flex: 0.3,
   },
   header_container: {
     flex: 0.1,
@@ -315,7 +404,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     height: 0,
   },
-  comment_container: {},
+  comment_container: {
+    flex: 1,
+  },
   give_margin: {
     margin: 10,
   },
@@ -334,7 +425,7 @@ const styles = StyleSheet.create({
   },
   content: {
     fontSize: 15,
-    marginBottom: 5,
+    // marginBottom: 5,
     marginLeft: 10,
   },
   date: {
@@ -347,6 +438,13 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 30,
     marginBottom: 0,
+  },
+  submit: {
+    alignItems: 'flex-end',
+    paddingHorizontal: 20,
+    paddingVertical: 9,
+    backgroundColor: YELLOW.DEFAULT,
+    borderRadius: 20,
   },
 });
 

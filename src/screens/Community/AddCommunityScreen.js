@@ -20,8 +20,10 @@ import axios from 'axios';
 //import defaultImage from '../../assets/defaultImage.png'
 
 const AddCommunityScreen = ({ navigation, route }) => {
+  const [email, setEmail] = useState('');
   const [imgUrl, setImgUrl] = useState(null);
   const [userName, setUserName] = useState('');
+  const [userImage, setUserImage] = useState('');
   const [postId, setPostId] = useState('');
   const [contents, setContents] = useState('');
   const [title, setTitle] = useState('');
@@ -34,24 +36,41 @@ const AddCommunityScreen = ({ navigation, route }) => {
 
   const formattedDate = `${year}-${month}-${date}`;
 
-  // 이제 formattedDate 변수를 사용하여 axios 요청을 보낼 때 date 필드에 넣을 수 있습니다.
-
-  // 유저네임 가져오기
+  //사용자 정보, 프로필 가져오기
   useEffect(() => {
-    AsyncStorage.getItem('userName')
-      .then((storedUserName) => {
-        if (storedUserName) {
-          setUserName(storedUserName);
+    const fetchData = async () => {
+      try {
+        const myEmail = await AsyncStorage.getItem('email');
+        const token = await AsyncStorage.getItem('token');
+        setUserImage(
+          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${myEmail}/${myEmail}.jpg`
+        );
+        console.log('사용자 프로필 url : ', userImage);
+
+        if (myEmail && token) {
+          const response = await axios.get(
+            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setEmail(response.data.email);
+          setUserName(response.data.userName);
         }
-      })
-      .catch((error) => {
-        console.log('Error fetching userName:', error);
-      });
-  }, []);
+      } catch (error) {
+        console.error('사용자 데이터 가져오기 오류:', error);
+      }
+    };
+    fetchData();
+  }, [email]);
 
   // 사진 전송
   const handleImageUpload = async (postId) => {
-    const imageUrl = imgUrl ? imgUrl : `https://i.ibb.co/Twj7906/defaultimage.jpg`;
+    const imageUrl = imgUrl
+      ? imgUrl
+      : `https://i.ibb.co/Twj7906/defaultimage.jpg`;
 
     try {
       const formData = new FormData();
@@ -117,10 +136,9 @@ const AddCommunityScreen = ({ navigation, route }) => {
       const postResponse = response.data;
       console.log(postResponse);
       handleImageUpload(postResponse.communityId);
-
     };
     uploadCommunity();
-    
+
     navigation.goBack();
   };
 
@@ -135,23 +153,17 @@ const AddCommunityScreen = ({ navigation, route }) => {
       <TouchableWithoutFeedback>
         {/* 작성자 */}
         <View style={styles.profile_container}>
-          <Image
-            source={require('../../assets/pet_icon.png')}
-            style={styles.profile}
-          />
+          <Image source={{ uri: userImage }} style={styles.profile} />
           <Text style={{ marginLeft: 10, fontSize: 16 }}>{userName}</Text>
         </View>
         {/* 사진 */}
         <View style={styles.photo_container}>
           {imgUrl === null ? (
-            <Image
-              source={{uri: `https://i.ibb.co/Twj7906/defaultimage.jpg` }}
-              style={styles.photoBox}
-            />
+            <View style={styles.photoBox}></View>
           ) : (
             <Image source={{ uri: imgUrl }} style={styles.image} />
           )}
-          <View style={{ marginLeft: 300 }}>
+          <View style={{ marginTop: -28, marginLeft: 300 }}>
             <ImagePickerComponent
               width={45}
               height={45}

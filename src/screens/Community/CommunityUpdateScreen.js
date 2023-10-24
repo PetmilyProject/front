@@ -1,45 +1,44 @@
-import { Text, View, StyleSheet, Image, Keyboard } from 'react-native';
-import ImagePickerComponent from '../../../components/ImagePicker';
-
-import { GRAY, WHITE, YELLOW } from '../../../colors';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  Keyboard,
+  ScrollView,
+} from 'react-native';
+import ImagePickerComponent from '../../components/ImagePicker';
+import { GRAY, WHITE, YELLOW } from '../../colors';
 import { useState } from 'react';
-import SquareButton, { ColorTypes } from '../../../components/Button';
+import SquareButton, { ColorTypes } from '../../components/Button';
 import {
   TextInput,
   TouchableWithoutFeedback,
 } from 'react-native-gesture-handler';
-import { ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import { CommunityRoutes } from '../../navigations/routes';
+//import defaultImage from '../../assets/defaultImage.png'
 
-const AddphotoScreen = ({ navigation, route }) => {
-  const { petName, petId } = route.params;
-  //사용자 정보 useState
+const CommunityUpdateScreen = ({ navigation, route }) => {
+  const params = route.params;
+  const communityId = params.community_id;
+  const writerEmail = params.writerEmail;
+  const photoUrl = params.photoUrl;
+  const title = params.title;
+  const wrote = params.wrote;
+  const community_id = params.community_id;
+  console.log(title, wrote);
+
+  const [email, setEmail] = useState('');
+  const [imgUrl, setImgUrl] = useState(photoUrl);
   const [userName, setUserName] = useState('');
   const [userImage, setUserImage] = useState('');
-  const [email, setEmail] = useState('');
-  //이미지 useState
-  const [image, setImage] = useState(null);
-  const [uploadImage, setUploadImage] = useState('');
-  //내용 useState
-  const [contents, setContents] = useState('');
-  const [title, setTitle] = useState('');
-  //등록일
-
-  const currentDate = new Date();
-  const year = currentDate.getFullYear(); // 연도
-  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1, 1월은 0)
-  const date = String(currentDate.getDate()).padStart(2, '0'); // 일
-
-  const formattedDate = `${year}-${month}-${date}`;
-
-  // 난수생성
-  const generateSharedPetId = () => {
-    const randomId = Math.floor(Math.random() * 100000); // 랜덤한 숫자 생성
-    return randomId;
-  };
-  const [sharedPetId, setSharedPetId] = useState(generateSharedPetId());
+  const [postId, setPostId] = useState('');
+  const [contents, setContents] = useState(wrote);
+  const [newTitle, setNewTitle] = useState(title);
+  const [image, setImage] = useState('');
 
   //사용자 정보, 프로필 가져오기
   useEffect(() => {
@@ -48,13 +47,13 @@ const AddphotoScreen = ({ navigation, route }) => {
         const myEmail = await AsyncStorage.getItem('email');
         const token = await AsyncStorage.getItem('token');
         setUserImage(
-          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${myEmail}/${myEmail}.jpg`
+          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/profile/get/${writerEmail}/${writerEmail}.jpg`
         );
         console.log('사용자 프로필 url : ', userImage);
 
         if (myEmail && token) {
           const response = await axios.get(
-            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${myEmail}`,
+            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${writerEmail}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -71,24 +70,26 @@ const AddphotoScreen = ({ navigation, route }) => {
     fetchData();
   }, [email]);
 
-  // 이미지 업로드
-  const handleImageUpload = async (photoId, petId) => {
+  // 사진 전송
+  const handleImageUpload = async () => {
+    const imageUrl = imgUrl
+      ? imgUrl
+      : `https://i.ibb.co/Twj7906/defaultimage.jpg`;
+
     try {
       const formData = new FormData();
+
       const myEmail = await AsyncStorage.getItem('email');
       const token = await AsyncStorage.getItem('token');
 
-      console.log('uri : ', image);
-      console.log(photoId, petId);
-
       formData.append('file', {
-        uri: image,
+        uri: imageUrl,
         type: 'multipart/form-data',
-        name: `${photoId}.jpg`,
+        name: `${community_id}.jpg`,
       });
 
-      const response = await axios.post(
-        `http://43.200.8.47:8080/shared-images/${petId}/uploadImage/${myEmail}/${photoId}`,
+      const response = await axios.put(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/communityImage/update/${myEmail}/${community_id}`,
         formData,
         {
           headers: {
@@ -97,62 +98,62 @@ const AddphotoScreen = ({ navigation, route }) => {
           },
         }
       );
-      const postResponse = response.data;
 
       if (response.data) {
-        setUploadImage(response.data.imageUrl);
-        console.log('성공 : ', response.data.imageUrl);
+        // 이미지 수정 성공
+        console.log('이미지 수정 성공 : ', response.data);
       } else {
-        console.log('오류이유 : ', response);
+        // 이미지 수정 실패
+        console.log('이미지 수정 오류 이유 : ', response);
       }
     } catch (error) {
-      console.error('이미지 업로드 오류:', error);
+      console.error('이미지 수정 오류:', error);
     }
   };
-  //게시글 올리기
-  const handleSubmit = () => {
-    const uploadPhoto = async () => {
-      const tmpToken = await AsyncStorage.getItem('token');
-      const response = await axios.post(
-        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/sharedPetGallery/${email}/post/${petId}`,
-        {
-          //communityId: postId,
-          title: title,
-          wrote: contents,
-          date: formattedDate,
-          likes: 0,
-          email: email,
-          petId: petId,
-        },
+
+  const handleCommunitySubmit = async () => {
+    try {
+      const myEmail = await AsyncStorage.getItem('email');
+      const token = await AsyncStorage.getItem('token');
+
+      const updatedCommunityData = {
+        communityId: communityId,
+        title: newTitle,
+        wrote: contents,
+      };
+
+      const response = await axios.put(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/community/update`,
+        updatedCommunityData,
         {
           headers: {
-            Authorization: `Bearer ${tmpToken}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      const postResponse = response.data;
-      console.log(postResponse);
-      handleImageUpload(postResponse.photoId, postResponse.petId);
-    };
-    uploadPhoto();
-
-    navigation.goBack();
+      if (response.data) {
+        console.log('게시글 수정 성공');
+        handleImageUpload(community_id); // 이미지 업로드 역시 필요하다면 호출
+        navigation.navigate(CommunityRoutes.PHOTO_COMMUNITY);
+        // 다른 작업을 수행하거나 페이지를 이동하는 코드 추가
+      } else {
+        console.log('게시글 수정 실패');
+      }
+    } catch (error) {
+      console.error('게시글 수정 오류:', error);
+    }
   };
 
   const InsertUrl = (url) => {
-    setImage(url);
+    setImgUrl(url);
   };
   return (
     <ScrollView
       contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
+      //keyboardShouldPersistTaps="handled"
     >
-      <TouchableWithoutFeedback
-        onPress={() => {
-          //Keyboard.dismiss();
-        }}
-      >
+      <TouchableWithoutFeedback>
         {/* 작성자 */}
         <View style={styles.profile_container}>
           <Image source={{ uri: userImage }} style={styles.profile} />
@@ -160,10 +161,10 @@ const AddphotoScreen = ({ navigation, route }) => {
         </View>
         {/* 사진 */}
         <View style={styles.photo_container}>
-          {image === null ? (
+          {imgUrl === null ? (
             <View style={styles.photoBox}></View>
           ) : (
-            <Image source={{ uri: image }} style={styles.image} />
+            <Image source={{ uri: imgUrl }} style={styles.image} />
           )}
           <View style={{ marginTop: -28, marginLeft: 300 }}>
             <ImagePickerComponent
@@ -176,7 +177,7 @@ const AddphotoScreen = ({ navigation, route }) => {
         {/* 입력 */}
         <View style={styles.content_container}>
           <TextInput
-            onChangeText={(text) => setTitle(text)}
+            onChangeText={(text) => setNewTitle(text)}
             placeholder="제목"
             style={{
               fontSize: 19,
@@ -184,6 +185,7 @@ const AddphotoScreen = ({ navigation, route }) => {
               width: 380,
               padding: 10,
             }}
+            value={newTitle}
           ></TextInput>
           <View
             style={{
@@ -204,13 +206,14 @@ const AddphotoScreen = ({ navigation, route }) => {
               paddingHorizontal: 10,
               paddingTop: 15,
             }}
+            value={contents}
           ></TextInput>
 
           <View style={styles.containerRow}>
             <SquareButton
               colorType={ColorTypes.YELLOW}
               text="등록하기"
-              onPress={handleSubmit}
+              onPress={handleCommunitySubmit}
             />
           </View>
         </View>
@@ -221,21 +224,17 @@ const AddphotoScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    //flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: WHITE,
   },
-  contents_container: {
-    flex: 1,
-  },  
   profile_container: {
     flexDirection: 'row',
-    //flex: 0.22,
+    flex: 0.25,
     alignItems: 'center',
     justifyContent: 'flex-start',
     marginHorizontal: 20,
-    //backgroundColor: YELLOW.DARK,
   },
   profile: {
     width: 50,
@@ -271,7 +270,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   imagePicker: {
-    marginTop: -20,
+    //marginTop: -20,
   },
 });
-export default AddphotoScreen;
+export default CommunityUpdateScreen;

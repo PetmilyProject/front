@@ -149,19 +149,22 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {petProfiles.map((profile) => (
-          <PetProfile
-            key={profile.id}
-            name={profile.petName}
-            age={profile.petAge}
-            species={profile.detailInfo}
-            imgurl={profile.imgurl}
-            handleLongPressed={handleLongPressed}
-            onPress={() => onPress(profile.petName, profile.id)}
-            select={select}
-            id={profile.id}
-          />
-        ))}
+        {petProfiles.map((profile) =>
+          // Add a check for null or undefined here
+          profile && profile.petName ? (
+            <PetProfile
+              key={profile.id}
+              name={profile.petName}
+              age={profile.petAge}
+              species={profile.detailInfo}
+              imgurl={profile.imgurl}
+              handleLongPressed={handleLongPressed}
+              onPress={() => onPress(profile.petName, profile.id)}
+              select={select}
+              id={profile.id}
+            />
+          ) : null
+        )}
       </ScrollView>
     </View>
   );

@@ -14,27 +14,59 @@ import InputText_in from '../../../components/InputText_in';
 import Button2 from '../../../components/Button2';
 import SelectionListAlert from '../../../components/SelectionListAlert';
 import ScheduleListScreen from './ScheduleListScreen';
+import { CarePetRoutes } from '../../../navigations/routes';
 
-const ScheduleModificationScreen = ({ route }) => {
+const ScheduleModificationScreen = ({ navigation, route }) => {
   const params = route.params;
+  const petId = route.params.petId;
   const scheduleId = route.params.id;
+
+  //입력란 useState
   const [schedule, setSchedule] = useState('');
   const [time, setTime] = useState('');
   const [date, setDate] = useState('');
   const [repeat, setRepeat] = useState(0);
+  const [executor, setExecutor] = useState([]);
+  const [executorStr, setExecutorStr] = useState('');
+  const [period, setPeriod] = useState([]);
+  const [isCompleted, setIsCompleted] = useState(null);
+  const [complete, setComplete] = useState('');
+
+  //양육자 목록
+  const [rearer, setRearer] = useState(null);
+  //랜더링된 owner 리스트
+  const [executorList, setExecutorList] = useState({});
+
   const [alarm, setAlarm] = useState(0);
   const [aaa, setaaa] = useState(0);
   const [visible, setVisible] = useState(false);
-  const [submit, setSubmit] = useState(false);
-  const [selectedDays, setSelectedDays] = useState([]);
-  const [selectedDaysForCycle, setSelectedDaysForCycle] = useState([]);
-  const [selectedDaysForExecutor, setSelectedDaysForExecutor] = useState([]);
-  const [email, setEmail] = useState('');
-  const [inviter, setInviter] = useState('');
-  const [petname, setPetname] = useState('');
-  const [executorVisible, setExecutorVisible] = useState(false);
-  const [selectedExecutor, setSelectedExecutor] = useState([]);
 
+  const [selectedDays, setSelectedDays] = useState([]);
+
+  const [executorVisible, setExecutorVisible] = useState(false);
+
+  const [response, setResponse] = useState(null);
+
+  const fetchPetLink = async () => {
+    try {
+      // 해당 계정에 속한 모든 양육자 불러오기
+      const AllRearerResponse = await axios.get(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/link/rearer/${petId}`
+      );
+
+      if (AllRearerResponse.status === 200) {
+        setRearer(AllRearerResponse.data);
+      } else {
+        console.error('펫 링크를 가져오는 데 실패했습니다');
+      }
+    } catch (error) {
+      console.error('펫 링크를 가져오는 중 오류 발생:', error);
+    }
+  };
+  useEffect(() => {
+    fetchPetLink();
+  }, []);
+  /* --------------------------------주기-----------------------------*/
   // 주기(요일) 리스트 아이템
   const item = {
     0: '일',
@@ -45,28 +77,9 @@ const ScheduleModificationScreen = ({ route }) => {
     5: '금',
     6: '토',
   };
-
-  // 수행자 리스트 아이템
-  const executor = {
-    11: '나',
-    12: '아빠',
-    13: '엄마',
-    14: '형',
-  };
-  //SelectionList 활성화 여부 함수
-  const handleSelection = () => {
-    setVisible(true);
-  };
-
-  //SelectionList 활성화 여부 함수
-  const handleExecutorSelection = (selectedItems) => {
-    setSelectedExecutor(selectedItems);
-    setExecutorVisible(false);
-  };
-
-  // 확인 버튼을 눌렀을 때 호출되는 함수
+  // 주기(요일) 리스트 확인 버튼을 눌렀을 때 호출되는 함수
   const handleConfirmSelection = (selectedDays) => {
-    // console.log('선택한 요일:', selectedDays);
+    console.log('선택한 요일:', selectedDays);
     let cnt = 0;
 
     for (let i = 0; i < selectedDays.length; i++) {
@@ -92,6 +105,32 @@ const ScheduleModificationScreen = ({ route }) => {
     setSelectedDays(selectedDays);
   };
 
+  /* --------------------------------수행자--------------------------------*/
+
+  //수행자 랜더링
+  useEffect(() => {
+    if (rearer) {
+      const newExecutor = {};
+      rearer.forEach((item) => {
+        // rearer의 각 항목을 반복
+        newExecutor[item.ownerName] = item.ownerName;
+      });
+      setExecutorList(newExecutor);
+    }
+  }, [rearer]);
+
+  //수행자 리스트 확인 버튼을 눌렀을 때 호출되는 함수
+  const handleExecutorSelection = (selectedItems) => {
+    setExecutor(selectedItems);
+    setExecutorStr(selectedItems.join(', '));
+    setExecutorVisible(false);
+  };
+
+  //SelectionList 활성화 여부 함수
+  const handleSelection = () => {
+    setVisible(true);
+  };
+
   const handleTimeChange = (selectedTime) => {
     setTime(selectedTime);
   };
@@ -102,7 +141,7 @@ const ScheduleModificationScreen = ({ route }) => {
       AsyncStorage.getItem('token').then((token) => {
         axios
           .get(
-            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/${params.petName}`,
+            `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/get/${petId}/${scheduleId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -110,9 +149,20 @@ const ScheduleModificationScreen = ({ route }) => {
             }
           )
           .then((response) => {
-            const responseData = response.data;
-            // console.log(response.data);
-            setPetname(responseData.petname);
+            setResponse(response.data);
+            setSchedule(response.data.schedule);
+            setTime(response.data.hm);
+            setDate(response.data.date);
+            setIsCompleted(response.data.isCompleted);
+            setComplete(response.data.complete);
+            setExecutorStr(response.data.executor);
+            // setRepeat(response.data.repete);
+            setPeriod(response.data.period);
+            const executorData = response.data.executor;
+            const executorArray = Array.isArray(executorData)
+              ? executorData
+              : [executorData];
+            setExecutor(executorArray);
           })
           .catch((error) => {
             // console.log('펫이름 : ', params.petName);
@@ -120,22 +170,44 @@ const ScheduleModificationScreen = ({ route }) => {
           });
       });
     });
-  });
+  }, []);
 
   // 일정 수정
   const Modification = () => {
+    console.log(
+      'schedule:',
+      schedule,
+      'date:',
+      date,
+      'hm:',
+      time,
+      'period:',
+      selectedDays,
+      'repeat:',
+      repeat,
+      'executor:',
+      executor,
+      'isCompleted:',
+      isCompleted,
+      'complete:',
+      complete
+    );
+    
     AsyncStorage.getItem('email')
       .then((myEmail) => {
         AsyncStorage.getItem('token')
           .then((token) => {
             axios
               .put(
-                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/${params.petName}/${scheduleId}`,
+                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/update/${petId}/${scheduleId}`,
                 {
                   schedule: schedule,
                   date: date,
                   hm: time,
                   period: repeat,
+                  executor: executorStr,
+                  // isCompleted: isCompleted,
+                  // complete: complete,
                 },
                 {
                   headers: {
@@ -145,9 +217,10 @@ const ScheduleModificationScreen = ({ route }) => {
               )
               .then((response) => {
                 console.log(response.data);
+                navigation.popToTop();
               })
               .catch((error) => {
-                console.error(error);
+                console.error("펫 일정 업데이트 실패 : 에러 : ", error);
               });
           })
           .catch((error) => {
@@ -165,12 +238,13 @@ const ScheduleModificationScreen = ({ route }) => {
       .then((myEmail) => {
         AsyncStorage.getItem('token')
           .then((token) => {
+            // 요청을 보내기 전에 petId와 scheduleId 값을 확인합니다.
+            console.log('petId:', petId);
+            console.log('scheduleId:', scheduleId);
+
             axios
               .delete(
-                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/schedule/${myEmail}/${params.petName}/${scheduleId}`,
-                {
-                  id: scheduleId,
-                },
+                `http://43.200.8.47:8080/schedule/${myEmail}/delete/${petId}/${scheduleId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -178,10 +252,18 @@ const ScheduleModificationScreen = ({ route }) => {
                 }
               )
               .then((response) => {
-                console.log(response.data);
+                console.log(response.data)
+                if (response.status === 200) {
+                  console.log('일정이 성공적으로 삭제되었습니다');
+                  navigation.goBack();
+                } else if (response.status === 404) {
+                  console.error('일정이 존재하지 않거나 삭제할 수 없습니다');
+                } else {
+                  console.error('일정 삭제 실패');
+                }
               })
               .catch((error) => {
-                console.error(error);
+                console.error('일정 삭제 중 오류 발생:', error);
               });
           })
           .catch((error) => {
@@ -191,7 +273,6 @@ const ScheduleModificationScreen = ({ route }) => {
       .catch((error) => {
         console.error(error);
       });
-    // navigation.navigate('scheduleListScreen');
   };
 
   // 일정 삭제 알람
@@ -257,6 +338,7 @@ const ScheduleModificationScreen = ({ route }) => {
           <SelectionListAlert
             visible={visible}
             onClose={() => setVisible(false)}
+            multiple={true} // 2023-10-21 추가
             item={item}
             width={220}
             scrollViewHeight={170}
@@ -279,13 +361,13 @@ const ScheduleModificationScreen = ({ route }) => {
           <SelectionListAlert
             visible={executorVisible}
             onClose={() => setExecutorVisible(false)}
-            item={executor}
+            item={executorList}
             width={220}
             scrollViewHeight={150}
             marginTop={500}
             marginLeft={140}
             buttonText={'확인'}
-            selected={selectedExecutor}
+            selected={executor}
             onConfirmSelection={handleExecutorSelection}
           />
           {/* 수행자 입력 */}
@@ -294,7 +376,7 @@ const ScheduleModificationScreen = ({ route }) => {
             titleSize={20}
             type={'free'}
             onPress={() => setExecutorVisible(true)}
-            selectedDays={selectedExecutor}
+            selectedDays={executor}
           />
 
           {/* 수정 및 삭제 버튼 */}

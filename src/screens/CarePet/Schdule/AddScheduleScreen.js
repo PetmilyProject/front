@@ -33,6 +33,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [repeat, setRepeat] = useState(0);
   const [executor, setExecutor] = useState([]);
   const [executorStr, setExecutorStr] = useState('');
+  const [executorEmail, setExectorEmail] = useState('');
 
   const [aaa, setaaa] = useState(0);
   const [visible, setVisible] = useState(false);
@@ -42,6 +43,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [executorVisible, setExecutorVisible] = useState(false);
   //랜더링된 owner 리스트
   const [executorList, setExecutorList] = useState({});
+  const [executorEmailList, setExecutorEmailList] = useState([]);
 
   const fetchPetLink = async () => {
     try {
@@ -119,17 +121,21 @@ const AddScheduleScreen = ({ navigation, route }) => {
   useEffect(() => {
     if (rearer) {
       const newExecutor = {};
+      const newExecutorEmail = {};
       rearer.forEach((item) => {
         // rearer의 각 항목을 반복
         newExecutor[item.ownerName] = item.ownerName;
+        newExecutorEmail[item.ownerName] = item.owner;
       });
       setExecutorList(newExecutor);
+      setExecutorEmailList(newExecutorEmail);
     }
   }, [rearer]);
 
   //수행자 리스트 확인 버튼을 눌렀을 때 호출되는 함수
   const handleExecutorSelection = (selectedItems) => {
     setExecutor(selectedItems);
+    setExectorEmail(executorEmailList[selectedItems])
     setExecutorStr(selectedItems.join(', '));
     setExecutorVisible(false);
   };
@@ -156,7 +162,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
                     hm: time,
                     period: repeat,
                     executor: executorStr,
-                    isCompleted: 0,
+                    executorEmail: myEmail,
                   },
                   {
                     headers: {
@@ -178,7 +184,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
         .catch((error) => {
           console.error(error, 3);
         });
-      navigation.navigate('ScheduleList', { updated: true });
     } else {
       return 1;
     }

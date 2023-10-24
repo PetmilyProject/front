@@ -11,6 +11,7 @@ import { CarePetRoutes } from '../../navigations/routes';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GRAY, WHITE } from '../../colors';
+import StatisticsScreen from './Statistics/StatisticsScreen';
 
 const MainCarePetScreen = ({ navigation, route }) => {
   const petName = route.params[0];
@@ -34,31 +35,16 @@ const MainCarePetScreen = ({ navigation, route }) => {
   const onRearerPress = () => {
     setContent('양육자');
   };
+  const onStatisticsPress = () => {
+    setContent('통계');
+  };
 
   const onAddPress = () => {
     if (content === '일정') {
       navigation.navigate(CarePetRoutes.ADD_SCHDULE, { petName, petId });
     } else if (content === '사진첩') {
-      navigation.navigate(CarePetRoutes.ADD_PHOTO, petName, petId);
+      navigation.navigate(CarePetRoutes.ADD_PHOTO, { petName, petId });
     }
-  };
-
-  const onDeletePress = () => {
-    Alert.alert(
-      '삭제하시겠습니까?',
-      null,
-      [
-        {
-          text: '취소',
-          style: 'cancel',
-        },
-        {
-          text: '확인',
-          onPress: () => {},
-        },
-      ],
-      { cancelable: true }
-    );
   };
 
   useEffect(() => {
@@ -103,31 +89,33 @@ const MainCarePetScreen = ({ navigation, route }) => {
       return photo === null ? (
         <EmptyPhotoSceen />
       ) : (
-        <ListPhotoScreen petName={petName} />
+        <ListPhotoScreen petName={petName} petId={petId} />
       );
     } else if (content === '양육자') {
       return <ListRearerScreen petName={petName} petId={petId} />;
+    } else if (content === '통계') {
+      return <StatisticsScreen petName={petName} petId={petId} />;
     } else {
       return null; // Return null or another default screen/component if needed
     }
   };
 
   return (
-    <ScrollView style={{ backgroundColor: '#FFFFFF' }}>
-    <View style={styles.container}>
-      <CarePetList
-        petName={petName}
-        onAddPress={onAddPress}
-        onSchedulePress={onSchedulePress}
-        onPhotoPress={onPhotoPress}
-        onRearerPress={onRearerPress}
-        onDeletePress={onDeletePress}
-        navigation={navigation}
-        petId={petId}
-      />
-      <View style={styles.line}></View>
-      <View style={styles.container2}>{renderScreen()}</View>
-    </View>
+    <ScrollView style={{backgroundColor: 'white'}}>
+      <View style={styles.container}>
+        <CarePetList
+          petName={petName}
+          onAddPress={onAddPress}
+          onSchedulePress={onSchedulePress}
+          onPhotoPress={onPhotoPress}
+          onRearerPress={onRearerPress}
+          onStatisticsPress={onStatisticsPress}
+          navigation={navigation}
+          petId={petId}
+        />
+        <View style={styles.line}></View>
+        <View style={styles.container2}>{renderScreen()}</View>
+      </View>
     </ScrollView>
   );
 };

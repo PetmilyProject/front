@@ -10,10 +10,10 @@ import { AddPetRoutes, AuthRoutes } from '../../navigations/routes';
 import { useState } from 'react';
 // import ImagePickerComponent from '../../components/ImagePicker';
 import * as ImagePicker from 'expo-image-picker';
-import { GRAY, WHITE } from '../../colors';
+import { GRAY, WHITE, YELLOW } from '../../colors';
 import SquareButton, { ColorTypes } from '../../components/Button';
 import InputText from '../../components/InputText';
-import { TextInput } from 'react-native-gesture-handler';
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import 'react-native-get-random-values';
 import { nanoid } from 'nanoid';
@@ -59,6 +59,7 @@ const PetRegisterScreen = ({ navigation, route }) => {
           addPetUrl,
           {
             petName: name,
+            petCode: name + ' ' + myEmail,
             detailInfo: character,
             petAge: age,
             inviter: userInviter,
@@ -145,71 +146,77 @@ const PetRegisterScreen = ({ navigation, route }) => {
   };
 
   return (
-    <ScrollView constentContainerStyle={styles.container}>
-      <View style={styles.photoContainer}>
-        <View style={styles.rowContainer}>
-          {imgUrl === null ? (
-            <View style={styles.photoBox}></View>
-          ) : (
-            <Image source={{ uri: imgUrl }} style={styles.image} />
-          )}
-          <View style={{ marginTop: 130, marginLeft: -30 }}>
-            <Pressable onPress={uploadImage}>
-              {/* <Text>이미지 업로드하기</Text> */}
-              <View style={styles.editIconContainer}>
-                <MaterialIcons name="edit" size={24} color="black" />
+    <View
+      style={{
+        backgroundColor: WHITE,
+        flex: 1,
+        padding: 10,
+      }}
+    >
+      <ScrollView constentContainerStyle={styles.container}>
+        <View style={styles.photoContainer}>
+          <TouchableOpacity>
+            <View style={{ alignItems: 'center' }}>
+              <View style={styles.photoBox}>
+                {imgUrl === null ? (
+                  <View style={styles.photoBox}></View>
+                ) : (
+                  <Image source={{ uri: imgUrl }} style={styles.image} />
+                )}
+                <Pressable onPress={uploadImage}>
+                  {/* <Text>이미지 업로드하기</Text> */}
+                  <View style={styles.editIconContainer}>
+                    <MaterialIcons name="edit" size={24} color="black" />
+                  </View>
+                  <Image source={{ uri: imageUrl }} />
+                </Pressable>
               </View>
-              <Image source={{ uri: imageUrl }} />
-            </Pressable>
+            </View>
+          </TouchableOpacity>
+          <View style={styles.rowContainer}>
+            <Ionicons name="md-pencil" size={20} color="black" />
+            <TextInput
+              style={styles.name}
+              onChangeText={(text) => setName(text.trim())}
+            >
+              {name}
+            </TextInput>
           </View>
         </View>
-        <View style={styles.rowContainer}>
-          <Ionicons
-            name="md-pencil"
-            size={20}
-            color="black"
-            style={{ marginLeft: -25 }}
+        <View style={{ alignItems: 'center' }}>
+          <InputText
+            title="성별"
+            placeholder={'예) 암컷'}
+            onChangeText={(text) => setGender(text.trim())}
           />
-          <TextInput
-            style={styles.name}
-            onChangeText={(text) => setName(text.trim())}
-          >
-            {name}
-          </TextInput>
+
+          <InputText
+            title="나이"
+            placeholder={'예) 8'}
+            onChangeText={(text) => {
+              setAge(text.trim());
+            }}
+          />
+
+          <InputText
+            title="구분"
+            placeholder={'예) 말티즈'}
+            onChangeText={(text) => setSpecies(text.trim())}
+          />
+          <InputText
+            title="특징"
+            placeholder={'예) 산책을 좋아함'}
+            onChangeText={(text) => setCharater(text.trim())}
+          />
+
+          <SquareButton
+            colorType={ColorTypes.YELLOW}
+            text="등록하기"
+            onPress={onInsert}
+          />
         </View>
-      </View>
-      <View>
-        <InputText
-          title="성별"
-          placeholder={'예) 암컷'}
-          onChangeText={(text) => setGender(text.trim())}
-        />
-
-        <InputText
-          title="나이"
-          placeholder={'예) 8'}
-          onChangeText={(text) => {
-            setAge(text.trim());
-          }}
-        />
-
-        <InputText
-          title="구분"
-          placeholder={'예) 말티즈'}
-          onChangeText={(text) => setSpecies(text.trim())}
-        />
-        <InputText
-          title="특징"
-          placeholder={'예) 산책을 좋아함'}
-          onChangeText={(text) => setCharater(text.trim())}
-        />
-      </View>
-      <SquareButton
-        colorType={ColorTypes.YELLOW}
-        text="등록하기"
-        onPress={onInsert}
-      />
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -219,12 +226,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: WHITE,
   },
   rowContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   },
   photoContainer: {
     flex: 1,
@@ -240,7 +247,7 @@ const styles = StyleSheet.create({
   },
   photoBox: {
     backgroundColor: GRAY.LIGHT,
-    borderRadius: 10,
+    borderRadius: 100,
     width: 150,
     height: 150,
   },
@@ -254,7 +261,12 @@ const styles = StyleSheet.create({
     height: 150,
   },
   editIconContainer: {
-    alignItems: 'center',
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    backgroundColor: YELLOW.DEFAULT_LIGHT,
+    borderRadius: 50,
+    padding: 5,
   },
 });
 

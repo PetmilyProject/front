@@ -27,7 +27,7 @@ const DetailPhotoScreen = ({ Navigation, route }) => {
           source={require('../../../assets/pet_icon.png')}
           style={styles.profile}
         />
-        <Text style={{ marginLeft: 10, fontSize: 16 }}>그로밋</Text>
+        <Text style={{ marginLeft: 10, fontSize: 16 }}>주양육자</Text>
       </View>
       {/* 사진 출력 영역 */}
       <View style={styles.photo_container}>
