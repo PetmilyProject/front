@@ -18,14 +18,20 @@ const ListPhotoScreen = ({ Navigation, petName, petId }) => {
   const [imageList, setImageList] = useState([]); // 이미지 목록을 저장할 상태 변수
   const [email, setEmail] = useState(''); // 이메일을 저장할 상태 변수
   const [isLoading, setIsLoading] = useState(true); // 데이터 로딩 상태를 저장할 상태 변수
+  const [token, setToken] = useState('');
   const [sharedPets, setSharedPets] = useState([]);
   const navigation = useNavigation();
+  const [photoId, setPhotoId] = useState('');
+
+  const [postData, setPostData] = useState(null);
 
   useEffect(() => {
     // AsyncStorage에서 이메일과 토큰 가져오는 코드
     const fetchData = async () => {
       const storedEmail = await AsyncStorage.getItem('email');
+      setEmail(storedEmail);
       const storedToken = await AsyncStorage.getItem('token');
+      setToken(storedToken);
       const imgUrl = `http://43.200.8.47:8080/shared-images/${petId}/getAllImages`;
 
       try {
@@ -61,6 +67,39 @@ const ListPhotoScreen = ({ Navigation, petName, petId }) => {
     });
   };
 
+  //사진 정보 가져오기
+  const handleLoadPost = (scheduleNum) => {
+    console.log('포토아이디', scheduleNum);
+    AsyncStorage.getItem('email')
+      .then((myEmail) => {
+        AsyncStorage.getItem('token')
+          .then((token) => {
+            axios
+              .get(
+                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/sharedPetGallery/${myEmail}/getByPhotoId/${scheduleNum}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              )
+              .then((response) => {
+                console.log(response.data);
+                setPostData(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   const renderItem = ({ item }) => {
     const handlePress = async () => {
       const myEmail = await AsyncStorage.getItem('email');
@@ -69,30 +108,22 @@ const ListPhotoScreen = ({ Navigation, petName, petId }) => {
       const petNum = parts[parts.length - 2];
       const rawScheduleNum = parts[parts.length - 1];
       const scheduleNum = rawScheduleNum.replace(/\.[^/.]+$/, '');
-      
-      const scheduleUrl = `http://43.200.8.47:8080/sharedPetGallery/${myEmail}/get/${petNum}`;
-      console.log(scheduleUrl);
-      const scheduleResponse = await axios.get(scheduleUrl, {
-        headers: {
-          Authorization: `Bearer ${myToken}`
-        }
+      handleLoadPost(scheduleNum);
+      console.log('포토아이디', scheduleNum);
+
+      navigation.navigate(CarePetRoutes.DETAIL_PHOTO, {
+        petInfo: {
+          petId: petId,
+          email: postData.email,
+          photoId: scheduleNum,
+          title: postData.title,
+          wrote: postData.wrote,
+          likedBy: postData.likedBy,
+          likes: postData.likes,
+          date: postData.date,
+          imageUrl: item,
+        },
       });
-      const responseData = scheduleResponse.data;
-      console.log(responseData);
-
-      console.log(number);
-      //const matchedPet = sharedPets.find((pet) => pet.sharedPetId === item.id);
-
-      if (matchedPet) {
-        navigation.navigate(CarePetRoutes.DETAIL_PHOTO, {
-          petInfo: {
-            pet: petNum,
-            likes: matchedPet.likes,
-            date: matchedPet.date,
-            memo: matchedPet.memo,
-          },
-        });
-      }
     };
 
     return (
