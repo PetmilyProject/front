@@ -33,6 +33,7 @@ import DetailRearerScreen from '../screens/CarePet/Rearer/DetailRearerScreen';
 import ListRearerScreen from '../screens/CarePet/Rearer/ListRearerScreen';
 import UserInfoEditScreen from '../screens/UserInfo/UserInfoEditScreen';
 import CommunityUpdateScreen from '../screens/Community/CommunityUpdateScreen';
+import UpdatePhotoScreen from '../screens/CarePet/Photo/UpdatePhotoScreen';
 
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
@@ -126,10 +127,17 @@ const AddPetStackScreen = () => {
         component={AddphotoScreen}
         options={{ title: '사진등록' }}
       />
+
       <AddPetStack.Screen
         name={CarePetRoutes.DETAIL_PHOTO}
         component={DetailPhotoScreen}
         options={{ title: '사진 상세' }}
+      />
+      {/* 사진 수정 */}
+      <AddPetStack.Screen
+        name={CarePetRoutes.UPDATE_PHOTO}
+        component={UpdatePhotoScreen}
+        options={{ title: '사진 수정' }}
       />
       {/* 양육자 */}
       <AddPetStack.Screen

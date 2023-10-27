@@ -14,15 +14,15 @@ import PhotoModal from './PhotoModal';
 
 const DetailPhotoScreen = (props, route) => {
   const param = props.route.params;
-
+  //넘어온 게시글
   const date = param.petInfo.date;
-  const writer = param.petInfo.email;
+  const writer = param.petInfo.writer;
   const petId = param.petInfo.petId;
   const photoId = param.petInfo.photoId;
   const title = param.petInfo.title;
   const wrote = param.petInfo.wrote;
   const imageUrl = param.petInfo.imageUrl;
-  console.log('넘어온 포토아이디', photoId);
+  console.log('작성자:', writer);
 
   // console.log(param);
   const [email, setEmail] = useState('');
@@ -31,7 +31,7 @@ const DetailPhotoScreen = (props, route) => {
   const [likes, setLikes] = useState(0);
   const [contentHeight, setContentHeight] = useState(0);
   //작성자 정보
-  const [writerInfo, setWriterInfo] = useState(null);
+  const [writerInfo, setWriterInfo] = useState([]);
 
   //모달관리
   const [modalActive, setModalActive] = useState(false);
@@ -41,14 +41,14 @@ const DetailPhotoScreen = (props, route) => {
   const [commentInfo, setCommentInfo] = useState('');
   const [comments, setComments] = useState([]);
 
-  //<---------------------------------------사용자 정보 가져옴 ------------------------------------------------->
+  //<---------------------------------------작성자 정보 가져옴 ------------------------------------------------->
   const getUserInfo = async () => {
     const token = await AsyncStorage.getItem('token');
     const email = await AsyncStorage.getItem('email');
     setEmail(email);
 
     const writerInfoResponse = await axios.get(
-      `http://43.200.8.47:8080/users/${writer}`,
+      `http://43.200.8.47:8080/users/${param.petInfo.writer}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ const DetailPhotoScreen = (props, route) => {
     );
 
     setWriterInfo(writerInfoResponse.data);
-    // console.log(writerInfoResponse.data);
+    console.log('양육자정보', writerInfoResponse.data);
   };
 
   //<-----------------------------------------------------좋아요---------------------------------------------------->
@@ -137,7 +137,7 @@ const DetailPhotoScreen = (props, route) => {
     const token = await AsyncStorage.getItem('token');
     try {
       const response = await axios.get(
-        `http://43.200.8.47:8080/sharedPetGallery/${email}/getByPhotoId/${photoId}`,
+        `http://43.200.8.47:8080/sharedPetGallery/${writer}/getByPhotoId/${photoId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -248,10 +248,10 @@ const DetailPhotoScreen = (props, route) => {
     setInitialLikes();
     getUserInfo();
   }, [comments]);
-
   useEffect(() => {
     getComments();
   }, []);
+
   return (
     <View style={styles.main_style}>
       <ScrollView>
@@ -266,7 +266,7 @@ const DetailPhotoScreen = (props, route) => {
                 style={styles.profile_image}
               />
               <View style={{ flex: 1, marginTop: 10, marginLeft: 10 }}>
-                <Text>양육자</Text>
+                <Text>{writerInfo.userName}</Text>
               </View>
               <TouchableOpacity onPress={openModal}>
                 <MaterialCommunityIcons
@@ -363,7 +363,7 @@ const DetailPhotoScreen = (props, route) => {
           <View style={[styles.downside_style, styles.give_margin]}>
             {/* <GestureHandlerScrollView style={styles.comment_container}> */}
             <View style={styles.comment_container}>
-              <CommentPhoto communityId={photoId} comments={comments} />
+              <CommentPhoto photoId={photoId} comments={comments} />
             </View>
             {/* </GestureHandlerScrollView> */}
             <View></View>

@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { CarePetRoutes } from '../../../navigations/routes';
 
 const PhotoModal = (params) => {
   const [isConfirmingDeletion, setIsConfirmingDeletion] = useState(false);
@@ -30,23 +31,18 @@ const PhotoModal = (params) => {
   const wrote = params.wrote;
   const date = params.date;
   const petId = params.petId;
+  console.log(petId);
 
   const navigation = useNavigation();
-  // console.log(community_id);
-
-  //console.log(modalActive);
 
   //<----------------------------------------삭제--------------------------------------------------->
   const handleDeleteClick = () => {
-    // console.log('이메일', email);
-
     if (writerEmail === email) {
       setIsConfirmingDeletion(true); // '삭제' 버튼 클릭 시 상태 업데이트
     } else {
       onClose();
     }
   };
-
   const handleCancelDelete = () => {
     setIsConfirmingDeletion(false); // '아니오' 클릭 시 상태 업데이트
   };
@@ -55,7 +51,7 @@ const PhotoModal = (params) => {
     AsyncStorage.getItem('token').then((token) => {
       axios
         .delete(
-          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/shared-images/${petId}/deleteImage/${email}/${petId}`,
+          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/shared-images/${petId}/deleteImage/${email}/${photoId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -142,13 +138,14 @@ const PhotoModal = (params) => {
   //<------------------------------------------수정----------------------------------------------->
   const handleUpdate = () => {
     if (writerEmail === email) {
-      navigation.navigate('CommunityUpdateScreen', {
-        community_id,
+      navigation.navigate(CarePetRoutes.UPDATE_PHOTO, {
+        photoId,
         writerEmail,
         photoUrl,
         title,
         wrote,
         date,
+        petId,
       });
       onClose();
     } else {
