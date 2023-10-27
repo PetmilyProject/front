@@ -34,6 +34,7 @@ export const CarePetRoutes = {
   LIST_PHOTO: 'ListPhotoScreen',
   VIEW_PHOTO: 'ViewPhotoScreen',
   DETAIL_PHOTO: 'DetailPhotoScreen',
+  UPDATE_PHOTO: 'UpdatePhotoScreen',
   // 양육자
   DETAIL_REARER: 'DetailRearerScreen',
   LIST_REARER: 'ListRearerScreen',
