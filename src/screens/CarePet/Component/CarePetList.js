@@ -178,10 +178,6 @@ const CarePetList = ({
               <Pressable onPress={handleRearerPress}>
                 <Text style={{ color: rearertextColor }}> 양 육 자 </Text>
               </Pressable>
-              <Text> | </Text>
-              <Pressable onPress={handleStatisticsPress}>
-                <Text style={{ color: statisticstextColor }}> 통 계 </Text>
-              </Pressable>
             </View>
           </View>
         </View>

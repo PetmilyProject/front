@@ -152,76 +152,78 @@ const UpdatePhotoScreen = ({ navigation, route }) => {
     setImgUrl(url);
   };
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      //keyboardShouldPersistTaps="handled"
-    >
-      <TouchableWithoutFeedback>
-        {/* 작성자 */}
-        <View style={styles.profile_container}>
-          <Image source={{ uri: userImage }} style={styles.profile} />
-          <Text style={{ marginLeft: 10, fontSize: 16 }}>{userName}</Text>
-        </View>
-        {/* 사진 */}
-        <View style={styles.photo_container}>
-          {imgUrl === null ? (
-            <View style={styles.photoBox}></View>
-          ) : (
-            <Image source={{ uri: imgUrl }} style={styles.image} />
-          )}
-          <View style={{ marginTop: -28, marginLeft: 300 }}>
-            <ImagePickerComponent
-              width={45}
-              height={45}
-              InsertUrl={InsertUrl}
-            />
+    <View style={{ flex: 1, backgroundColor: WHITE }}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        //keyboardShouldPersistTaps="handled"
+      >
+        <TouchableWithoutFeedback>
+          {/* 작성자 */}
+          <View style={styles.profile_container}>
+            <Image source={{ uri: userImage }} style={styles.profile} />
+            <Text style={{ marginLeft: 10, fontSize: 16 }}>{userName}</Text>
           </View>
-        </View>
-        {/* 입력 */}
-        <View style={styles.content_container}>
-          <TextInput
-            onChangeText={(text) => setNewTitle(text)}
-            placeholder="제목"
-            style={{
-              fontSize: 19,
-              marginHorizontal: 15,
-              width: 380,
-              padding: 10,
-            }}
-            value={newTitle}
-          ></TextInput>
-          <View
-            style={{
-              backgroundColor: GRAY.LIGHT,
-              height: 1,
-              width: '100%',
-            }}
-          ></View>
-          <TextInput
-            onChangeText={(text) => setContents(text)}
-            placeholder="내용을 입력해주세요"
-            multiline={true}
-            style={{
-              textAlignVertical: 'top',
-              height: 100,
-              width: 380,
-              marginHorizontal: 15,
-              paddingHorizontal: 10,
-              paddingTop: 15,
-            }}
-            value={contents}
-          ></TextInput>
+          {/* 사진 */}
+          <View style={styles.photo_container}>
+            {imgUrl === null ? (
+              <View style={styles.photoBox}></View>
+            ) : (
+              <Image source={{ uri: imgUrl }} style={styles.image} />
+            )}
+            <View style={{ marginTop: -28, marginLeft: 300 }}>
+              <ImagePickerComponent
+                width={45}
+                height={45}
+                InsertUrl={InsertUrl}
+              />
+            </View>
+          </View>
+          {/* 입력 */}
+          <View style={styles.content_container}>
+            <TextInput
+              onChangeText={(text) => setNewTitle(text)}
+              placeholder="제목"
+              style={{
+                fontSize: 19,
+                marginHorizontal: 15,
+                width: 380,
+                padding: 10,
+              }}
+              value={newTitle}
+            ></TextInput>
+            <View
+              style={{
+                backgroundColor: GRAY.LIGHT,
+                height: 1,
+                width: '100%',
+              }}
+            ></View>
+            <TextInput
+              onChangeText={(text) => setContents(text)}
+              placeholder="내용을 입력해주세요"
+              multiline={true}
+              style={{
+                textAlignVertical: 'top',
+                height: 100,
+                width: 380,
+                marginHorizontal: 15,
+                paddingHorizontal: 10,
+                paddingTop: 15,
+              }}
+              value={contents}
+            ></TextInput>
 
-          <View style={styles.containerRow}>
-            <SquareButton
-              colorType={ColorTypes.YELLOW}
-              text="등록하기"
-              onPress={handleCommunitySubmit}
-            />
+            <View style={styles.containerRow}>
+              <SquareButton
+                colorType={ColorTypes.YELLOW}
+                text="등록하기"
+                onPress={handleCommunitySubmit}
+              />
+            </View>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -238,6 +240,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     marginHorizontal: 20,
+    marginVertical: 5,
   },
   profile: {
     width: 50,

@@ -47,7 +47,6 @@ const PetRegisterScreen = ({ navigation, route }) => {
         userId: myId,
         name: name,
         gender: gender,
-        species: species,
         age: age,
         character: character,
       };
@@ -55,7 +54,6 @@ const PetRegisterScreen = ({ navigation, route }) => {
       const addPetUrl = `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/add/${myEmail}`;
       const addPetResponse = await axios
         .post(
-          // 이 형식 그대로 안맞춰져서 안되는 거였음
           addPetUrl,
           {
             petName: name,
@@ -63,6 +61,7 @@ const PetRegisterScreen = ({ navigation, route }) => {
             detailInfo: character,
             petAge: age,
             inviter: userInviter,
+            gender: gender,
           },
           {
             headers: {
@@ -185,24 +184,18 @@ const PetRegisterScreen = ({ navigation, route }) => {
         </View>
         <View style={{ alignItems: 'center' }}>
           <InputText
-            title="성별"
-            placeholder={'예) 암컷'}
-            onChangeText={(text) => setGender(text.trim())}
-          />
-
-          <InputText
             title="나이"
             placeholder={'예) 8'}
             onChangeText={(text) => {
               setAge(text.trim());
             }}
           />
-
           <InputText
-            title="구분"
-            placeholder={'예) 말티즈'}
-            onChangeText={(text) => setSpecies(text.trim())}
+            title="성별"
+            placeholder={'예) 암컷'}
+            onChangeText={(text) => setGender(text.trim())}
           />
+
           <InputText
             title="특징"
             placeholder={'예) 산책을 좋아함'}

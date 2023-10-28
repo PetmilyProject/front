@@ -154,6 +154,7 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
               name={profile.petName}
               age={profile.petAge}
               species={profile.detailInfo}
+              gender={profile.gender}
               imgurl={profile.imgurl}
               handleLongPressed={handleLongPressed}
               onPress={() => onPress(profile.petName, profile.id)}
