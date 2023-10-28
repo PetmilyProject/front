@@ -283,6 +283,7 @@ const ListRearerScreen = ({ petName, petId }) => {
                     justifyContent: 'center',
                     backgroundColor: YELLOW.DEFAULT,
                     height: window.height * 0.05,
+                    marginLeft: window.width * 0.19,
                   }}
                 >
                   <TouchableOpacity

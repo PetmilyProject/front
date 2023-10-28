@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   RefreshControl,
+  useWindowDimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -15,6 +16,7 @@ import { CarePetRoutes } from '../../../navigations/routes';
 import { useNavigation } from '@react-navigation/native';
 
 const ScheduleListScreen = ({ petName, petId }) => {
+  const window = useWindowDimensions();
   const [responseData, setResponseData] = useState([]);
   const [selectedItemIndices, setSelectedItemIndices] = useState([]);
   const [currentDate, setCurrentDate] = useState(
@@ -139,6 +141,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
           {
             opacity: isSelected ? 0.4 : 1,
             backgroundColor: backgroundColor,
+            width: window.width * 0.9,
           },
         ]}
       >
@@ -156,13 +159,19 @@ const ScheduleListScreen = ({ petName, petId }) => {
         </TouchableOpacity>
 
         <View style={styles.container_detail}>
-          <Text style={styles.details}>{item.schedule}</Text>
+          <Text style={[styles.details, { fontSize: 0.045 * window.width }]}>
+            {item.schedule}
+          </Text>
         </View>
         <View style={styles.container_time}>
-          <Text style={styles.time}>{item.hm}</Text>
+          <Text style={[styles.time, { fontSize: 0.036 * window.width }]}>
+            {item.hm}
+          </Text>
         </View>
         <View style={styles.container_executor}>
-          <Text style={styles.executor}>{item.executor}</Text>
+          <Text style={[styles.executor, { fontSize: 0.03 * window.width }]}>
+            {item.executor}
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -284,7 +293,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   scheduleItem: {
-    width: 350,
+    width: 320,
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
@@ -298,7 +307,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   details: {
-    fontSize: 20,
+    fontSize: 15,
   },
   container_time: {
     flex: 1,
@@ -307,8 +316,9 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   time: {
-    fontSize: 20,
+    fontSize: 12,
     fontWeight: '500',
+    marginRight: 15,
   },
   container_executor: {
     flex: 1,

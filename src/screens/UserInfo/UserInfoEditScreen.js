@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserInfoEditScreen = ({ navigation }) => {
   const [userId, setId] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userName, setUserName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -42,9 +43,10 @@ const UserInfoEditScreen = ({ navigation }) => {
           .then((response) => {
             const userData = response.data;
             setId(userData.userId);
+            setUserEmail(userData.email);
             setUserName(userData.userName);
             setPhoneNumber(userData.phoneNumber);
-            // console.log('userData : ', userData);
+            console.log('userData : ', userData);
           })
           .catch((error) => {
             console.error('유저 정보 가져오기 실패:', error);
@@ -59,46 +61,83 @@ const UserInfoEditScreen = ({ navigation }) => {
     }
   };
 
-  const handleProfileUpdate = async () => {
-    try {
-      const myEmail = await AsyncStorage.getItem('email');
-      const token = await AsyncStorage.getItem('token');
+  // const handleProfileUpdate = async () => {
+  //   try {
+  //     const myEmail = await AsyncStorage.getItem('email');
+  //     const token = await AsyncStorage.getItem('token');
 
-      if (myEmail && token) {
-        axios
-          .put(
-            'http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/update',
-            {
-              // password: password,
-              userId: userId,
-              userName: userName,
-              phoneNumber: phoneNumber,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          )
-          .then((response) => {
-            Alert.alert('업데이트 성공', '프로필이 업데이트되었습니다.');
-            navigation.goBack();
+  //     if (myEmail && token) {
+  //       axios
+  //         .put(
+  //           'http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/update',
+  //           {
+  //             // password: password,
+  //             userId: userId,
+  //             userName: userName,
+  //             phoneNumber: phoneNumber,
+  //           },
+  //           {
+  //             headers: {
+  //               Authorization: `Bearer ${token}`,
+  //             },
+  //           }
+  //         )
+  //         .then((response) => {
+  //           Alert.alert('업데이트 성공', '프로필이 업데이트되었습니다.');
+  //           navigation.goBack();
+  //         })
+  //         .catch((error) => {
+  //           console.log('usid : ', myEmail);
+  //           console.error('업데이트 실패:', error);
+  //           Alert.alert('업데이트 실패', '다시 시도해주세요.');
+  //         });
+
+  //       // 키보드를 닫습니다.
+  //       Keyboard.dismiss();
+  //     } else {
+  //       Alert.alert('에러', '이메일 또는 토큰을 찾을 수 없습니다.');
+  //     }
+  //   } catch (error) {
+  //     console.error('에러:', error);
+  //     Alert.alert('에러', '다시 시도해주세요.');
+  //   }
+  // };
+
+  const handleProfileUpdate = () => {
+    AsyncStorage.getItem('email')
+      .then((myEmail) => {
+        AsyncStorage.getItem('token')
+          .then((token) => {
+            axios
+              .put(
+                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/update`,
+                {
+                  email: userEmail,
+                  user_id: userId,
+                  user_name: userName,
+                  phone_number: phoneNumber,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              )
+              .then((response) => {
+                console.log(response.data);
+              })
+              .catch((error) => {
+                console.error('유저 정보 업데이트 실패 : 에러 : ', error);
+                console.log('ddd : ', userEmail);
+              });
           })
           .catch((error) => {
-            console.log('usid : ', userId);
-            console.error('업데이트 실패:', error);
-            Alert.alert('업데이트 실패', '다시 시도해주세요.');
+            console.error(error);
           });
-
-        // 키보드를 닫습니다.
-        Keyboard.dismiss();
-      } else {
-        Alert.alert('에러', '이메일 또는 토큰을 찾을 수 없습니다.');
-      }
-    } catch (error) {
-      console.error('에러:', error);
-      Alert.alert('에러', '다시 시도해주세요.');
-    }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
