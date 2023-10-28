@@ -34,6 +34,7 @@ import ListRearerScreen from '../screens/CarePet/Rearer/ListRearerScreen';
 import UserInfoEditScreen from '../screens/UserInfo/UserInfoEditScreen';
 import CommunityUpdateScreen from '../screens/Community/CommunityUpdateScreen';
 import UpdatePhotoScreen from '../screens/CarePet/Photo/UpdatePhotoScreen';
+import { YELLOW } from '../colors';
 
 const TabStack = createBottomTabNavigator();
 const AddPetStack = createStackNavigator();
@@ -253,18 +254,21 @@ const TabStackScreen = () => {
             let iconName;
 
             if (route.name === '캘린더') {
-              iconName = 'calendar'; // 메인 아이콘의 이름
+              iconName = 'calendar';
             } else if (route.name === '메인') {
-              iconName = 'home'; // 캘린더 아이콘의 이름
+              iconName = 'home';
             } else if (route.name === '커뮤니티') {
-              iconName = 'chatbubbles'; // 커뮤니티 아이콘의 이름
+              iconName = 'chatbubbles';
             } else if (route.name === '내정보') {
-              iconName = 'person'; // 내정보 아이콘의 이름
+              iconName = 'person';
             }
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
         })}
+        tabBarOptions={{
+          activeTintColor: '#fbbf24', // 여기에 활성 탭의 아이콘 색상을 설정합니다.
+        }}
       >
         <TabStack.Screen
           name="메인"

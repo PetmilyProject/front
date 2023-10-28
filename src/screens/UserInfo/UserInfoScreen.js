@@ -146,106 +146,108 @@ const UserInfoScreen = () => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: WHITE,
-      }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-      }
-    >
-      <View style={styles.container}>
-        <DangerAlert
-          visible={visible}
-          onClose={() => setVisible(false)}
-          onRight={handleLogout}
-          leftBtnColor={GRAY.LIGHT}
-          rightBtnColor={YELLOW.DEFAULT}
-          title={'로그아웃 하시겠습니까?'}
-          leftText={'취소'}
-          rightText={'로그아웃'}
-        />
-        {/* 강아지 사진 */}
-        <TouchableOpacity
-          onPress={async () => {
-            let result = await ImagePicker.launchImageLibraryAsync({
-              mediaTypes: ImagePicker.MediaTypeOptions.All,
-              allowsEditing: true,
-              aspect: [3, 3],
-              quality: 1,
-            });
+    <View style={{ flex: 1, backgroundColor: WHITE }}>
+      <ScrollView
+        contentContainerStyle={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: WHITE,
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
+        <View style={styles.container}>
+          <DangerAlert
+            visible={visible}
+            onClose={() => setVisible(false)}
+            onRight={handleLogout}
+            leftBtnColor={GRAY.LIGHT}
+            rightBtnColor={YELLOW.DEFAULT}
+            title={'로그아웃 하시겠습니까?'}
+            leftText={'취소'}
+            rightText={'로그아웃'}
+          />
+          {/* 강아지 사진 */}
+          <TouchableOpacity
+            onPress={async () => {
+              let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [3, 3],
+                quality: 1,
+              });
 
-            console.log(
-              '결과 : ',
-              result,
-              '넣을 데이터 : ',
-              result.assets[0].uri
-            );
+              console.log(
+                '결과 : ',
+                result,
+                '넣을 데이터 : ',
+                result.assets[0].uri
+              );
 
-            uploadImage(result.assets[0].uri);
-          }}
-        >
-          <View style={styles.imageContainer}>
-            {image ? (
-              <Image
-                source={{ uri: image + '?cache=' + Math.random() }}
-                style={styles.dogImage}
-              />
-            ) : (
-              <Image
-                style={styles.dogImage}
-                source={require('../../assets/pet_icon.png')}
-              />
-            )}
-            <View style={styles.editIconContainer}>
-              <MaterialIcons name="edit" size={24} color="black" />
+              uploadImage(result.assets[0].uri);
+            }}
+          >
+            <View style={styles.imageContainer}>
+              {image ? (
+                <Image
+                  source={{ uri: image + '?cache=' + Math.random() }}
+                  style={styles.dogImage}
+                />
+              ) : (
+                <Image
+                  style={styles.dogImage}
+                  source={require('../../assets/pet_icon.png')}
+                />
+              )}
+              <View style={styles.editIconContainer}>
+                <MaterialIcons name="edit" size={24} color="black" />
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          {/* 이메일과 닉네임 */}
+          <View style={styles.infoContainer}>
+            <View style={styles.infoRow}>
+              <Text style={styles.nicknameText}>{userName}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.emailText}>{email}</Text>
             </View>
           </View>
-        </TouchableOpacity>
 
-        {/* 이메일과 닉네임 */}
-        <View style={styles.infoContainer}>
-          <View style={styles.infoRow}>
-            <Text style={styles.nicknameText}>{userName}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.emailText}>{email}</Text>
+          {/* 로그아웃과 회원탈퇴 버튼 */}
+          <View style={styles.buttonContainer}>
+            <Button2
+              backgrouncolor={YELLOW.DEFAULT}
+              color={WHITE}
+              text={'수정'}
+              onPress={() => {
+                navigation.navigate(UserInfoRoutes.USER_EDIT);
+              }}
+              width={350}
+            />
+            <Button2
+              backgrouncolor={YELLOW.DEFAULT}
+              color={WHITE}
+              text={'로그아웃'}
+              onPress={() => {
+                setVisible(true);
+              }}
+              width={350}
+            />
+            <Button2
+              backgrouncolor={GRAY.LIGHT}
+              color={WHITE}
+              text={'계정탈퇴'}
+              onPress={handleWithdrawal}
+              width={350}
+            />
           </View>
         </View>
-
-        {/* 로그아웃과 회원탈퇴 버튼 */}
-        <View style={styles.buttonContainer}>
-          <Button2
-            backgrouncolor={YELLOW.DEFAULT}
-            color={WHITE}
-            text={'수정'}
-            onPress={() => {
-              navigation.navigate(UserInfoRoutes.USER_EDIT);
-            }}
-            width={350}
-          />
-          <Button2
-            backgrouncolor={YELLOW.DEFAULT}
-            color={WHITE}
-            text={'로그아웃'}
-            onPress={() => {
-              setVisible(true);
-            }}
-            width={350}
-          />
-          <Button2
-            backgrouncolor={GRAY.LIGHT}
-            color={WHITE}
-            text={'계정탈퇴'}
-            onPress={handleWithdrawal}
-            width={350}
-          />
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

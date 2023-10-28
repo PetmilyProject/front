@@ -30,7 +30,6 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
   const [name, setName] = useState(petName);
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
-  const [species, setSpecies] = useState('');
   const [character, setCharater] = useState('');
   const [inviter, setInviter] = useState('');
   const [email, setEmail] = useState('');
@@ -129,6 +128,7 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
         setName(responseData.petName);
         setAge(responseData.petAge);
         setCharater(responseData.detailInfo);
+        setGender(responseData.gender);
       } catch (error) {
         console.log('Error fetching pet data:', error);
       }
@@ -152,6 +152,7 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
         petName: name,
         petAge: age,
         detailInfo: character,
+        gender: gender,
       },
       {
         headers: {
@@ -312,14 +313,6 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
             type={'input'}
             keyboardType={'decimal-pad'}
           />
-          {/* 
-          <InputText_in
-            title={'구분'}
-            titleSize={20}
-            value={species}
-            onChangeText={setSpecies}
-            type={'input'}
-          />
           <InputText_in
             title={'성별'}
             titleSize={20}
@@ -327,7 +320,7 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
             onChangeText={setGender}
             type={'input'}
           />
-          */}
+
           <InputText_in
             title={'특징'}
             titleSize={20}
@@ -369,7 +362,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    paddingTop: 30,
     backgroundColor: WHITE,
   },
   container_profile: {
@@ -406,7 +399,6 @@ const styles = StyleSheet.create({
   container_info: {
     flex: 2,
     alignItems: 'center',
-    // backgroundColor: GRAY.LIGHTER,
   },
   editIconContainer: {
     position: 'absolute',

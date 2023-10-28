@@ -291,7 +291,12 @@ const CommunityDetailPhotoScreen = (props, route) => {
             />
           </View>
           {/* 상세 정보 영역 */}
-          <View style={(styles.detail_container.height = 600 + contentHeight)}>
+          <View
+            style={[
+              (styles.detail_container.height = 600 + contentHeight),
+              { marginLeft: 5 },
+            ]}
+          >
             <View style={styles.like_area}>
               {/* 좋아요 버튼 */}
               <TouchableOpacity
@@ -300,7 +305,7 @@ const CommunityDetailPhotoScreen = (props, route) => {
               >
                 <MaterialCommunityIcons
                   name="cards-heart"
-                  size={36}
+                  size={30}
                   color={liked}
                 />
               </TouchableOpacity>
@@ -324,30 +329,39 @@ const CommunityDetailPhotoScreen = (props, route) => {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              marginHorizontal: 5,
+              marginHorizontal: 10,
               marginBottom: 5,
+              marginTop: 10,
             }}
           >
-            <TextInput
-              placeholder="댓글 작성"
-              value={comment}
-              onChangeText={(text) => setComment(text)}
+            <View
               style={{
                 flex: 1,
                 marginRight: 5,
                 borderWidth: 1,
                 borderRadius: 20,
-                padding: 5,
+                padding: 10,
+                borderColor: GRAY.LIGHT,
               }}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                handleComment(), sendComment();
-              }}
-              style={styles.submit}
             >
-              <Text style={{ fontWeight: 'bold' }}>전송</Text>
-            </TouchableOpacity>
+              <View style={{ flexDirection: 'row' }}>
+                <TextInput
+                  placeholder="댓글 작성"
+                  value={comment}
+                  onChangeText={(text) => setComment(text)}
+                  style={{ width: '90%' }}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    handleComment(), sendComment();
+                  }}
+                >
+                  <Text style={{ fontWeight: 'bold', color: YELLOW.DARK }}>
+                    전송
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
           {/* 댓글 영역 */}
           <View style={[styles.downside_style, styles.give_margin]}>
@@ -438,13 +452,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 30,
     marginBottom: 0,
-  },
-  submit: {
-    alignItems: 'flex-end',
-    paddingHorizontal: 20,
-    paddingVertical: 9,
-    backgroundColor: YELLOW.DEFAULT,
-    borderRadius: 20,
   },
 });
 

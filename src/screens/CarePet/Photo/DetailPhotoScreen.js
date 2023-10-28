@@ -310,7 +310,7 @@ const DetailPhotoScreen = (props, route) => {
               >
                 <MaterialCommunityIcons
                   name="cards-heart"
-                  size={36}
+                  size={30}
                   color={liked}
                 />
               </TouchableOpacity>
@@ -330,6 +330,45 @@ const DetailPhotoScreen = (props, route) => {
             </View>
           </View>
           {/* 댓글 입력 */}
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginHorizontal: 10,
+              marginBottom: 5,
+              marginTop: 10,
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                marginRight: 5,
+                borderWidth: 1,
+                borderRadius: 20,
+                padding: 10,
+                borderColor: GRAY.LIGHT,
+              }}
+            >
+              <View style={{ flexDirection: 'row' }}>
+                <TextInput
+                  placeholder="댓글 작성"
+                  value={commentInfo}
+                  onChangeText={(text) => setCommentInfo(text)}
+                  style={{ width: '90%' }}
+                />
+                <TouchableOpacity
+                  onPress={() => {
+                    handleComment(), sendComment();
+                  }}
+                >
+                  <Text style={{ fontWeight: 'bold', color: YELLOW.DARK }}>
+                    전송
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          {/* 댓글 입력
           <View
             style={{
               flexDirection: 'row',
@@ -358,7 +397,7 @@ const DetailPhotoScreen = (props, route) => {
             >
               <Text style={{ fontWeight: 'bold' }}>전송</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           {/* 댓글 영역 */}
           <View style={[styles.downside_style, styles.give_margin]}>
             {/* <GestureHandlerScrollView style={styles.comment_container}> */}

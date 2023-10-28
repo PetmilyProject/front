@@ -196,8 +196,8 @@ const ListRearerScreen = ({ petName, petId }) => {
                       marginRight: 10,
                       height: 40,
                       width: 250,
-                      borderWidth: 1,
-                      borderColor: 'gray',
+                      borderWidth: 0,
+                      backgroundColor: GRAY.BRIGHT,
                       paddingLeft: 20,
                     }}
                     onChangeText={(text) => setInviteName(text)}
@@ -221,7 +221,6 @@ const ListRearerScreen = ({ petName, petId }) => {
                   <TouchableOpacity
                     style={{
                       fontSize: 17,
-                      color: WHITE,
                     }}
                     onPress={() => {
                       setVisible(true);
