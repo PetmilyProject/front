@@ -144,7 +144,10 @@ const CommentPhoto = (param) => {
                 {userNames[index]}
               </Text>
             </View>
-            <View style={styles.comment_content_area} onLayout={handleLayout2}>
+            <View
+              style={[styles.comment_content_area, { paddingTop: 2 }]}
+              onLayout={handleLayout2}
+            >
               <Text>{comment.commentInfo}</Text>
             </View>
 
@@ -200,6 +203,7 @@ const styles = StyleSheet.create({
     //fontFamily: 'GmarketSansTTFMedium',
     flex: 0.2,
     paddingLeft: 10,
+    marginRight: 10,
     color: 'black',
     //height: 50,
   },

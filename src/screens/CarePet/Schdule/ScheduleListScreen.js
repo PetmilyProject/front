@@ -271,6 +271,7 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 20,
+    marginHorizontal: 20,
   },
   select_date: {
     fontSize: 22,

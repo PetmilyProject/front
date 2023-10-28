@@ -209,10 +209,10 @@ const CarePetList = ({
               <Pressable onPress={handleRearerPress}>
                 <Text style={textStyle.rearer}>양육자</Text>
               </Pressable>
-              <Text> | </Text>
+              {/* <Text> | </Text>
               <Pressable onPress={handleStatisticsPress}>
                 <Text style={textStyle.statistics}>통계</Text>
-              </Pressable>
+              </Pressable> */}
             </View>
           </View>
         </View>

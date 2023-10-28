@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserWithdrawalScreen = ({ navigation }) => {
   const handleWithdrawal = async () => {
+    const email = await AsyncStorage.getItem('email');
     try {
       // 서버에 계정 삭제 요청 보내기
       const token = await AsyncStorage.getItem('token');
@@ -17,9 +18,8 @@ const UserWithdrawalScreen = ({ navigation }) => {
         return;
       }
 
-      const response = await axios.post(
-        'http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/auth/logout',
-        {},
+      const response = await axios.delete(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/delete/${email}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -28,11 +28,13 @@ const UserWithdrawalScreen = ({ navigation }) => {
       );
 
       // 서버로부터 응답 받은 후, 계정 삭제에 성공하면 로컬 저장소에서도 계정 정보 삭제
-      await AsyncStorage.clear();
-      console.log('계정 삭제 완료');
-
-      // 이전 화면으로 돌아가기
-      navigation.goBack();
+      if (response.status === 200) {
+        await AsyncStorage.clear();
+        console.log('계정 삭제 완료');
+        navigation.navigate('First');
+      } else {
+        console.error('계정 삭제 실패:', response.status);
+      }
     } catch (error) {
       console.error('계정 삭제 실패:', error);
     }
@@ -53,6 +55,7 @@ const UserWithdrawalScreen = ({ navigation }) => {
         영구적으로 삭제됩니다.{'\n'}
         -사용자 계정은 영구적으로 삭제됩니다.
       </Text>
+
       <Button2
         backgrouncolor={GRAY.LIGHT}
         text="취소"
@@ -63,7 +66,7 @@ const UserWithdrawalScreen = ({ navigation }) => {
       <Button2
         backgrouncolor={RED.DEFAULT}
         text="계정탈퇴"
-        onPress={handleWithdrawal}
+        onPress={() => {}}
         color={WHITE}
         width={'90%'}
       />
@@ -74,8 +77,10 @@ const UserWithdrawalScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginLeft: 50,
-    marginTop: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -120,
+    backgroundColor: WHITE,
   },
   title: {
     fontSize: 23,
@@ -85,6 +90,7 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 15,
     color: GRAY.DEFAULT,
+    marginBottom: 20,
   },
 });
 

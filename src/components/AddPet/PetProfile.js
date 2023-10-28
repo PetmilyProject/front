@@ -8,6 +8,7 @@ const PetProfile = ({
   name,
   age,
   species,
+  gender,
   set,
   handleLongPressed,
   onPress,
@@ -35,7 +36,8 @@ const PetProfile = ({
                 <Text style={styles.age}>{age}살</Text>
               </View>
               <View style={styles.container3}>
-                <Text style={styles.content}>{species}</Text>
+                <Text style={[styles.content]}> 특징 : {species}</Text>
+                <Text style={styles.content}> 성별 : {gender}</Text>
                 {/* <Text style={styles.content}>{gender}</Text>
                 <Text style={styles.content}>{character}</Text> */}
               </View>
@@ -69,34 +71,32 @@ const styles = StyleSheet.create({
   container2: {
     flexDirection: 'column',
   },
-  container3: {
-    flexDirection: 'row',
-  },
+  container3: {},
   nametitle: {
     flexDirection: 'row',
     borderRadius: 20,
     backgroundColor: YELLOW.DEFAULT,
     width: 220,
     height: 40,
+    alignItems: 'center',
     marginTop: 10,
     marginBottom: 15,
   },
   name: {
     fontSize: 23,
     color: WHITE,
-    fontWeight: '500',
+    fontWeight: '600',
     paddingLeft: 15,
-    paddingTop: 10,
   },
   age: {
     fontSize: 18,
     color: WHITE,
     marginLeft: 10,
-    marginTop: 12,
   },
   content: {
     fontSize: 16,
     marginLeft: 10,
+    marginBottom: 3,
   },
   image: {
     borderRadius: 100,
@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     marginRight: 10,
+    marginTop: 5,
   },
 });
 

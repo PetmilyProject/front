@@ -6,7 +6,6 @@ import {
   Image,
   RefreshControl,
   TouchableOpacity,
-  ScrollView,
   Text,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,7 +16,6 @@ import { YELLOW } from '../../colors';
 import { CommunityRoutes } from '../../navigations/routes';
 
 const CommunityPhotoScreen = () => {
-  //const [myPhotoUrl, setMyPhotoUrl] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [topicData, setTopicData] = useState([]);
   const navigation = useNavigation();
@@ -133,7 +131,6 @@ const CommunityPhotoScreen = () => {
     );
     let sortedData = getData.data.sort();
 
-    //console.log(sortedData);
     setTopicData(getData.data);
   };
 
@@ -145,35 +142,37 @@ const CommunityPhotoScreen = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.separator} />
-      <ScrollView
+      <FlatList
+        data={sortedPhotoUrl}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            onPress={() => gotoDetail(index)}
+            style={styles.photoList}
+          >
+            <View style={{ alignItems: 'center' }}>
+              <Image
+                source={{ uri: item + '?cache=' + Math.random() }}
+                style={styles.photoItem}
+              />
+            </View>
+            <Text
+              style={{
+                marginTop: 10,
+                marginLeft: 10,
+                fontSize: 16,
+                marginBottom: -20,
+              }}
+            >
+              {titleOfPost[index]}
+            </Text>
+          </TouchableOpacity>
+        )}
+        numColumns={2}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
         }
-      >
-        <View style={styles.container}>
-          <FlatList
-            data={sortedPhotoUrl}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => (
-              <TouchableOpacity
-                onPress={() => gotoDetail(index)}
-                style={styles.photoList}
-              >
-                <View style={{ alignItems: 'center' }}>
-                  <Image
-                    source={{ uri: item + '?cache=' + Math.random() }}
-                    style={styles.photoItem}
-                  />
-                </View>
-                <Text style={{ marginTop: 10, marginLeft: 10, fontSize: 16 }}>
-                  {titleOfPost[index]}
-                </Text>
-              </TouchableOpacity>
-            )}
-            numColumns={2}
-          />
-        </View>
-      </ScrollView>
+      />
     </View>
   );
 };
@@ -193,10 +192,6 @@ const styles = StyleSheet.create({
     height: 1,
     width: '100%',
   },
-  container: {
-    width: '100%',
-    alignItems: 'center',
-  },
   photoList: {
     width: '50%',
     marginTop: '10%',
@@ -204,7 +199,6 @@ const styles = StyleSheet.create({
   photoItem: {
     width: '90%',
     aspectRatio: 1,
-    // margin: 20,
   },
 });
 

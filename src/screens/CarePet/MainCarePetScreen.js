@@ -93,8 +93,6 @@ const MainCarePetScreen = ({ navigation, route }) => {
       );
     } else if (content === '양육자') {
       return <ListRearerScreen petName={petName} petId={petId} />;
-    } else if (content === '통계') {
-      return <StatisticsScreen petName={petName} petId={petId} />;
     } else {
       return null; // Return null or another default screen/component if needed
     }

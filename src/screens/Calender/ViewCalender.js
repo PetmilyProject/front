@@ -1,6 +1,6 @@
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import { WHITE, YELLOW } from '../../colors';
+import { GRAY, WHITE, YELLOW } from '../../colors';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -120,47 +120,54 @@ const ViewCalender = () => {
   const markedDates = {
     [selectedDate]: {
       selected: true,
-      selectedColor: 'blue',
+      selectedColor: YELLOW.DEFAULT,
     },
   };
 
   return (
-    <ScrollView style={{ backgroundColor: 'white' }}>
-      <View style={styles.container}>
-        <Calendar
-          style={styles.calendar}
-          onDayPress={handleDayPress}
-          markedDates={markedDates}
-          theme={{
-            selectedDayBackgroundColor: YELLOW.DARK,
-            arrowColor: YELLOW.DARK,
-            dotColor: 'green',
-            todayTextColor: YELLOW.DARK,
+    <View style={styles.container}>
+      <Calendar
+        style={styles.calendar}
+        onDayPress={handleDayPress}
+        markedDates={markedDates} // 수정된 부분
+        theme={{
+          arrowColor: YELLOW.DARK,
+          dotColor: 'green',
+          todayTextColor: YELLOW.DARK,
+        }}
+      />
+
+      <View>
+        {/*selectedDate && <Text>Selected Date : {selectedDate}</Text>*/}
+        <Text
+          style={{
+            marginLeft: 10,
+            marginTop: 20,
+            marginBottom: 30,
+            fontSize: 18,
+            color: YELLOW.DEFAULT,
+            fontWeight: '700',
           }}
-        />
-        <View>
-          {/*selectedDate && <Text>Selected Date : {selectedDate}</Text>*/}
-          <Text
-            style={{
-              marginLeft: 10,
-              marginTop: 20,
-              marginBottom: 30,
-              fontSize: 18,
-              color: YELLOW.DEFAULT,
-              fontWeight: '700',
-            }}
-          >
-            예정된 일정
-          </Text>
-          <View style={styles.petNavigation}>
-            <TouchableOpacity onPress={handlePreviousPet}>
-              <Text style={styles.navigationText}>&lt;</Text>
-            </TouchableOpacity>
-            <Text style={styles.petName}>{myPets[currentPetIndex]}</Text>
-            <TouchableOpacity onPress={handleNextPet}>
-              <Text style={styles.navigationText}>&gt;</Text>
-            </TouchableOpacity>
-          </View>
+        >
+          예정된 일정
+        </Text>
+
+        <View style={styles.petNavigation}>
+          <TouchableOpacity onPress={handlePreviousPet}>
+            <Text style={styles.navigationText}>◀</Text>
+          </TouchableOpacity>
+          <Text style={styles.petName}>{myPets[currentPetIndex]}</Text>
+          <TouchableOpacity onPress={handleNextPet}>
+            <Text style={styles.navigationText}>▶</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView
+          style={{
+            height: '100%',
+            paddingTop: 10,
+            paddingHorizontal: 20,
+          }}
+        >
           {petSchedules &&
             petSchedules.map((item) => (
               <TouchableOpacity
@@ -172,11 +179,11 @@ const ViewCalender = () => {
                 <Text style={styles.time}>{item.hm}</Text>
               </TouchableOpacity>
             ))}
-        </View>
-
-        {renderRecurringItems()}
+        </ScrollView>
       </View>
-    </ScrollView>
+
+      {renderRecurringItems()}
+    </View>
   );
 };
 
@@ -198,23 +205,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
-    borderRadius: 20,
-    backgroundColor: '#f5f5f5',
-    padding: 20,
+    borderRadius: 70,
+    backgroundColor: '#f5f5f4',
+    padding: 15,
   },
   details: {
     fontSize: 18,
   },
   time: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '500',
     marginLeft: 120,
   },
   petNavigation: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginHorizontal: 20,
+    marginHorizontal: 50,
     marginBottom: 10,
   },
   navigationText: {
