@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, Text } from 'react-native';
-import { PieChart } from 'react-native-chart-kit';
+// import { PieChart } from 'react-native-chart-kit';
 import { GRAY, YELLOW } from '../../../colors';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';

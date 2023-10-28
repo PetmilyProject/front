@@ -4,9 +4,8 @@ import {
   StyleSheet,
   Text,
   Image,
-  TextInput,
   TouchableOpacity,
-  Touchable,
+  ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -135,17 +134,20 @@ const CommentPhoto = (param) => {
             style={{
               flexDirection: 'row',
               flex: 0.7,
-              marginBottom: -50,
-              marginTop: 15,
+              marginBottom: -80,
+              marginTop: 5,
             }}
           >
             <View style={styles.nickname_area}>
-              <Text style={{ fontSize: 15, fontWeight: 600 }}>
+              <Text style={{ fontSize: 10, fontWeight: 600 }}>
                 {userNames[index]}
               </Text>
             </View>
             <View
-              style={[styles.comment_content_area, { paddingTop: 2 }]}
+              style={[
+                styles.comment_content_area,
+                { paddingTop: 2, marginLeft: 20 },
+              ]}
               onLayout={handleLayout2}
             >
               <Text>{comment.commentInfo}</Text>

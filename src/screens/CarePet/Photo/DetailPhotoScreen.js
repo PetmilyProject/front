@@ -1,4 +1,11 @@
-import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  RefreshControl,
+} from 'react-native';
 import { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { RED, BLACK, WHITE, GRAY, YELLOW } from '../../../colors';
@@ -22,7 +29,7 @@ const DetailPhotoScreen = (props, route) => {
   const title = param.petInfo.title;
   const wrote = param.petInfo.wrote;
   const imageUrl = param.petInfo.imageUrl;
-  console.log('작성자:', writer);
+  // console.log('작성자:', writer);
 
   // console.log(param);
   const [email, setEmail] = useState('');
@@ -41,6 +48,12 @@ const DetailPhotoScreen = (props, route) => {
   const [commentInfo, setCommentInfo] = useState('');
   const [comments, setComments] = useState([]);
 
+  //새로고침
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = () => {
+    setRefreshing(false);
+  };
+
   //<---------------------------------------작성자 정보 가져옴 ------------------------------------------------->
   const getUserInfo = async () => {
     const token = await AsyncStorage.getItem('token');
@@ -57,7 +70,7 @@ const DetailPhotoScreen = (props, route) => {
     );
 
     setWriterInfo(writerInfoResponse.data);
-    console.log('양육자정보', writerInfoResponse.data);
+    // console.log('양육자정보', writerInfoResponse.data);
   };
 
   //<-----------------------------------------------------좋아요---------------------------------------------------->
@@ -254,7 +267,11 @@ const DetailPhotoScreen = (props, route) => {
 
   return (
     <View style={styles.main_style}>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View style={styles.upside_style}>
           {/* 헤더 영역 */}
           <View style={styles.header_container}>
@@ -432,7 +449,7 @@ const styles = StyleSheet.create({
   downside_style: {
     marginTop: 5,
     width: '100%',
-    //height: 300,
+    // height: 300,
     flex: 0.3,
   },
   header_container: {
