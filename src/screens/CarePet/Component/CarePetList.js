@@ -4,16 +4,16 @@ import {
   Text,
   Image,
   Pressable,
-  Alert,
   TouchableOpacity,
+  useWindowDimensions,
 } from 'react-native';
 import { useState, useEffect } from 'react';
-import { BLACK, GRAY, WHITE } from '../../../colors';
+import { BLACK, WHITE } from '../../../colors';
 import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { CarePetRoutes } from '../../../navigations/routes';
 import {
   widthPercentageToDP,
@@ -31,6 +31,7 @@ const CarePetList = ({
   onStatisticsPress,
   petId,
 }) => {
+  const window = useWindowDimensions();
   const [schedueltextColor, setScheduleTextColor] = useState(YELLOW.DARK);
   const [phototextColor, setPhotoTextColor] = useState(BLACK);
   const [rearertextColor, setRearerTextColor] = useState(BLACK);
@@ -39,8 +40,6 @@ const CarePetList = ({
   const [responseData, setResponseData] = useState([]);
   const [myEmail, setMyEmail] = useState('');
   const [inviterEmail, setInviterEmail] = useState('');
-  var petProfiles2 = [];
-  var petData;
 
   const handleSchedulePress = () => {
     setScheduleTextColor(YELLOW.DARK);
@@ -84,9 +83,21 @@ const CarePetList = ({
   const textStyle = StyleSheet.create({
     schdule: {
       color: schedueltextColor,
+      fontSize: widthPercentageToDP('5%'),
+    },
+    photo: {
+      color: phototextColor,
+      fontSize: widthPercentageToDP('5%'),
+    },
+    rearer: {
+      color: rearertextColor,
+      fontSize: widthPercentageToDP('5%'),
+    },
+    statistics: {
+      color: statisticstextColor,
+      fontSize: widthPercentageToDP('5%'),
     },
   });
-
   const fetchData = async () => {
     try {
       const email = await AsyncStorage.getItem('email');
@@ -157,7 +168,13 @@ const CarePetList = ({
                   '?cache=' +
                   Math.random(),
               }}
-              style={styles.image}
+              style={[
+                styles.image,
+                {
+                  width: widthPercentageToDP('30%'),
+                  height: heightPercentageToDP('15%'),
+                },
+              ]}
             />
             <View style={styles.editIconContainer}>
               <MaterialIcons name="edit" size={24} color="black" />
@@ -167,37 +184,45 @@ const CarePetList = ({
           <View style={styles.container_content}>
             <View style={{ flexDirection: 'row' }}>
               <View style={styles.container_name}>
-                <Text style={styles.name}>{petName}</Text>
+                <Text
+                  style={[
+                    styles.name,
+                    {
+                      fontSize: widthPercentageToDP('7%'),
+                    },
+                  ]}
+                >
+                  {petName}
+                </Text>
               </View>
             </View>
             {/* 케어 목록 */}
             <View style={styles.container_row}>
               <Pressable onPress={handleSchedulePress}>
-                <Text style={textStyle.schdule}>일 정 </Text>
+                <Text style={textStyle.schdule}>일정</Text>
               </Pressable>
               <Text> | </Text>
               <Pressable onPress={handlePhotoPress}>
-                <Text style={{ color: phototextColor }}> 사 진 첩 </Text>
+                <Text style={textStyle.photo}>사진첩</Text>
               </Pressable>
               <Text> | </Text>
               <Pressable onPress={handleRearerPress}>
-                <Text style={{ color: rearertextColor }}> 양 육 자 </Text>
+                <Text style={textStyle.rearer}>양육자</Text>
               </Pressable>
               <Text> | </Text>
               <Pressable onPress={handleStatisticsPress}>
-                <Text style={{ color: statisticstextColor }}> 통 계 </Text>
+                <Text style={textStyle.statistics}>통계</Text>
               </Pressable>
             </View>
           </View>
         </View>
-
-        <View style={styles.componentAMD}>
-          <ComponentAMD
-            onAddPress={onAddPress}
-            navigation={navigation}
-            petName={petName}
-          />
-        </View>
+      </View>
+      <View style={styles.componentAMD}>
+        <ComponentAMD
+          onAddPress={onAddPress}
+          navigation={navigation}
+          petName={petName}
+        />
       </View>
     </View>
   );
@@ -208,19 +233,22 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: heightPercentageToDP('10%'),
+    marginTop: heightPercentageToDP('8%'),
   },
   container_row: {
     flexDirection: 'row',
   },
   container_main: {
     flexDirection: 'row',
-    marginRight: widthPercentageToDP('10%'),
+    marginRight: widthPercentageToDP('9%'),
   },
-  componentAMD: { marginTop: heightPercentageToDP('1%') },
+  componentAMD: {
+    width: widthPercentageToDP('90%'),
+    marginBottom: heightPercentageToDP('-1.5%'),
+  },
   container_content: {
     justifyContent: 'center',
-    marginLeft: widthPercentageToDP('1%'),
+    marginLeft: widthPercentageToDP('2%'),
   },
   container_name: {
     marginBottom: heightPercentageToDP('2%'),
@@ -232,8 +260,6 @@ const styles = StyleSheet.create({
   image: {
     borderRadius: 100,
     alignItems: 'center',
-    width: widthPercentageToDP('30%'),
-    height: heightPercentageToDP('15%'),
     marginRight: widthPercentageToDP('5%'),
   },
   editIconContainer: {

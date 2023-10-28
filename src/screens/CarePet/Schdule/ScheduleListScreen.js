@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  RefreshControl,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -19,13 +20,14 @@ const ScheduleListScreen = ({ petName, petId }) => {
   const [currentDate, setCurrentDate] = useState(
     new Date().toISOString().split('T')[0]
   );
-  const [profileOwner, setProfileOwner] = useState([]);
   const [scheduleMap, setScheduleMap] = useState({});
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const navigation = useNavigation();
 
   // 스케줄 가져오기
   const fetchScheduleData = () => {
+    setIsRefreshing(true);
     AsyncStorage.getItem('email')
       .then((myEmail) => {
         AsyncStorage.getItem('token')
@@ -61,14 +63,19 @@ const ScheduleListScreen = ({ petName, petId }) => {
               })
               .catch((error) => {
                 console.error(error);
+              })
+              .finally(() => {
+                setIsRefreshing(false);
               });
           })
           .catch((error) => {
             console.error(error);
+            setIsRefreshing(false);
           });
       })
       .catch((error) => {
         console.error(error);
+        setIsRefreshing(false);
       });
   };
 
@@ -101,6 +108,12 @@ const ScheduleListScreen = ({ petName, petId }) => {
     fetchScheduleData(); // 컴포넌트가 처음 렌더링될 때 데이터를 가져옵니다.
     fetchEtcData();
   }, [currentDate]);
+
+  const onRefresh = () => {
+    setSelectedItemIndices([]);
+    setCurrentDate(new Date().toISOString().split('T')[0]);
+    fetchScheduleData();
+  };
 
   useEffect(() => {
     //console.log('scheduleMap updating...');
@@ -223,13 +236,13 @@ const ScheduleListScreen = ({ petName, petId }) => {
     <View style={styles.container}>
       <View style={styles.container_row}>
         <TouchableOpacity onPress={handleLeftArrowPress}>
-          <Text style={styles.select_date}>◀ </Text>
+          <Text style={styles.select_date}>◀</Text>
         </TouchableOpacity>
         <TouchableOpacity>
           <Text style={styles.date}>{currentDate}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleRightArrowPress}>
-          <Text style={styles.select_date}> ▶</Text>
+          <Text style={styles.select_date}>▶</Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -237,6 +250,9 @@ const ScheduleListScreen = ({ petName, petId }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         style={styles.schedule_container}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        }
       />
     </View>
   );

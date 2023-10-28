@@ -4,11 +4,12 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
   TouchableOpacity,
   Image,
+  RefreshControl,
+  useWindowDimensions,
 } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,6 +38,8 @@ const giveInvitation = async (receiver, petId) => {
 };
 
 const ListRearerScreen = ({ petName, petId }) => {
+  const window = useWindowDimensions();
+
   const [visible, setVisible] = useState(false); // 초대 확인 모달 관리
   const [inviteName, setInviteName] = useState('');
 
@@ -50,7 +53,7 @@ const ListRearerScreen = ({ petName, petId }) => {
   const [mainRearer, setMainRearer] = useState(null);
   const [subRearer, setSubRearer] = useState([]);
   const [email, setEmail] = useState('');
-  // const [isInviter, setIsInviter] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const navigation = useNavigation();
 
@@ -63,6 +66,11 @@ const ListRearerScreen = ({ petName, petId }) => {
       // If inviteName is not in allRearer, proceed with the invitation
       giveInvitation(inviteName, petId);
     }
+  };
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    fetchPetLink().then(() => setIsRefreshing(false));
   };
 
   // 양육자 프로필 생성
@@ -146,8 +154,224 @@ const ListRearerScreen = ({ petName, petId }) => {
     Keyboard.dismiss();
   };
 
+  //   return (
+  //     <ScrollView
+  //       refreshControl={
+  //         <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+  //       }
+  //     >
+  //       <View style={styles.container}>
+  //         <SingleButtonAlert
+  //           visible={checkVisible}
+  //           title={'초대 불가'}
+  //           comment={'이미 존재하는 양육자 입니다.'}
+  //           BtnText={'닫기'}
+  //           onClose={() => {
+  //             setCheckVisible(false);
+  //             setInviteName('');
+  //           }}
+  //           BtnColor={YELLOW.DEFAULT}
+  //         />
+  //         <DangerAlert
+  //           visible={visible}
+  //           title={`${inviteName}` + ' 님을' + '\n' + '초대하시겠습니까?'}
+  //           comment={'한 번 요청한 초대는 취소할 수 없습니다.'}
+  //           leftText={'취소'}
+  //           rightText={'초대'}
+  //           onClose={() => setVisible(false)}
+  //           onRight={() => {
+  //             setVisible(false);
+  //             setInviteName('');
+  //             handleCheckInvitation();
+  //             // giveInvitation(inviteName, petId);
+  //           }}
+  //           leftBtnColor={GRAY.LIGHT}
+  //           rightBtnColor={YELLOW.DEFAULT}
+  //         />
+  //         <View style={{ flex: 1, marginTop: 15 }}>
+  //           {inviter !== email ? (
+  //             <View></View>
+  //           ) : (
+  //             <>
+  //               <Text
+  //                 style={{ fontSize: 16, margin: 10, marginBottom: 15, flex: 1 }}
+  //               >
+  //                 초대하기
+  //               </Text>
+
+  //               <View style={styles.container_invite}>
+  //                 <View style={{ flex: 0.7 }}>
+  //                   <TextInput
+  //                     borderRadius={30}
+  //                     style={{
+  //                       marginLeft: 10,
+  //                       marginRight: 10,
+  //                       height: 40,
+  //                       width: 250,
+  //                       borderWidth: 1,
+  //                       borderColor: 'gray',
+  //                       paddingLeft: 20,
+  //                     }}
+  //                     onChangeText={(text) => setInviteName(text)}
+  //                     keyboardType="email-address"
+  //                     placeholder="예) petmily@gmail.com"
+  //                   >
+  //                     {inviteName}
+  //                   </TextInput>
+  //                 </View>
+
+  //                 <View
+  //                   borderRadius={30}
+  //                   style={{
+  //                     flex: 0.25,
+  //                     alignItems: 'center',
+  //                     justifyContent: 'center',
+  //                     backgroundColor: YELLOW.DEFAULT,
+  //                     height: 40,
+  //                   }}
+  //                 >
+  //                   <TouchableOpacity
+  //                     style={{
+  //                       fontSize: 17,
+  //                       color: WHITE,
+  //                     }}
+  //                     onPress={() => {
+  //                       setVisible(true);
+  //                     }}
+  //                     paddingVertical={13}
+  //                   >
+  //                     <Text>초대</Text>
+  //                   </TouchableOpacity>
+  //                 </View>
+  //               </View>
+  //             </>
+  //           )}
+  //         </View>
+
+  //         <View style={styles.container_rearer}>
+  //           <Text style={{ fontSize: 16, marginBottom: 10, margin: 10 }}>
+  //             등록된 양육자
+  //           </Text>
+  //           <ScrollView style={styles.scrollView}>
+  //             <View style={{ alignItems: 'flex-start' }}>
+  //               {/* 주양육자 표시 */}
+  //               <View style={{ alignItems: 'center' }}>
+  //                 <Image
+  //                   style={{ marginBottom: -9 }}
+  //                   source={require('../../../assets/crown.png')}
+  //                 />
+  //                 {mainRearer && (
+  //                   <View style={styles.rearerItem}>
+  //                     {renderRearer(mainRearer)}
+  //                   </View>
+  //                 )}
+  //               </View>
+  //             </View>
+  //             <View style={styles.rearerContainer}>
+  //               {/* 부양육자 표시 */}
+  //               {subRearer.map((item) => (
+  //                 <RearerItem key={item.linkId} owner={item} />
+  //               ))}
+  //             </View>
+  //           </ScrollView>
+  //         </View>
+  //       </View>
+  //     </ScrollView>
+  //   );
+  // };
+
+  // const styles = StyleSheet.create({
+  //   container: { flex: 1, width: 385 },
+  //   scrollView: {
+  //     flex: 1,
+  //     marginBottom: 10,
+  //     marginHorizontal: 20,
+  //   },
+  //   container_invite: {
+  //     flexDirection: 'row',
+  //     marginBottom: 15,
+  //     flex: 1,
+  //   },
+  //   container_rearer: {
+  //     flex: 1,
+  //   },
+  //   rearerContainer: {
+  //     flexDirection: 'row',
+  //     flexWrap: 'wrap',
+  //     marginTop: 10,
+  //   },
+  //   rearerItem: {
+  //     width: '33.33%', // 3개씩 가로 배열을 위해 33.33%로 설정
+  //     //padding: 5,
+  //   },
+  //   dogImage: {
+  //     width: 95,
+  //     height: 95,
+  //     borderRadius: 50,
+  //   },
+  //   container_profile: {
+  //     justifyContent: 'center',
+  //     alignItems: 'center',
+  //     width: 120,
+  //     marginVertical: 4,
+  //     //padding: 5,
+  //   },
+  //   nicname: {
+  //     textAlign: 'center',
+  //     marginTop: 10,
+  //     fontSize: 17,
+  //   },
+  // });
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      width: window.width, // Use window dimensions for width
+    },
+    scrollView: {
+      flex: 1,
+      marginBottom: 10,
+      marginHorizontal: window.width * 0.04, // Adjust margin according to the window width
+    },
+    container_invite: {
+      flexDirection: 'row',
+      marginBottom: window.height * 0.015, // Adjust margin according to the window height
+      flex: 1,
+    },
+    container_rearer: {
+      flex: 1,
+    },
+    rearerContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginTop: window.height * 0.01, // Adjust margin according to the window height
+    },
+    rearerItem: {
+      width: window.width * 0.3, // 3 items per row, adjust accordingly
+    },
+    dogImage: {
+      width: window.width * 0.25, // Adjust image width according to window width
+      height: window.width * 0.25, // Adjust image height according to window width
+      borderRadius: window.width * 0.125, // Adjust border radius according to image size
+    },
+    container_profile: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: window.width * 0.3, // Adjust width according to window width
+      marginVertical: window.height * 0.01, // Adjust margin according to window height
+    },
+    nicname: {
+      textAlign: 'center',
+      marginTop: window.height * 0.009, // Adjust margin according to window height
+      fontSize: 17,
+    },
+  });
+
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.container}>
         <SingleButtonAlert
           visible={checkVisible}
@@ -171,18 +395,22 @@ const ListRearerScreen = ({ petName, petId }) => {
             setVisible(false);
             setInviteName('');
             handleCheckInvitation();
-            // giveInvitation(inviteName, petId);
           }}
           leftBtnColor={GRAY.LIGHT}
           rightBtnColor={YELLOW.DEFAULT}
         />
-        <View style={{ flex: 1, marginTop: 15 }}>
+        <View style={{ flex: 1, marginTop: window.height * 0.03 }}>
           {inviter !== email ? (
             <View></View>
           ) : (
             <>
               <Text
-                style={{ fontSize: 16, margin: 10, marginBottom: 15, flex: 1 }}
+                style={{
+                  fontSize: 16,
+                  margin: window.width * 0.05,
+                  marginBottom: window.height * 0.015,
+                  flex: 1,
+                }}
               >
                 초대하기
               </Text>
@@ -192,13 +420,13 @@ const ListRearerScreen = ({ petName, petId }) => {
                   <TextInput
                     borderRadius={30}
                     style={{
-                      marginLeft: 10,
-                      marginRight: 10,
-                      height: 40,
-                      width: 250,
+                      marginLeft: window.width * 0.05,
+                      marginRight: window.width * 0.05,
+                      height: window.height * 0.05,
+                      width: window.width * 0.7,
                       borderWidth: 1,
                       borderColor: 'gray',
-                      paddingLeft: 20,
+                      paddingLeft: window.width * 0.05,
                     }}
                     onChangeText={(text) => setInviteName(text)}
                     keyboardType="email-address"
@@ -215,7 +443,7 @@ const ListRearerScreen = ({ petName, petId }) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: YELLOW.DEFAULT,
-                    height: 40,
+                    height: window.height * 0.05,
                   }}
                 >
                   <TouchableOpacity
@@ -226,7 +454,7 @@ const ListRearerScreen = ({ petName, petId }) => {
                     onPress={() => {
                       setVisible(true);
                     }}
-                    paddingVertical={13}
+                    paddingVertical={window.height * 0.02}
                   >
                     <Text>초대</Text>
                   </TouchableOpacity>
@@ -237,12 +465,17 @@ const ListRearerScreen = ({ petName, petId }) => {
         </View>
 
         <View style={styles.container_rearer}>
-          <Text style={{ fontSize: 16, marginBottom: 10, margin: 10 }}>
+          <Text
+            style={{
+              fontSize: 16,
+              marginBottom: window.height * 0.01,
+              margin: window.width * 0.05,
+            }}
+          >
             등록된 양육자
           </Text>
           <ScrollView style={styles.scrollView}>
             <View style={{ alignItems: 'flex-start' }}>
-              {/* 주양육자 표시 */}
               <View style={{ alignItems: 'center' }}>
                 <Image
                   style={{ marginBottom: -9 }}
@@ -256,7 +489,6 @@ const ListRearerScreen = ({ petName, petId }) => {
               </View>
             </View>
             <View style={styles.rearerContainer}>
-              {/* 부양육자 표시 */}
               {subRearer.map((item) => (
                 <RearerItem key={item.linkId} owner={item} />
               ))}
@@ -267,48 +499,5 @@ const ListRearerScreen = ({ petName, petId }) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1, width: 385 },
-  scrollView: {
-    flex: 1,
-    marginBottom: 10,
-    marginHorizontal: 20,
-  },
-  container_invite: {
-    flexDirection: 'row',
-    marginBottom: 15,
-    flex: 1,
-  },
-  container_rearer: {
-    flex: 1,
-  },
-  rearerContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 10,
-  },
-  rearerItem: {
-    width: '33.33%', // 3개씩 가로 배열을 위해 33.33%로 설정
-    //padding: 5,
-  },
-  dogImage: {
-    width: 95,
-    height: 95,
-    borderRadius: 50,
-  },
-  container_profile: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 120,
-    marginVertical: 4,
-    //padding: 5,
-  },
-  nicname: {
-    textAlign: 'center',
-    marginTop: 10,
-    fontSize: 17,
-  },
-});
 
 export default ListRearerScreen;

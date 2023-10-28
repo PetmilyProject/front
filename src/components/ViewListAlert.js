@@ -6,16 +6,15 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Image,
+  RefreshControl,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { BLACK, GRAY, WHITE, YELLOW } from '../colors';
-import React, { useState } from 'react'; // Import React and useState
-import { Image } from 'react-native';
+import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useEffect } from 'react';
-import { TextInput } from 'react-native-gesture-handler';
-import { Button } from 'react-native-elements';
 
 const ViewListAlert = ({
   visible,
@@ -50,6 +49,13 @@ const ViewListAlert = ({
   const [email, setEmail] = useState('');
   const [myPets, setMyPets] = useState([]);
   const [receivedPet, setReceivedPet] = useState([]);
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    findPet().then(() => setIsRefreshing(false));
+  };
 
   const findPet = async () => {
     setItems([]);
@@ -221,14 +227,13 @@ const ViewListAlert = ({
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.comment}>{comment}</Text>
           <Text style={styles.comment2}>{subComment}</Text>
-          {/* <Text style={styles.scrollViewName}>{startInvitation}</Text>
-          <ScrollView style={styles.ScrollView}>
-            {myPets.map((item) => (
-              <InvitationCard item={item} />
-            ))}
-          </ScrollView> */}
           <Text style={styles.scrollViewName}>{scrollViewName}</Text>
-          <ScrollView style={styles.ScrollView}>
+          <ScrollView
+            style={styles.ScrollView}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+          >
             {receivedPet.map((item) => (
               <Item key={item} item={item} />
             ))}

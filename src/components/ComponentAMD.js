@@ -10,11 +10,6 @@ const ComponentAMD = ({ navigation, petName, onAddPress }) => {
   };
   return (
     <View style={styles.container}>
-      {/* 펫정보 버튼 */}
-      {/* <TouchableOpacity onPress={onPetPress}>
-          <Ionicons name="heart-circle" size={40} color={YELLOW.DEFAULT} />
-        </TouchableOpacity> */}
-      {/* 입력 버튼 */}
       <TouchableOpacity onPress={onAddPress}>
         <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
       </TouchableOpacity>

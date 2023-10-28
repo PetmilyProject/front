@@ -101,22 +101,20 @@ const MainCarePetScreen = ({ navigation, route }) => {
   };
 
   return (
-    <ScrollView style={{backgroundColor: 'white'}}>
-      <View style={styles.container}>
-        <CarePetList
-          petName={petName}
-          onAddPress={onAddPress}
-          onSchedulePress={onSchedulePress}
-          onPhotoPress={onPhotoPress}
-          onRearerPress={onRearerPress}
-          onStatisticsPress={onStatisticsPress}
-          navigation={navigation}
-          petId={petId}
-        />
-        <View style={styles.line}></View>
-        <View style={styles.container2}>{renderScreen()}</View>
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <CarePetList
+        petName={petName}
+        onAddPress={onAddPress}
+        onSchedulePress={onSchedulePress}
+        onPhotoPress={onPhotoPress}
+        onRearerPress={onRearerPress}
+        onStatisticsPress={onStatisticsPress}
+        navigation={navigation}
+        petId={petId}
+      />
+      <View style={styles.line}></View>
+      <View style={styles.container2}>{renderScreen()}</View>
+    </View>
   );
 };
 
@@ -131,9 +129,10 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY.LIGHT,
     height: 1,
     width: '95%',
+    marginTop: 15,
   },
   container2: {
-    flex: 4,
+    flex: 3.5,
     justifyContent: 'center',
     alignItems: 'center',
   },
