@@ -169,7 +169,7 @@ const UserInfoScreen = () => {
             leftText={'취소'}
             rightText={'로그아웃'}
           />
-          {/* 강아지 사진 */}
+          {/* 사용자 사진 */}
           <TouchableOpacity
             onPress={async () => {
               let result = await ImagePicker.launchImageLibraryAsync({
@@ -267,7 +267,6 @@ const styles = StyleSheet.create({
   },
   infoRow: {
     flexDirection: 'row',
-    marginBottom: 20,
   },
   dogImage: {
     width: 100,
@@ -279,7 +278,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginLeft: 45,
+    marginLeft: 30,
   },
   emailText: {
     fontSize: 15,

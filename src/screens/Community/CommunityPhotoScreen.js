@@ -156,7 +156,14 @@ const CommunityPhotoScreen = () => {
                 style={styles.photoItem}
               />
             </View>
-            <Text style={{ marginTop: 10, marginLeft: 10, fontSize: 16 }}>
+            <Text
+              style={{
+                marginTop: 10,
+                marginLeft: 10,
+                fontSize: 16,
+                marginBottom: -20,
+              }}
+            >
               {titleOfPost[index]}
             </Text>
           </TouchableOpacity>
