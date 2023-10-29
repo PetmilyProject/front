@@ -159,17 +159,17 @@ const ScheduleListScreen = ({ petName, petId }) => {
         </TouchableOpacity>
 
         <View style={styles.container_detail}>
-          <Text style={[styles.details, { fontSize: 0.045 * window.width }]}>
+          <Text style={[styles.details, { fontSize: 0.046 * window.width }]}>
             {item.schedule}
           </Text>
         </View>
         <View style={styles.container_time}>
-          <Text style={[styles.time, { fontSize: 0.036 * window.width }]}>
+          <Text style={[styles.time, { fontSize: 0.046 * window.width }]}>
             {item.hm}
           </Text>
         </View>
         <View style={styles.container_executor}>
-          <Text style={[styles.executor, { fontSize: 0.03 * window.width }]}>
+          <Text style={[styles.executor, { fontSize: 0.036 * window.width }]}>
             {item.executor}
           </Text>
         </View>
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     width: '90%',
     marginLeft: 5,
     marginRight: 5,
-    marginTop: 40,
+    marginTop: 20,
   },
   scheduleItem: {
     width: 320,
