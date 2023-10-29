@@ -1,28 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
   StyleSheet,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from 'react-native';
 
 import Input, { InputTypes, ReturnKeyTypes } from '../components/Input';
-import { useState } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SquareButton, { ColorTypes } from '../components/Button';
 import { useContext } from 'react';
 import { AuthContext } from '../navigations/Nest';
-import { WHITE } from '../colors';
+import { BLACK, WHITE } from '../colors';
 
 const SignInScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const { signIn, isSignedIn } = useContext(AuthContext);
 
   const handleSignIn = () => {
+    if (loading) return;
+
+    setLoading(true);
+
     AsyncStorage.setItem('email', email);
+
     axios
       .post(
         'http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/auth/login',
@@ -33,20 +39,19 @@ const SignInScreen = () => {
       )
       .then((response) => {
         const token = response.data.token;
-        const loginsuccess = () => {
-          setIsSignedIn(true);
-        };
 
         AsyncStorage.setItem('token', token)
           .then(() => {
-            console.log('로그인 토큰 저장 완료:', token);
+            setLoading(false);
             signIn();
           })
           .catch((error) => {
+            setLoading(false);
             console.error('로그인 토큰 저장 실패:', error);
           });
       })
       .catch((error) => {
+        setLoading(false);
         console.error('로그인 실패:', error);
       });
   };
@@ -78,11 +83,20 @@ const SignInScreen = () => {
           inputType={InputTypes.PASSWORD}
           returnKeyType={ReturnKeyTypes.DONE}
         />
-        <SquareButton
-          colorType={ColorTypes.YELLOW}
-          text="로그인하기"
-          onPress={handleSignIn}
-        />
+
+        {loading ? (
+          <SquareButton
+            colorType={ColorTypes.YELLOW}
+            text={<ActivityIndicator size="small" color={BLACK} />}
+            onPress={handleSignIn}
+          />
+        ) : (
+          <SquareButton
+            colorType={ColorTypes.YELLOW}
+            text="로그인하기"
+            onPress={handleSignIn}
+          />
+        )}
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );

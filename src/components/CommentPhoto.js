@@ -134,20 +134,17 @@ const CommentPhoto = (param) => {
             style={{
               flexDirection: 'row',
               flex: 0.7,
-              marginBottom: -80,
-              marginTop: 5,
+              marginBottom: -50,
+              marginTop: 15,
             }}
           >
             <View style={styles.nickname_area}>
-              <Text style={{ fontSize: 10, fontWeight: 600 }}>
+              <Text style={{ fontSize: 15, fontWeight: 600 }}>
                 {userNames[index]}
               </Text>
             </View>
             <View
-              style={[
-                styles.comment_content_area,
-                { paddingTop: 2, marginLeft: 20 },
-              ]}
+              style={[styles.comment_content_area, { paddingTop: 2 }]}
               onLayout={handleLayout2}
             >
               <Text>{comment.commentInfo}</Text>

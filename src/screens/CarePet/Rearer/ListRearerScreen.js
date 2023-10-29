@@ -256,7 +256,7 @@ const ListRearerScreen = ({ petName, petId }) => {
                       marginRight: window.width * 0.05,
                       height: window.height * 0.05,
                       width: window.width * 0.7,
-                      borderWidth: 1,
+                      borderWidth: 0,
                       borderColor: 'gray',
                       paddingLeft: window.width * 0.05,
                       // marginLeft: 10,
@@ -264,7 +264,7 @@ const ListRearerScreen = ({ petName, petId }) => {
                       // height: 40,
                       // width: 250,
                       // borderWidth: 0,
-                      // backgroundColor: GRAY.BRIGHT,
+                      backgroundColor: GRAY.BRIGHT,
                       // paddingLeft: 20,
                     }}
                     onChangeText={(text) => setInviteName(text)}
@@ -317,7 +317,7 @@ const ListRearerScreen = ({ petName, petId }) => {
             <View style={{ alignItems: 'flex-start' }}>
               <View style={{ alignItems: 'center' }}>
                 <Image
-                  style={{ marginBottom: -9 }}
+                  style={{ marginBottom: -9, width: 40, height: 40 }}
                   source={require('../../../assets/crown.png')}
                 />
                 {mainRearer && (

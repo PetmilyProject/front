@@ -168,18 +168,15 @@ const ListPhotoScreen = ({ Navigation, petName, petId }) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
+      <FlatList
+        data={imageList}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={renderItem}
+        numColumns={3}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
-      >
-        <FlatList
-          data={imageList}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderItem}
-          numColumns={3}
-        />
-      </ScrollView>
+      />
     </View>
   );
 };

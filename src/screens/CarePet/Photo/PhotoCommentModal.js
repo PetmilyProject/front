@@ -90,10 +90,6 @@ const PhotoCommentModal = (params) => {
                 <Text style={styles.delete}>삭제</Text>
               </TouchableOpacity>
               <View style={styles.separator}></View>
-              <TouchableOpacity onPress={handleUpdate}>
-                <Text style={styles.update_and_cancel}>수정</Text>
-              </TouchableOpacity>
-              <View style={styles.separator}></View>
               <TouchableOpacity onPress={onClose}>
                 <Text style={styles.update_and_cancel}>취소</Text>
               </TouchableOpacity>
