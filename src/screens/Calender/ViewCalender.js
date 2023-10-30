@@ -161,20 +161,19 @@ const ViewCalender = () => {
             <Text style={styles.navigationText}>▶</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView
+        {/* <ScrollView
           style={{
             height: '100%',
             paddingTop: 10,
             paddingHorizontal: 20,
           }}
+        > */}
+        <ScrollView
+          contentContainerStyle={{ paddingTop: 10, paddingHorizontal: 20 }}
         >
           {petSchedules &&
             petSchedules.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.scheduleItem}
-                //onPress={() => handlePress(item)}
-              >
+              <TouchableOpacity key={item.id} style={styles.scheduleItem}>
                 <Text style={styles.details}>{item.schedule}</Text>
                 <Text style={styles.time}>{item.hm}</Text>
               </TouchableOpacity>

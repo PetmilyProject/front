@@ -56,7 +56,7 @@ Button2.defaultProps = {
 const btnStyle = StyleSheet.create({
   yellow: {
     alignItems: 'center',
-    borderRadius: 20,
+    borderRadius: 40,
     marginBottom: 10,
   },
   yellow_text: {

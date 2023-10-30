@@ -169,50 +169,52 @@ const UserInfoScreen = () => {
             leftText={'취소'}
             rightText={'로그아웃'}
           />
-          {/* 사용자 사진 */}
-          <TouchableOpacity
-            onPress={async () => {
-              let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.All,
-                allowsEditing: true,
-                aspect: [3, 3],
-                quality: 1,
-              });
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            {/* 사용자 사진 */}
 
-              console.log(
-                '결과 : ',
-                result,
-                '넣을 데이터 : ',
-                result.assets[0].uri
-              );
+            <View>
+              <TouchableOpacity
+                onPress={async () => {
+                  let result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.All,
+                    allowsEditing: true,
+                    aspect: [3, 3],
+                    quality: 1,
+                  });
 
-              uploadImage(result.assets[0].uri);
-            }}
-          >
-            <View style={styles.imageContainer}>
-              {image ? (
-                <Image
-                  source={{ uri: image + '?cache=' + Math.random() }}
-                  style={styles.dogImage}
-                />
-              ) : (
-                <Image
-                  style={styles.dogImage}
-                  source={require('../../assets/pet_icon.png')}
-                />
-              )}
-              <View style={styles.editIconContainer}>
-                <MaterialIcons name="edit" size={24} color="black" />
-              </View>
+                  console.log(
+                    '결과 : ',
+                    result,
+                    '넣을 데이터 : ',
+                    result.assets[0].uri
+                  );
+
+                  uploadImage(result.assets[0].uri);
+                }}
+              >
+                <View style={styles.imageContainer}>
+                  {image ? (
+                    <Image
+                      source={{ uri: image + '?cache=' + Math.random() }}
+                      style={styles.dogImage}
+                    />
+                  ) : (
+                    <Image
+                      style={styles.dogImage}
+                      source={require('../../assets/pet_icon.png')}
+                    />
+                  )}
+                  <View style={styles.editIconContainer}>
+                    <MaterialIcons name="edit" size={24} color="black" />
+                  </View>
+                </View>
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity>
 
-          {/* 이메일과 닉네임 */}
-          <View style={styles.infoContainer}>
-            <View style={styles.infoRow}>
+            {/* 이메일과 닉네임 */}
+            <View style={styles.infoContainer}>
               <Text style={styles.nicknameText}>{userName}</Text>
-            </View>
-            <View style={styles.infoRow}>
+
               <Text style={styles.emailText}>{email}</Text>
             </View>
           </View>
@@ -278,12 +280,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginLeft: 30,
   },
   emailText: {
     fontSize: 15,
-    fontWeight: 'bold',
-    marginLeft: 10,
   },
 
   userText: {

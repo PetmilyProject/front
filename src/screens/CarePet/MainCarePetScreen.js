@@ -127,9 +127,10 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY.LIGHT,
     height: 1,
     width: '95%',
+    marginTop: 15,
   },
   container2: {
-    flex: 4,
+    flex: 3.5,
     justifyContent: 'center',
     alignItems: 'center',
   },

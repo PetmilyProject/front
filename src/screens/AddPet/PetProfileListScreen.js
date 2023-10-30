@@ -8,15 +8,13 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import ComponentAMD2 from '../../components/ComponentAMD2';
 import PetProfile from '../../components/AddPet/PetProfile';
 import { useRoute } from '@react-navigation/native';
 import { AddPetRoutes, CarePetRoutes } from '../../navigations/routes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GRAY, WHITE, YELLOW } from '../../colors';
-import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
+import { WHITE, YELLOW } from '../../colors';
+import { Entypo } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
 import ViewListAlert from '../../components/ViewListAlert';
 
 const PetProfileListScreen = ({ navigation, AddPress }) => {
@@ -129,15 +127,15 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
       />
 
       <View style={styles.container_list}>
-        <Text style={{ fontSize: 17, paddingRight: 190, paddingTop: 15 }}>
-          등록된 펫
-        </Text>
-        <TouchableOpacity onPress={handleAddPress} onRefresh={handleRefresh}>
-          <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleInvitePress}>
-          <Ionicons name="navigate-circle" size={43} color={YELLOW.DEFAULT} />
-        </TouchableOpacity>
+        <Text style={styles.petHeaderText}>등록된 펫</Text>
+        <View style={styles.rightAlignedIcons}>
+          <TouchableOpacity onPress={handleAddPress} onRefresh={handleRefresh}>
+            <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleInvitePress}>
+            <Ionicons name="navigate-circle" size={43} color={YELLOW.DEFAULT} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView
@@ -178,13 +176,20 @@ const styles = StyleSheet.create({
     flex: 0.1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     marginTop: 40,
-    marginRight: 20,
+    marginHorizontal: 20,
     backgroundColor: WHITE,
+  },
+  petHeaderText: {
+    fontSize: 17,
   },
   scroll: {
     flex: 1,
+  },
+  rightAlignedIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 

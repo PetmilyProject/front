@@ -192,7 +192,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
       'complete:',
       complete
     );
-    
+
     AsyncStorage.getItem('email')
       .then((myEmail) => {
         AsyncStorage.getItem('token')
@@ -220,7 +220,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
                 navigation.popToTop();
               })
               .catch((error) => {
-                console.error("펫 일정 업데이트 실패 : 에러 : ", error);
+                console.error('펫 일정 업데이트 실패 : 에러 : ', error);
               });
           })
           .catch((error) => {
@@ -252,7 +252,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
                 }
               )
               .then((response) => {
-                console.log(response.data)
+                console.log(response.data);
                 if (response.status === 200) {
                   console.log('일정이 성공적으로 삭제되었습니다');
                   navigation.goBack();

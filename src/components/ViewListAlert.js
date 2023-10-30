@@ -6,20 +6,20 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Image,
+  RefreshControl,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { BLACK, GRAY, WHITE, YELLOW } from '../colors';
-import React, { useState } from 'react'; // Import React and useState
-import { Image } from 'react-native';
+import React, { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useEffect } from 'react';
-import { TextInput } from 'react-native-gesture-handler';
-import { Button } from 'react-native-elements';
 
 const ViewListAlert = ({
   visible,
   title,
+
   comment,
   subComment,
   leftText,
@@ -30,20 +30,32 @@ const ViewListAlert = ({
   const deleteInvitation = async (receiver, petId) => {
     const email = await AsyncStorage.getItem('email');
     const token = await AsyncStorage.getItem('token');
-    const card = await axios.delete(`http://43.200.8.47:8080/invitation/delete/${email}/${receiver}/${petId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  
-    console.log(`http://43.200.8.47:8080/invitation/delete/${email}/${receiver}/${petId}에 삭제 요청.`);
-  }
+    const card = await axios.delete(
+      `http://43.200.8.47:8080/invitation/delete/${email}/${receiver}/${petId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(
+      `http://43.200.8.47:8080/invitation/delete/${email}/${receiver}/${petId}에 삭제 요청.`
+    );
+  };
 
   const [items, setItems] = useState([]);
   const [token, setToken] = useState([]);
   const [email, setEmail] = useState('');
   const [myPets, setMyPets] = useState([]);
   const [receivedPet, setReceivedPet] = useState([]);
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    findPet().then(() => setIsRefreshing(false));
+  };
 
   const findPet = async () => {
     setItems([]);
@@ -67,7 +79,8 @@ const ViewListAlert = ({
 
     setItems([]);
     const getInvitations = await axios.get(
-      `http://43.200.8.47:8080/invitation/get/${tmpEmail}`, {
+      `http://43.200.8.47:8080/invitation/get/${tmpEmail}`,
+      {
         headers: {
           Authorization: `Bearer ${tmpToken}`,
         },
@@ -78,23 +91,26 @@ const ViewListAlert = ({
 
     //console.log(getInvitations.data);
   };
-  
+
   const getInvitationCard = async () => {
-    setReceivedPet([]); 
+    setReceivedPet([]);
     const petPromises = [];
     const tmpEmail = await AsyncStorage.getItem('email');
     const tmpToken = await AsyncStorage.getItem('token');
-  
+
     for (const i of items) {
-      const petInvitation = await axios.get(`http://43.200.8.47:8080/pet/get-pet/${i.inviter}/${i.petId}`, {
-        headers: {
-          Authorization: `Bearer ${tmpToken}`,
-        },
-      });
+      const petInvitation = await axios.get(
+        `http://43.200.8.47:8080/pet/get-pet/${i.inviter}/${i.petId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${tmpToken}`,
+          },
+        }
+      );
 
       petPromises.push(petInvitation);
     }
-  
+
     try {
       const petResponses = await Promise.all(petPromises);
       const petData = petResponses.map((response) => response.data);
@@ -103,7 +119,7 @@ const ViewListAlert = ({
       console.error(`Error fetching pet data: ${error}`);
     }
   };
-  
+
   const acceptPetLink = async (inviter, petId) => {
     const email = await AsyncStorage.getItem('email');
     const token = await AsyncStorage.getItem('token');
@@ -115,7 +131,7 @@ const ViewListAlert = ({
     });
 
     console.log(`${petLinkUrl}에 등록 요청. 메시지 : `, petLinkResponse.data);
-    
+
     const deleteUrl = `http://43.200.8.47:8080/invitation/delete/${inviter}/${email}/${petId}`;
     const deleteResponse = await axios.delete(deleteUrl, {
       headers: {
@@ -123,10 +139,13 @@ const ViewListAlert = ({
       },
     });
 
-    console.log(`${deleteUrl}에 삭제 요청. 기등록된 초대 요청 삭제. 메시지 : `, deleteResponse.data);
+    console.log(
+      `${deleteUrl}에 삭제 요청. 기등록된 초대 요청 삭제. 메시지 : `,
+      deleteResponse.data
+    );
 
     await findPet();
-  }
+  };
 
   const declinePetLink = async (inviter, petId) => {
     const email = await AsyncStorage.getItem('email');
@@ -138,20 +157,23 @@ const ViewListAlert = ({
       },
     });
 
-    console.log(`${deleteUrl}에 삭제 요청. 기등록된 초대 요청 삭제. 메시지 : `, deleteResponse.data);
+    console.log(
+      `${deleteUrl}에 삭제 요청. 기등록된 초대 요청 삭제. 메시지 : `,
+      deleteResponse.data
+    );
 
     await findPet();
-  }
-  
+  };
+
   const Item = (invitationCard) => {
     return (
       <View style={styles.container_Item}>
         <Image
-          source={{ 
-            uri: `http://43.200.8.47:8080/pet/${invitationCard.item.inviter}/downloadImage/${invitationCard.item.id}.jpg`
+          source={{
+            uri: `http://43.200.8.47:8080/pet/${invitationCard.item.inviter}/downloadImage/${invitationCard.item.id}.jpg`,
           }}
           style={styles.user_profile}
-          />
+        />
         <Text style={styles.user_name}>{invitationCard.item.petName}</Text>
         <TouchableOpacity
           onPress={() => {
@@ -159,22 +181,22 @@ const ViewListAlert = ({
             acceptPetLink(invitationCard.item.inviter, invitationCard.item.id);
           }}
           style={styles.button1_Item}
-          >
+        >
           <Text>승인</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
             console.log('거절');
-            declinePetLink(invitationCard.item.inviter, invitationCard.item.id)
+            declinePetLink(invitationCard.item.inviter, invitationCard.item.id);
           }}
           style={styles.button2_Item}
-          >
+        >
           <Text>거절</Text>
         </TouchableOpacity>
       </View>
     );
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       await findPet();
@@ -205,14 +227,13 @@ const ViewListAlert = ({
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.comment}>{comment}</Text>
           <Text style={styles.comment2}>{subComment}</Text>
-          {/* <Text style={styles.scrollViewName}>{startInvitation}</Text>
-          <ScrollView style={styles.ScrollView}>
-            {myPets.map((item) => (
-              <InvitationCard item={item} />
-            ))}
-          </ScrollView> */}
           <Text style={styles.scrollViewName}>{scrollViewName}</Text>
-          <ScrollView style={styles.ScrollView}>
+          <ScrollView
+            style={styles.ScrollView}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+          >
             {receivedPet.map((item) => (
               <Item key={item} item={item} />
             ))}
@@ -335,7 +356,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   user_name: {
-    width: 40
+    width: 40,
   },
 });
 
