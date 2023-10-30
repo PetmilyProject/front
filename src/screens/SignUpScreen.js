@@ -26,20 +26,15 @@ const SignUpScreen = ({ navigation }) => {
     // 클라이언트에서 이메일을 입력하여 중복 확인 요청을 서버로 보냅니다.
     axios
       .get(
-        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/auth/overlapCheck/${email}`
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${email}`
       )
       .then((response) => {
-        if (response.data) {
-          // 중복되지 않은 이메일일 경우
-          Alert.alert('중복 확인', '사용 가능한 이메일입니다.');
-        } else {
-          // 중복된 이메일일 경우
-          Alert.alert('중복 확인', '이미 사용 중인 이메일입니다.');
-        }
+        Alert.alert('사용 불가', '이미 사용 중인 이메일입니다.');
+        setEmail('');
       })
       .catch((error) => {
-        console.error('중복 확인 실패:', error);
-        Alert.alert('중복 확인 실패', '다시 시도해주세요.');
+        Alert.alert('사용 가능', '사용하지 않는 이메일입니다.');
+        setEmail(email);
       });
   };
 
@@ -71,7 +66,7 @@ const SignUpScreen = ({ navigation }) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
         <ScrollView contentContainerStyle={[styles.container, { height }]}>
-          <View style={{ marginTop: height * -0.25 }}>
+          <View style={{ marginTop: height * -0.25, marginBottom: 30 }}>
             <View
               style={{
                 flexDirection: 'row',

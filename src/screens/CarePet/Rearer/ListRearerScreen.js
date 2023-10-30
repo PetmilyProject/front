@@ -35,6 +35,7 @@ const giveInvitation = async (receiver, petId) => {
     `http://43.200.8.47:8080/invitation/post/${email}/${receiver}/${petId}에 등록 요청. 메시지 : `,
     card.data
   );
+  return 0;
 };
 
 const ListRearerScreen = ({ petName, petId }) => {
@@ -45,6 +46,10 @@ const ListRearerScreen = ({ petName, petId }) => {
 
   //기존에 있는 양육자인지 판단 모달
   const [checkVisible, setCheckVisible] = useState(false);
+  //존재하는 사용자인지 판단 모달
+  const [checkEmailVisible, setCheckEmailVisible] = useState(false);
+  //초대 확인 모달
+  const [confirmInviteVisible, setConfirmInviteVisible] = useState(false);
 
   const [petLink, setPetLink] = useState(null);
   const [inviter, setInviter] = useState(null);
@@ -57,6 +62,22 @@ const ListRearerScreen = ({ petName, petId }) => {
 
   const navigation = useNavigation();
 
+  //존재하는 사용자인지 판단
+  const handleCheckEmail = async () => {
+    try {
+      const response = await axios.get(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/${inviteName}`
+      );
+      if (response.status === 200) {
+        // 사용자O
+        handleCheckInvitation();
+      }
+    } catch (error) {
+      //사용자 존재X
+      setCheckEmailVisible(true);
+    }
+  };
+
   //기존에 있는 양육자인지 판단
   const handleCheckInvitation = () => {
     if (inviteName && allRearer.some((rearer) => rearer.owner === inviteName)) {
@@ -64,7 +85,16 @@ const ListRearerScreen = ({ petName, petId }) => {
       setCheckVisible(true);
     } else {
       // If inviteName is not in allRearer, proceed with the invitation
-      giveInvitation(inviteName, petId);
+      try {
+        const result = giveInvitation(inviteName, petId);
+        if (result === 0) {
+          setConfirmInviteVisible(true);
+        }
+      } catch (error) {
+        console.log('초대오류');
+      }
+
+      setConfirmInviteVisible(true);
     }
   };
 
@@ -216,6 +246,28 @@ const ListRearerScreen = ({ petName, petId }) => {
           }}
           BtnColor={YELLOW.DEFAULT}
         />
+        <SingleButtonAlert
+          visible={checkEmailVisible}
+          title={'초대 불가'}
+          comment={'존재하지 않는 사용자 입니다.'}
+          BtnText={'닫기'}
+          onClose={() => {
+            setCheckEmailVisible(false);
+            setInviteName('');
+          }}
+          BtnColor={YELLOW.DEFAULT}
+        />
+        <SingleButtonAlert
+          visible={confirmInviteVisible}
+          title={'초대 성공'}
+          comment={'초대 요청을 전송했습니다.'}
+          BtnText={'닫기'}
+          onClose={() => {
+            setConfirmInviteVisible(false);
+            setInviteName('');
+          }}
+          BtnColor={YELLOW.DEFAULT}
+        />
         <DangerAlert
           visible={visible}
           title={`${inviteName}` + ' 님을' + '\n' + '초대하시겠습니까?'}
@@ -226,7 +278,7 @@ const ListRearerScreen = ({ petName, petId }) => {
           onRight={() => {
             setVisible(false);
             setInviteName('');
-            handleCheckInvitation();
+            handleCheckEmail();
           }}
           leftBtnColor={GRAY.LIGHT}
           rightBtnColor={YELLOW.DEFAULT}
