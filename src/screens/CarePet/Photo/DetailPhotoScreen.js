@@ -261,7 +261,7 @@ const DetailPhotoScreen = (props, route) => {
             <View style={{ flexDirection: 'row', marginLeft: 10 }}>
               <Image
                 source={{
-                  uri: `http://43.200.8.47:8080/profile/get/${writer}/${writer}.jpg`,
+                  uri: `http://43.200.8.47:8080/profile/get/${writer}/${writer}.jpg` + '?cache=' + Math.random(),
                 }}
                 style={styles.profile_image}
               />

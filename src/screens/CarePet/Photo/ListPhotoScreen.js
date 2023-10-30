@@ -137,7 +137,7 @@ const ListPhotoScreen = ({ Navigation, petName, petId }) => {
 
     return (
       <Pressable onPress={handlePress}>
-        <Image source={{ uri: item }} style={styles.image} />
+        <Image source={{ uri: item + '?cache=' + Math.random() }} style={styles.image} />
       </Pressable>
     );
   };
