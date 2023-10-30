@@ -47,6 +47,23 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [executorList, setExecutorList] = useState({});
   const [executorEmailList, setExecutorEmailList] = useState([]);
 
+  const handleDateChange = (selectedDate) => {
+    if (selectedDate) {
+      // 년, 월, 일을 문자열에서 추출
+      const match = /(\d{4})년 (\d{1,2})월 (\d{1,2})일/.exec(selectedDate);
+
+      if (match) {
+        const year = match[1];
+        const month = match[2].padStart(2, '0');
+        const day = match[3].padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        setDate(formattedDate);
+
+        console.log('ddd : ', formattedDate);
+      }
+    }
+  };
+
   const fetchPetLink = async () => {
     try {
       // 해당 계정에 속한 모든 양육자 불러오기
@@ -75,6 +92,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const handleTimeChange = (selectedTime) => {
     setTime(selectedTime);
   };
+
   {
     /* --------------------------------주기-----------------------------*/
   }
@@ -91,7 +109,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
 
   // 주기(요일) 리스트 확인 버튼을 눌렀을 때 호출되는 함수
   const handleConfirmSelection = (selectedDays) => {
-    console.log('선택한 요일:', selectedDays);
     let cnt = 0;
 
     for (let i = 0; i < selectedDays.length; i++) {
@@ -149,7 +166,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
     setSubmit(true);
 
     if (schedule != '') {
-      console.log(petName, schedule, date, time, repeat, executor, 'end \n');
+      // console.log(petName, schedule, date, time, repeat, executor, 'end \n');
 
       AsyncStorage.getItem('email')
         .then((myEmail) => {
@@ -223,7 +240,8 @@ const AddScheduleScreen = ({ navigation, route }) => {
               title={'일자'}
               titleSize={20}
               selectedDate={date}
-              onDateChange={setDate}
+              // onDateChange={setDate}
+              onDateChange={handleDateChange}
               type={'date'}
             />
 

@@ -121,7 +121,6 @@ const ScheduleListScreen = ({ petName, petId }) => {
         newScheduleMap[key] = [];
       }
       newScheduleMap[key].push(data.email);
-      console.log('datadata : ', data);
     });
 
     // scheduleMap 업데이트
@@ -240,7 +239,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
       });
       const deleteResponseData = deleteResponse.data;
       const newScheduleMap = { ...scheduleMap };
-      delete newScheduleMap[key]; // 해당 키를 제거
+      delete newScheduleMap[key];
 
       setScheduleMap(newScheduleMap);
       console.log(deleteResponseData, 'deleted');
