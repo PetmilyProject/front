@@ -6,8 +6,11 @@ import SquareButton from '../../components/Button';
 import Button2 from '../../components/Button2';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useContext } from 'react';
+import { AuthContext } from '../../navigations/Nest';
 
 const UserWithdrawalScreen = ({ navigation }) => {
+  const { signOut, isSignedIn } = useContext(AuthContext);
   const handleWithdrawal = async () => {
     const email = await AsyncStorage.getItem('email');
     try {
@@ -31,7 +34,7 @@ const UserWithdrawalScreen = ({ navigation }) => {
       if (response.status === 200) {
         await AsyncStorage.clear();
         console.log('계정 삭제 완료');
-        navigation.navigate('First');
+        signOut();
       } else {
         console.error('계정 삭제 실패:', response.status);
       }
@@ -66,7 +69,7 @@ const UserWithdrawalScreen = ({ navigation }) => {
       <Button2
         backgrouncolor={RED.DEFAULT}
         text="계정탈퇴"
-        onPress={() => {}}
+        onPress={handleWithdrawal}
         color={WHITE}
         width={'90%'}
       />
