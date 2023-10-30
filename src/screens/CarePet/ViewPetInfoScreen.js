@@ -37,6 +37,8 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
 
   const [visible, setVisible] = useState(false);
 
+  console.log(gender);
+
   const uploadImage = async (uri) => {
     try {
       const formData = new FormData();
@@ -139,6 +141,7 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
   }, [imgUrl]);
 
   const handlePetInfoSubmit = async () => {
+    console.log(gender);
     const email = await AsyncStorage.getItem('email');
     const token = await AsyncStorage.getItem('token');
     const linkResponse = await axios.get(
