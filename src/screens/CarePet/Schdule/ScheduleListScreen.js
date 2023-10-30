@@ -14,6 +14,7 @@ import axios from 'axios';
 import { GRAY, WHITE, YELLOW } from '../../../colors';
 import { CarePetRoutes } from '../../../navigations/routes';
 import { useNavigation } from '@react-navigation/native';
+import { cos } from 'react-native-reanimated';
 
 const ScheduleListScreen = ({ petName, petId }) => {
   const window = useWindowDimensions();
@@ -46,18 +47,38 @@ const ScheduleListScreen = ({ petName, petId }) => {
               .then((response) => {
                 const newResponseData = [];
 
-                for (let i = 0; i < response.data.length; i++) {
-                  const zegopsu = Math.pow(
-                    10,
-                    6 - new Date(currentDate).getDay()
-                  );
+                // for (let i = 0; i < response.data.length; i++) {
+                //   const zegopsu = Math.pow(
+                //     10,
+                //     6 - new Date(currentDate).getDay()
+                //   );
 
-                  if (
-                    Math.floor(parseInt(response.data[i].period) / zegopsu) %
-                      10 ===
-                    1
-                  ) {
-                    newResponseData.push(response.data[i]);
+                //   if (
+                //     Math.floor(parseInt(response.data[i].period) / zegopsu) %
+                //       10 ===
+                //     1
+                //   ) {
+                //     newResponseData.push(response.data[i]);
+                //   }
+                // }
+
+                for (let i = 0; i < response.data.length; i++) {
+                  const schedule = response.data[i];
+
+                  if (schedule.repeatSchedule === 1) {
+                    newResponseData.push(schedule);
+                  } else if (schedule.repeatSchedule === 0) {
+                    const zegopsu = Math.pow(
+                      10,
+                      6 - new Date(currentDate).getDay()
+                    );
+
+                    if (
+                      Math.floor(parseInt(schedule.period) / zegopsu) % 10 ===
+                      1
+                    ) {
+                      newResponseData.push(schedule);
+                    }
                   }
                 }
 
@@ -100,6 +121,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
         newScheduleMap[key] = [];
       }
       newScheduleMap[key].push(data.email);
+      console.log('datadata : ', data);
     });
 
     // scheduleMap 업데이트
@@ -123,8 +145,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
 
   // 렌더링 되는 스케줄 아이템
   const renderItem = ({ item, index }) => {
-    //console.log(item);
-    //console.log(`2 ${currentDate}-${item.scheduleId} ` + scheduleMap[`${currentDate}-${item.scheduleId}`])
+    // console.log(`2 ${currentDate}-${item.scheduleId} ` + scheduleMap[`${currentDate}-${item.scheduleId}`])
     const isSelected = selectedItemIndices.includes(index.id);
     const key = `${currentDate}-${item.scheduleId}`;
     const backgroundColor = scheduleMap[key]

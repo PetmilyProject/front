@@ -113,9 +113,9 @@ const UserInfoEditScreen = ({ navigation }) => {
                 `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/update`,
                 {
                   email: userEmail,
-                  user_id: userId,
-                  user_name: userName,
-                  phone_number: phoneNumber,
+                  // user_id: userId,
+                  userName: userName,
+                  phoneNumber: phoneNumber,
                 },
                 {
                   headers: {
