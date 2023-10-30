@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginLeft: 10,
+    width: 200,
   },
 });
 

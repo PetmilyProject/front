@@ -75,11 +75,11 @@ const UpdatePhotoScreen = ({ navigation, route }) => {
     /*---------------------------------------------사진 업로드-------------------------------------------------*/
   }
   const handleImageUpload = async () => {
-    const imageUrl = imgUrl
+    try {
+      const imageUrl = imgUrl
       ? imgUrl
       : `https://i.ibb.co/Twj7906/defaultimage.jpg`;
 
-    try {
       const formData = new FormData();
 
       const myEmail = await AsyncStorage.getItem('email');
@@ -138,7 +138,7 @@ const UpdatePhotoScreen = ({ navigation, route }) => {
       if (response.data) {
         console.log('게시글 수정 성공');
         handleImageUpload(photoId); // 이미지 업로드 역시 필요하다면 호출
-        navigation.navigate(CarePetRoutes.LIST_PHOTO);
+        navigation.navigate('PetProfileListScreen');
         // 다른 작업을 수행하거나 페이지를 이동하는 코드 추가
       } else {
         console.log('게시글 수정 실패');

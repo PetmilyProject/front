@@ -186,6 +186,7 @@ const PetRegisterScreen = ({ navigation, route }) => {
           <InputText
             title="나이"
             placeholder={'예) 8'}
+            keyboardType={'numeric'}
             onChangeText={(text) => {
               setAge(text.trim());
             }}
