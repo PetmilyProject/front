@@ -137,8 +137,8 @@ const ViewCalender = () => {
         }}
       />
 
-      <View>
-        {/*selectedDate && <Text>Selected Date : {selectedDate}</Text>*/}
+      {/*selectedDate && <Text>Selected Date : {selectedDate}</Text>*/}
+      <View style={{ width: 380 }}>
         <Text
           style={{
             marginLeft: 10,
@@ -161,6 +161,7 @@ const ViewCalender = () => {
             <Text style={styles.navigationText}>▶</Text>
           </TouchableOpacity>
         </View>
+
         {/* <ScrollView
           style={{
             height: '100%',
@@ -168,8 +169,12 @@ const ViewCalender = () => {
             paddingHorizontal: 20,
           }}
         > */}
+
         <ScrollView
-          contentContainerStyle={{ paddingTop: 10, paddingHorizontal: 20 }}
+          contentContainerStyle={{
+            paddingTop: 10,
+            paddingHorizontal: 20,
+          }}
         >
           {petSchedules &&
             petSchedules.map((item) => (
@@ -191,10 +196,12 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 0,
     backgroundColor: WHITE,
+    alignItems: 'center',
   },
   calendar: {
     borderBottomWidth: 1,
     borderBottomColor: WHITE,
+    width: 380,
   },
   container2: {
     marginTop: 30,

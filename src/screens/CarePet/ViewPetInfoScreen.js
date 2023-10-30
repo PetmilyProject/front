@@ -37,6 +37,8 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
 
   const [visible, setVisible] = useState(false);
 
+  console.log(gender);
+
   const uploadImage = async (uri) => {
     try {
       const formData = new FormData();
@@ -139,6 +141,7 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
   }, [imgUrl]);
 
   const handlePetInfoSubmit = async () => {
+    console.log(gender);
     const email = await AsyncStorage.getItem('email');
     const token = await AsyncStorage.getItem('token');
     const linkResponse = await axios.get(
@@ -187,34 +190,20 @@ const ViewPetInfoScreen = ({ navigation, route }) => {
     }
   };
   //inviter 계정나가기(1)- pet 삭제
-  const deletePet = () => {
-    AsyncStorage.getItem('email')
-      .then((email) => {
-        AsyncStorage.getItem('token')
-          .then((token) => {
-            axios
-              .delete(
-                `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/delete-pet/${email}/${petId}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                }
-              )
-              .then((response) => {
-                console.log(response.data);
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const deletePet = async () => {
+    const myEmail = AsyncStorage.getItem('email');
+    try {
+      const response = await axios.delete(
+        `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/delete-pet/${petId}`
+      );
+      if (response.status === 200) {
+        console.log('펫 계정 삭제 성공,');
+      } else {
+        console.log('펫 계정 삭제 실패');
+      }
+    } catch (error) {
+      console.log('펫 삭제 중 오류 발생', error);
+    }
 
     navigation.navigate(AddPetRoutes.LIST);
   };

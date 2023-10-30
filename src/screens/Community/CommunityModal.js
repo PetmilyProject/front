@@ -63,11 +63,12 @@ const CommunityModal = (params) => {
           }
         )
         .then((response) => {
-          if (response.status === 204) {
-            console.log('이미지 삭제 성공:', response);
+          console.log('이미지 삭제 상태 확인 : ', response.status);
+          if (response.status === 200) {
+            console.log('이미지 삭제 성공:', response.data);
           } else {
             // 다른 상태 코드에 대한 처리 추가
-            console.error('이미지 삭제 실패:', response);
+            console.error('이미지 삭제 실패:', response.data);
           }
         })
         .catch((error) => {
@@ -90,11 +91,12 @@ const CommunityModal = (params) => {
           }
         )
         .then((response) => {
+          console.log('게시글 삭제 상태 확인 : ', response.status);
           if (response.status === 204) {
-            console.log('게시글 삭제 성공:', response);
+            console.log('게시글 삭제 성공:', response.data);
           } else {
             // 다른 상태 코드에 대한 처리 추가
-            console.error('게시글 삭제 실패:', response);
+            console.error('게시글 삭제 실패:', response.data);
           }
         })
         .catch((error) => {
@@ -103,40 +105,42 @@ const CommunityModal = (params) => {
         });
     });
   };
-  //모든 댓글 삭제( 500 오류남,,, 수정 필요)
-  // const performCommentDelete = () => {
-  //   AsyncStorage.getItem('token').then((token) => {
-  //     // console.log(community_id);
-  //     axios
-  //       .delete(
-  //         `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/comment/deleteByCommunityId/${community_id}`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         if (response.status === 204) {
-  //           // 성공적으로 삭제되었습니다.
-  //           // 원하는 작업 수행 가능
-  //           console.log('모든 댓글 삭제 성공:', response);
-  //         } else {
-  //           // 다른 상태 코드에 대한 처리 추가
-  //           console.error('모든 댓글 삭제 실패:', response);
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         // 삭제 요청 에러 처리
-  //         console.error('모든 댓글 삭제 요청 에러:', error);
-  //       });
-  //   });
-  // };
+  // 모든 댓글 삭제
+  const performCommentDelete = () => {
+    AsyncStorage.getItem('token').then((token) => {
+      // console.log(community_id);
+      axios
+        .delete(
+          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/comment/deleteByCommunityId/${community_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log('댓글 삭제 상태 확인 : ', response.status);
+          if (response.status === 200) {
+            // 성공적으로 삭제되었습니다.
+            // 원하는 작업 수행 가능
+            console.log('모든 댓글 삭제 성공:', response.data);
+          } else {
+            // 다른 상태 코드에 대한 처리 추가
+            console.error('모든 댓글 삭제 실패:', response.data);
+          }
+        })
+        .catch((error) => {
+          // 삭제 요청 에러 처리
+          console.error('모든 댓글 삭제 요청 에러:', error);
+        });
+    });
+  };
 
   //삭제 최종확인
   const handleConfirmDelete = () => {
     performImageDelete();
     performDelete();
+    performCommentDelete();
     onClose();
   };
   //<------------------------------------------수정----------------------------------------------->
