@@ -31,8 +31,9 @@ const DetailPhotoScreen = (props, route) => {
   const imageUrl = param.petInfo.imageUrl;
   // console.log('작성자:', writer);
 
-  // console.log(param);
   const [email, setEmail] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+
   //좋아요
   const [liked, setLiked] = useState(BLACK.DEFAULT);
   const [likes, setLikes] = useState(0);
@@ -278,7 +279,7 @@ const DetailPhotoScreen = (props, route) => {
             <View style={{ flexDirection: 'row', marginLeft: 10 }}>
               <Image
                 source={{
-                  uri: `http://43.200.8.47:8080/profile/get/${writer}/${writer}.jpg` + '?cache=' + Math.random(),
+                  uri: `http://43.200.8.47:8080/profile/get/${writer}/${writer}.jpg?cache=${refreshKey}`,
                 }}
                 style={styles.profile_image}
               />
@@ -302,6 +303,7 @@ const DetailPhotoScreen = (props, route) => {
                   title={title}
                   date={date}
                   wrote={wrote}
+                  likes={likes}
                 />
               </TouchableOpacity>
             </View>
@@ -309,7 +311,7 @@ const DetailPhotoScreen = (props, route) => {
           {/* 이미지 영역 */}
           <View style={styles.image_container}>
             <Image
-              source={{ uri: imageUrl }}
+              source={{ uri: imageUrl + '?cache=' + Math.random() }}
               style={{
                 height: '100%',
                 width: '100%',

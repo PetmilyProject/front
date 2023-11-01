@@ -30,6 +30,7 @@ const UpdatePhotoScreen = ({ navigation, route }) => {
   const photoUrl = params.photoUrl;
   const title = params.title;
   const wrote = params.wrote;
+  const likes = params.likes;
   console.log('펫아이디', petId);
 
   const [email, setEmail] = useState('');
@@ -123,6 +124,7 @@ const UpdatePhotoScreen = ({ navigation, route }) => {
         photoId: photoId,
         title: newTitle,
         wrote: contents,
+        likes: likes,
       };
 
       const response = await axios.put(

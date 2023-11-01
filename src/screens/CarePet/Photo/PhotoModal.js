@@ -31,6 +31,7 @@ const PhotoModal = (params) => {
   const wrote = params.wrote;
   const date = params.date;
   const petId = params.petId;
+  const likes = params.likes
   console.log(petId);
 
   const navigation = useNavigation();
@@ -116,11 +117,11 @@ const PhotoModal = (params) => {
           }
         )
         .then((response) => {
-          if (response.data) {
-            console.log('모든 댓글 삭제 성공:', response);
+          if (response.status / 100 === 2) {
+            console.log('모든 댓글 삭제 성공:', response.data);
           } else {
             // 다른 상태 코드에 대한 처리 추가
-            console.error('모든 댓글 삭제 실패:', response);
+            console.error('모든 댓글 삭제 실패', response.data);
           }
         })
         .catch((error) => {
@@ -150,6 +151,7 @@ const PhotoModal = (params) => {
         wrote,
         date,
         petId,
+        likes,
       });
       onClose();
     } else {
