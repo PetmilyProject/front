@@ -14,6 +14,9 @@ import axios from 'axios';
 import { GRAY, WHITE, YELLOW } from '../../../colors';
 import { CarePetRoutes } from '../../../navigations/routes';
 import { useNavigation } from '@react-navigation/native';
+import SingleButtonAlert from '../../../components/SingleButtonAlert';
+import MemoAlert from '../../../components/MemoAlert';
+import { useRef } from 'react';
 
 const ScheduleListScreen = ({ petName, petId }) => {
   const window = useWindowDimensions();
@@ -25,6 +28,12 @@ const ScheduleListScreen = ({ petName, petId }) => {
   );
   const [scheduleMap, setScheduleMap] = useState({});
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [memoVisible, setMemoVisible] = useState(false);
+  const [memoContent, setMemoContent] = useState('');
+
+  // 나머지 코드를 계속 표시하려면 계속해서 이어서 표시해 드릴 수 있습니다.
+
+  const memoTimerRef = useRef(null);
 
   const navigation = useNavigation();
 
@@ -172,47 +181,68 @@ const ScheduleListScreen = ({ petName, petId }) => {
     const executorProfileURL = `http://43.200.8.47:8080/profile/get/${scheduleMap[key]}/${scheduleMap[key]}.jpg`;
     //console.log(executorProfileURL);
 
-    return (
-      <TouchableOpacity
-        onPress={() => onSchedulePress(item.scheduleId)}
-        style={[
-          styles.scheduleItem,
-          {
-            opacity: isSelected ? 0.4 : 1,
-            backgroundColor: backgroundColor,
-            width: window.width * 0.9,
-          },
-        ]}
-      >
-        <TouchableOpacity onPress={() => handleCompleted(index)}>
-          {scheduleMap[`${currentDate}-${item.scheduleId}`] ? (
-            <Image
-              source={{
-                uri: executorProfileURL + '?cache=' + Math.random(),
-              }}
-              style={styles.executor_profile}
-            />
-          ) : (
-            <View style={styles.execute}></View>
-          )}
-        </TouchableOpacity>
+    const handleLongPress = (item) => {
+      console.log(item);
+      setMemoContent(item);
+      memoTimerRef.current = setTimeout(() => {
+        if (item === null) {
+          setMemoVisible(false);
+        } else {
+          setMemoVisible(true);
+        }
+      }, 10);
+    };
 
-        <View style={styles.container_detail}>
-          <Text style={[styles.details, { fontSize: 0.046 * window.width }]}>
-            {item.schedule}
-          </Text>
-        </View>
-        <View style={styles.container_time}>
-          <Text style={[styles.time, { fontSize: 0.046 * window.width }]}>
-            {item.hm}
-          </Text>
-        </View>
-        <View style={styles.container_executor}>
-          <Text style={[styles.executor, { fontSize: 0.036 * window.width }]}>
-            {item.executor}
-          </Text>
-        </View>
-      </TouchableOpacity>
+    const handlePressOut = () => {
+      setMemoVisible(false);
+    };
+
+    return (
+      <>
+        <MemoAlert visible={memoVisible} title={memoContent} />
+        <TouchableOpacity
+          onPress={() => onSchedulePress(item.scheduleId)}
+          onLongPress={() => handleLongPress(item.memo)}
+          onPressOut={handlePressOut}
+          style={[
+            styles.scheduleItem,
+            {
+              opacity: isSelected ? 0.4 : 1,
+              backgroundColor: backgroundColor,
+              width: window.width * 0.9,
+            },
+          ]}
+        >
+          <TouchableOpacity onPress={() => handleCompleted(index)}>
+            {scheduleMap[`${currentDate}-${item.scheduleId}`] ? (
+              <Image
+                source={{
+                  uri: executorProfileURL + '?cache=' + Math.random(),
+                }}
+                style={styles.executor_profile}
+              />
+            ) : (
+              <View style={styles.execute}></View>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.container_detail}>
+            <Text style={[styles.details, { fontSize: 0.046 * window.width }]}>
+              {item.schedule}
+            </Text>
+          </View>
+          <View style={styles.container_time}>
+            <Text style={[styles.time, { fontSize: 0.046 * window.width }]}>
+              {item.hm}
+            </Text>
+          </View>
+          <View style={styles.container_executor}>
+            <Text style={[styles.executor, { fontSize: 0.036 * window.width }]}>
+              {item.executor}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </>
     );
   };
 

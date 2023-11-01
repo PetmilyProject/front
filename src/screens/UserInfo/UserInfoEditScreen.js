@@ -113,9 +113,9 @@ const UserInfoEditScreen = ({ navigation }) => {
                 `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/users/update`,
                 {
                   email: userEmail,
-                  user_id: userId,
-                  user_name: userName,
-                  phone_number: phoneNumber,
+                  userId: userId,
+                  userName: userName,
+                  phoneNumber: phoneNumber,
                 },
                 {
                   headers: {
@@ -128,7 +128,7 @@ const UserInfoEditScreen = ({ navigation }) => {
               })
               .catch((error) => {
                 console.error('유저 정보 업데이트 실패 : 에러 : ', error);
-                console.log('ddd : ', userEmail);
+                console.log('ddd : ', userEmail, userId, userName, phoneNumber);
               });
           })
           .catch((error) => {
