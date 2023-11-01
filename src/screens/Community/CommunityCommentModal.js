@@ -35,7 +35,7 @@ const CommunityCommnetModal = (params) => {
     AsyncStorage.getItem('token').then((token) => {
       axios
         .delete(
-          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/comment/delete/${commentId}`,
+          `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/GalleryComment/delete/${commentId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -46,7 +46,8 @@ const CommunityCommnetModal = (params) => {
           if (response.status === 204) {
             // 성공적으로 삭제되었습니다.
             // 원하는 작업 수행 가능
-            console.log('삭제 성공:', response);
+            // 나중에는 본인이 작성한 댓글만 삭제 가능하게 수정해야 함
+            console.log('삭제 성공');
           } else {
             // 다른 상태 코드에 대한 처리 추가
             console.error('삭제 실패:', response);

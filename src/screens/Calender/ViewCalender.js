@@ -1,12 +1,16 @@
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { GRAY, WHITE, YELLOW } from '../../colors';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { FlatList } from 'react-native-gesture-handler';
-import { ScrollView } from 'react-native';
 import * as CalendarTools from '../../components/Calendar/CalendarTools';
+import {
+  TouchableWithoutFeedback,
+  ScrollView as GestureHandlerScrollView,
+} from 'react-native-gesture-handler';
+import { Dimensions } from 'react-native';
 
 const ViewCalender = () => {
   var petData;
@@ -14,6 +18,13 @@ const ViewCalender = () => {
   const [petSchedules, setPetSchedules] = useState([]);
   const [currentPetIndex, setCurrentPetIndex] = useState(0); // 현재 선택된 펫 인덱스
   const [selectedDate, setSelectedDate] = useState('');
+  const [scrollViewHeight, setScrollViewHeight] = useState(100); // 초기 높이 설정
+
+  // 화면의 높이를 가져옵니다.
+  const screenHeight = Dimensions.get('window').height;
+
+  // 여백이나 고정 높이를 계산합니다. 예: 여백 20을 빼고 남은 높이로 설정
+  const remainingHeight = screenHeight - 550;
 
   // 서버에서 일정 데이터를 가져오는 비동기 함수
   useEffect(() => {
@@ -70,7 +81,7 @@ const ViewCalender = () => {
         console.log('펫 정보를 받지 못했습니다.');
       }
     }
-
+    setScrollViewHeight(remainingHeight);
     getPetData();
   }, [selectedDate, currentPetIndex]);
 
@@ -171,6 +182,7 @@ const ViewCalender = () => {
         > */}
 
         <ScrollView
+          style={{ height: scrollViewHeight }}
           contentContainerStyle={{
             paddingTop: 10,
             paddingHorizontal: 20,
@@ -202,6 +214,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: WHITE,
     width: 380,
+    height: 310,
   },
   container2: {
     marginTop: 30,

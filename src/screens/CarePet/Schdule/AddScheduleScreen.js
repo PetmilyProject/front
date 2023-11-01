@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import { Text, View } from 'react-native';
 import axios from 'axios';
@@ -189,104 +190,108 @@ const AddScheduleScreen = ({ navigation, route }) => {
   }, [repeat]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView behavior={'padding'} style={styles.container}>
-        <View>
-          {submit === true && schedule === '' ? (
-            <Text style={{ color: RED.DEFAULT }}>*일정명 필수입력</Text>
-          ) : null}
-          <InputText_in
-            title={'일정'}
-            titleSize={20}
-            placeholder="ex) 밥먹기"
-            value={schedule}
-            onChangeText={setSchedule}
-            type={'input'}
-          />
-          <InputText_in
-            title={'시간'}
-            titleSize={20}
-            time={time}
-            onChangeText={handleTimeChange}
-            type={'time'}
-          />
-          <InputText_in
-            title={'일자'}
-            titleSize={20}
-            selectedDate={date}
-            onDateChange={setDate}
-            type={'date'}
-          />
-          <InputText_in
-            title={'반복'}
-            titleSize={20}
-            type={'toggle'}
-            onToggleAlarm={setRepeat}
-          />
-          <SelectionListAlert
-            visible={visible}
-            onClose={() => setVisible(false)}
-            multiple={true}
-            item={item}
-            width={220}
-            scrollViewHeight={170}
-            marginTop={430}
-            marginLeft={140}
-            buttonText={'확인'}
-            selected={selectedDays}
-            onConfirmSelection={handleConfirmSelection}
-          />
-          <InputText_in
-            title={'주기'}
-            titleSize={20}
-            type={'free'}
-            onPress={() => {
-              if (repeat === 1) {
-                setVisible(true);
-              }
-            }}
-            selectedDays={selectedDays}
-          />
-          <SelectionListAlert
-            visible={executorVisible}
-            onClose={() => setExecutorVisible(false)}
-            multiple={false}
-            item={executorList}
-            width={220}
-            scrollViewHeight={150}
-            marginTop={500}
-            marginLeft={140}
-            buttonText={'확인'}
-            selected={executor}
-            onConfirmSelection={handleExecutorSelection}
-          />
-          <InputText_in
-            title={'수행자'}
-            titleSize={20}
-            type={'free'}
-            onPress={() => setExecutorVisible(true)}
-            selectedDays={executor}
-          />
-          <InputText_in
-            title={'메모'}
-            titleSize={20}
-            placeholder="메모"
-            value={memo}
-            onChangeText={setMemo}
-            type={'input'}
-          />
-          <View style={{ marginTop: 50 }}>
-            <Button2
-              backgrouncolor={YELLOW.DEFAULT}
-              color={WHITE}
-              text={'등록하기'}
-              onPress={handleScheduleSubmit}
-              width={'100%'}
+    <ScrollView
+      style={{ backgroundColor : 'white' }}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView behavior={'padding'} style={styles.container}>
+          <View>
+            {submit === true && schedule === '' ? (
+              <Text style={{ color: RED.DEFAULT }}>*일정명 필수입력</Text>
+            ) : null}
+            <InputText_in
+              title={'일정'}
+              titleSize={20}
+              placeholder="ex) 밥먹기"
+              value={schedule}
+              onChangeText={setSchedule}
+              type={'input'}
             />
+            <InputText_in
+              title={'시간'}
+              titleSize={20}
+              time={time}
+              onChangeText={handleTimeChange}
+              type={'time'}
+            />
+            <InputText_in
+              title={'일자'}
+              titleSize={20}
+              selectedDate={date}
+              onDateChange={setDate}
+              type={'date'}
+            />
+            <InputText_in
+              title={'반복'}
+              titleSize={20}
+              type={'toggle'}
+              onToggleAlarm={setRepeat}
+            />
+            <SelectionListAlert
+              visible={visible}
+              onClose={() => setVisible(false)}
+              multiple={true}
+              item={item}
+              width={220}
+              scrollViewHeight={170}
+              marginTop={430}
+              marginLeft={140}
+              buttonText={'확인'}
+              selected={selectedDays}
+              onConfirmSelection={handleConfirmSelection}
+            />
+            <InputText_in
+              title={'주기'}
+              titleSize={20}
+              type={'free'}
+              onPress={() => {
+                if (repeat === 1) {
+                  setVisible(true);
+                }
+              }}
+              selectedDays={selectedDays}
+            />
+            <SelectionListAlert
+              visible={executorVisible}
+              onClose={() => setExecutorVisible(false)}
+              multiple={false}
+              item={executorList}
+              width={220}
+              scrollViewHeight={150}
+              marginTop={500}
+              marginLeft={140}
+              buttonText={'확인'}
+              selected={executor}
+              onConfirmSelection={handleExecutorSelection}
+            />
+            <InputText_in
+              title={'수행자'}
+              titleSize={20}
+              type={'free'}
+              onPress={() => setExecutorVisible(true)}
+              selectedDays={executor}
+            />
+            <InputText_in
+              title={'메모'}
+              titleSize={20}
+              placeholder="메모"
+              value={memo}
+              onChangeText={setMemo}
+              type={'input'}
+            />
+            <View style={{ marginTop: 50 }}>
+              <Button2
+                backgrouncolor={YELLOW.DEFAULT}
+                color={WHITE}
+                text={'등록하기'}
+                onPress={handleScheduleSubmit}
+                width={'100%'}
+              />
+            </View>
           </View>
-        </View>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </ScrollView>
   );
 };
 
