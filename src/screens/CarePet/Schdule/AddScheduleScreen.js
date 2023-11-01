@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -34,6 +34,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
   const [executor, setExecutor] = useState([]);
   const [executorStr, setExecutorStr] = useState('');
   const [executorEmail, setExectorEmail] = useState('');
+  const [memo, setMemo] = useState('');
 
   const [repeat, setRepeat] = useState(0);
   const [visible, setVisible] = useState(false);
@@ -153,6 +154,7 @@ const AddScheduleScreen = ({ navigation, route }) => {
                     executor: executorStr,
                     executorEmail: myEmail,
                     repeatSchedule: repeat,
+                    memo: memo,
                   },
                   {
                     headers: {
@@ -264,6 +266,14 @@ const AddScheduleScreen = ({ navigation, route }) => {
             type={'free'}
             onPress={() => setExecutorVisible(true)}
             selectedDays={executor}
+          />
+          <InputText_in
+            title={'메모'}
+            titleSize={20}
+            placeholder="메모"
+            value={memo}
+            onChangeText={setMemo}
+            type={'input'}
           />
           <View style={{ marginTop: 50 }}>
             <Button2

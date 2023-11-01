@@ -46,6 +46,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
   const [executorVisible, setExecutorVisible] = useState(false);
 
   const [response, setResponse] = useState(null);
+  const [memoContent, setMemoContent] = useState('');
 
   const fetchPetLink = async () => {
     try {
@@ -156,6 +157,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
             setIsCompleted(response.data.isCompleted);
             setComplete(response.data.complete);
             setExecutorStr(response.data.executor);
+            setMemoContent(response.data.memo);
             // setRepeat(response.data.repete);
             setPeriod(response.data.period);
             const executorData = response.data.executor;
@@ -188,6 +190,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
                   period: period,
                   executor: executorStr,
                   repeatSchedule: repeat,
+                  memo: memoContent,
                 },
                 {
                   headers: {
@@ -197,7 +200,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
               )
               .then((response) => {
                 console.log(response.data);
-                navigation.popToTop();
+                navigation.goBack();
               })
               .catch((error) => {
                 console.error('펫 일정 업데이트 실패 : 에러 : ', error);
@@ -357,6 +360,14 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
             type={'free'}
             onPress={() => setExecutorVisible(true)}
             selectedDays={executor}
+          />
+          <InputText_in
+            title={'메모'}
+            titleSize={20}
+            placeholder="메모"
+            value={memoContent}
+            onChangeText={setMemoContent}
+            type={'input'}
           />
 
           {/* 수정 및 삭제 버튼 */}
