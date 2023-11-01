@@ -25,10 +25,10 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
   const [schedule, setSchedule] = useState('');
   const [time, setTime] = useState('');
   const [date, setDate] = useState('');
-  const [repeat, setRepeat] = useState(0);
+  const [period, setPeriod] = useState(0);
   const [executor, setExecutor] = useState([]);
   const [executorStr, setExecutorStr] = useState('');
-  const [period, setPeriod] = useState([]);
+  // const [period, setPeriod] = useState([]);
   const [isCompleted, setIsCompleted] = useState(null);
   const [complete, setComplete] = useState('');
 
@@ -38,7 +38,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
   const [executorList, setExecutorList] = useState({});
 
   const [alarm, setAlarm] = useState(0);
-  const [aaa, setaaa] = useState(0);
+  const [repeat, setRepeat] = useState(0);
   const [visible, setVisible] = useState(false);
 
   const [selectedDays, setSelectedDays] = useState([]);
@@ -100,7 +100,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
       }
     }
 
-    setRepeat(cnt);
+    setPeriod(cnt);
     // console.log(cnt);
     setSelectedDays(selectedDays);
   };
@@ -174,25 +174,6 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
 
   // 일정 수정
   const Modification = () => {
-    console.log(
-      'schedule:',
-      schedule,
-      'date:',
-      date,
-      'hm:',
-      time,
-      'period:',
-      selectedDays,
-      'repeat:',
-      repeat,
-      'executor:',
-      executor,
-      'isCompleted:',
-      isCompleted,
-      'complete:',
-      complete
-    );
-
     AsyncStorage.getItem('email')
       .then((myEmail) => {
         AsyncStorage.getItem('token')
@@ -204,10 +185,9 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
                   schedule: schedule,
                   date: date,
                   hm: time,
-                  period: repeat,
+                  period: period,
                   executor: executorStr,
-                  // isCompleted: isCompleted,
-                  // complete: complete,
+                  repeatSchedule: repeat,
                 },
                 {
                   headers: {
@@ -332,7 +312,7 @@ const ScheduleModificationScreen = ({ navigation, route }) => {
             titleSize={20}
             type={'toggle'}
             alarm={alarm}
-            onToggleAlarm={setaaa}
+            onToggleAlarm={setRepeat}
           />
           {/* 주기(요일) 선택 리스트*/}
           <SelectionListAlert

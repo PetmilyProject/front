@@ -24,24 +24,24 @@ const AddScheduleScreen = ({ navigation, route }) => {
     setTime(`${hours}:${minutes}`);
   }, []);
 
-  //양육자 목록
+  // 양육자 목록
   const [rearer, setRearer] = useState(null);
-  //입력란 useState
+  // 입력란 useState
   const [schedule, setSchedule] = useState('');
   const [time, setTime] = useState('');
   const [date, setDate] = useState('');
-  const [repeat, setRepeat] = useState(0);
+  const [period, setPeriod] = useState(0);
   const [executor, setExecutor] = useState([]);
   const [executorStr, setExecutorStr] = useState('');
   const [executorEmail, setExectorEmail] = useState('');
 
-  const [aaa, setaaa] = useState(0);
+  const [repeat, setRepeat] = useState(0);
   const [visible, setVisible] = useState(false);
   const [submit, setSubmit] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
-  //수행자 모달 관리
+  // 수행자 모달 관리
   const [executorVisible, setExecutorVisible] = useState(false);
-  //랜더링된 owner 리스트
+  // 랜더링된 owner 리스트
   const [executorList, setExecutorList] = useState({});
   const [executorEmailList, setExecutorEmailList] = useState([]);
 
@@ -66,16 +66,11 @@ const AddScheduleScreen = ({ navigation, route }) => {
     fetchPetLink();
   }, []);
 
-  {
-    /* --------------------------------시간-----------------------------*/
-  }
-  //시간 변경 함수
+  // 시간 변경 함수
   const handleTimeChange = (selectedTime) => {
     setTime(selectedTime);
   };
-  {
-    /* --------------------------------주기-----------------------------*/
-  }
+
   // 주기(요일) 리스트 아이템
   const item = {
     0: '일',
@@ -110,20 +105,16 @@ const AddScheduleScreen = ({ navigation, route }) => {
       }
     }
 
-    setRepeat(cnt);
-    // console.log(cnt);
+    setPeriod(cnt);
     setSelectedDays(selectedDays);
   };
 
-  /* --------------------------------수행자--------------------------------*/
-
-  //수행자 랜더링
+  // 수행자 랜더링
   useEffect(() => {
     if (rearer) {
       const newExecutor = {};
       const newExecutorEmail = {};
       rearer.forEach((item) => {
-        // rearer의 각 항목을 반복
         newExecutor[item.ownerName] = item.ownerName;
         newExecutorEmail[item.ownerName] = item.owner;
       });
@@ -132,22 +123,20 @@ const AddScheduleScreen = ({ navigation, route }) => {
     }
   }, [rearer]);
 
-  //수행자 리스트 확인 버튼을 눌렀을 때 호출되는 함수
+  // 수행자 리스트 확인 버튼을 눌렀을 때 호출되는 함수
   const handleExecutorSelection = (selectedItems) => {
     setExecutor(selectedItems);
-    setExectorEmail(executorEmailList[selectedItems])
+    setExectorEmail(executorEmailList[selectedItems]);
     setExecutorStr(selectedItems.join(', '));
     setExecutorVisible(false);
   };
 
-  /* --------------------------------등록하기-------------------------------*/
-
-  //등록하기 함수
+  // 등록하기 함수
   const handleScheduleSubmit = () => {
     setSubmit(true);
 
-    if (schedule != '') {
-      console.log(petName, schedule, date, time, repeat, executor, 'end \n');
+    if (schedule !== '') {
+      console.log(petName, schedule, date, time, period, executor, 'end \n');
 
       AsyncStorage.getItem('email')
         .then((myEmail) => {
@@ -160,9 +149,10 @@ const AddScheduleScreen = ({ navigation, route }) => {
                     schedule: schedule,
                     date: date,
                     hm: time,
-                    period: repeat,
+                    period: period,
                     executor: executorStr,
                     executorEmail: myEmail,
+                    repeatSchedule: repeat,
                   },
                   {
                     headers: {
@@ -190,6 +180,12 @@ const AddScheduleScreen = ({ navigation, route }) => {
     navigation.goBack();
   };
 
+  useEffect(() => {
+    if (repeat === 0) {
+      setSelectedDays([]); // repeat가 0일 때 selectedDays를 초기화
+    }
+  }, [repeat]);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView behavior={'padding'} style={styles.container}>
@@ -197,7 +193,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
           {submit === true && schedule === '' ? (
             <Text style={{ color: RED.DEFAULT }}>*일정명 필수입력</Text>
           ) : null}
-          {/* 일정 입력 */}
           <InputText_in
             title={'일정'}
             titleSize={20}
@@ -206,7 +201,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
             onChangeText={setSchedule}
             type={'input'}
           />
-          {/* 시간 입력 */}
           <InputText_in
             title={'시간'}
             titleSize={20}
@@ -214,8 +208,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
             onChangeText={handleTimeChange}
             type={'time'}
           />
-
-          {/* 일자 선택 */}
           <InputText_in
             title={'일자'}
             titleSize={20}
@@ -223,14 +215,12 @@ const AddScheduleScreen = ({ navigation, route }) => {
             onDateChange={setDate}
             type={'date'}
           />
-
           <InputText_in
             title={'반복'}
             titleSize={20}
             type={'toggle'}
-            onToggleAlarm={setaaa}
+            onToggleAlarm={setRepeat}
           />
-          {/* 주기(요일) 선택 리스트 Alert*/}
           <SelectionListAlert
             visible={visible}
             onClose={() => setVisible(false)}
@@ -241,21 +231,20 @@ const AddScheduleScreen = ({ navigation, route }) => {
             marginTop={430}
             marginLeft={140}
             buttonText={'확인'}
-            selected={selectedDays} // 선택한 요일을 전달합니다.
-            onConfirmSelection={handleConfirmSelection} // 확인 버튼을 눌렀을 때 선택한 요일을 처리하는 함수를 전달합니다.
+            selected={selectedDays}
+            onConfirmSelection={handleConfirmSelection}
           />
-          {/* 주기(요일) 입력란 */}
           <InputText_in
             title={'주기'}
             titleSize={20}
             type={'free'}
             onPress={() => {
-              setVisible(true);
+              if (repeat === 1) {
+                setVisible(true);
+              }
             }}
-            selectedDays={selectedDays} // 이 부분 추가
+            selectedDays={selectedDays}
           />
-
-          {/* 수행자 선택 리스트 Alert*/}
           <SelectionListAlert
             visible={executorVisible}
             onClose={() => setExecutorVisible(false)}
@@ -269,7 +258,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
             selected={executor}
             onConfirmSelection={handleExecutorSelection}
           />
-          {/* 수행자 입력란 */}
           <InputText_in
             title={'수행자'}
             titleSize={20}
@@ -277,7 +265,6 @@ const AddScheduleScreen = ({ navigation, route }) => {
             onPress={() => setExecutorVisible(true)}
             selectedDays={executor}
           />
-          {/* 등록 버튼 */}
           <View style={{ marginTop: 50 }}>
             <Button2
               backgrouncolor={YELLOW.DEFAULT}

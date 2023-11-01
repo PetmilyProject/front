@@ -19,6 +19,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
   const window = useWindowDimensions();
   const [responseData, setResponseData] = useState([]);
   const [selectedItemIndices, setSelectedItemIndices] = useState([]);
+  const [repeat, setRepeat] = useState(0);
   const [currentDate, setCurrentDate] = useState(
     new Date().toISOString().split('T')[0]
   );
@@ -26,6 +27,28 @@ const ScheduleListScreen = ({ petName, petId }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const navigation = useNavigation();
+
+  //받아온 date 형식 변경함수
+  function parseKoreanDate(koreanDate) {
+    const parts = koreanDate.match(/(\d{4})년 (\d{1,2})월 (\d{1,2})일/);
+
+    if (parts === null) {
+      throw new Error('날짜 형식이 잘못되었습니다.');
+    }
+
+    const year = parseInt(parts[1], 10);
+    const month = parseInt(parts[2], 10);
+    const day = parseInt(parts[3], 10);
+
+    if (isNaN(year) || isNaN(month) || isNaN(day)) {
+      throw new Error('날짜를 해석할 수 없습니다.');
+    }
+
+    const formattedMonth = month.toString().padStart(2, '0');
+    const formattedDay = day.toString().padStart(2, '0');
+
+    return `${year}-${formattedMonth}-${formattedDay}`;
+  }
 
   // 스케줄 가져오기
   const fetchScheduleData = () => {
@@ -47,17 +70,33 @@ const ScheduleListScreen = ({ petName, petId }) => {
                 const newResponseData = [];
 
                 for (let i = 0; i < response.data.length; i++) {
+                  //일정 날짜 형식 변환
+                  const schduleDate = parseKoreanDate(response.data[i].date);
+                  setRepeat(response.data[i].repeatSchedule);
+
                   const zegopsu = Math.pow(
                     10,
                     6 - new Date(currentDate).getDay()
                   );
-
-                  if (
-                    Math.floor(parseInt(response.data[i].period) / zegopsu) %
-                      10 ===
-                    1
-                  ) {
-                    newResponseData.push(response.data[i]);
+                  //반복 설정o
+                  if (response.data[i].repeatSchedule === 1) {
+                    if (schduleDate <= currentDate) {
+                      if (
+                        Math.floor(
+                          parseInt(response.data[i].period) / zegopsu
+                        ) %
+                          10 ===
+                        1
+                      ) {
+                        newResponseData.push(response.data[i]);
+                      }
+                    }
+                  }
+                  //반복 설정X
+                  else {
+                    if (schduleDate === currentDate) {
+                      newResponseData.push(response.data[i]);
+                    }
                   }
                 }
 
