@@ -23,7 +23,7 @@ export const ImagePickerComponent = ({ width, height, InsertUrl }) => {
       aspect: [4, 3],
       quality: 1,
     });
-    if (result.cancelled) {
+    if (result.canceled) {
       return null;
     } else {
       setImageUrl(result.uri); // 이미지 선택 결과의 URI를 설정

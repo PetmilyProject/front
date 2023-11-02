@@ -19,6 +19,7 @@ import 'react-native-get-random-values';
 import { nanoid } from 'nanoid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import ImagePickerComponent from '../../components/ImagePicker';
 
 const PetRegisterScreen = ({ navigation, route }) => {
   const [imgUrl, setImgUrl] = useState(null);
@@ -75,6 +76,10 @@ const PetRegisterScreen = ({ navigation, route }) => {
 
       console.log('펫 추가 메시지 : ', addPetResponse.data);
 
+      const petId = addPetResponse.data.id;
+
+      uploadToServer(petId);
+
       // petlink 추가
       await axios.post(
         `http://43.200.8.47:8080/link/post/${myEmail}/${myEmail}/${addPetResponse.data.id}`,
@@ -122,27 +127,33 @@ const PetRegisterScreen = ({ navigation, route }) => {
       InsertUrl(result.assets[0].uri);
       setUpload(true);
     }
+  };
 
+  const uploadToServer = async (petId) => {
+    console.log("imgUrl ", imgUrl)
     // 서버에 요청 보내기
-    const localUri = result.uri;
+    const localUri = imgUrl;
     const filename = localUri.split('/').pop();
     const match = /\.(\w+)$/.exec(filename ?? '');
     const type = match ? `image/${match[1]}` : `image`;
     const formData = new FormData();
     const myEmail = await AsyncStorage.getItem('email');
     const tmpToken = await AsyncStorage.getItem('token');
-    formData.append('image', { uri: localUri, name: filename, type });
+    formData.append('file', { uri: localUri, name: filename, type });
 
-    await axios({
-      method: 'post',
-      uri: `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${myEmail}/uploadImage/${userId}`,
-      headers: {
-        Authorization: `Bearer ${tmpToken}`,
-        'Content-Type': 'multipart/form-data',
+    const postResponse = await axios.post(
+      `http://ec2-43-200-8-47.ap-northeast-2.compute.amazonaws.com:8080/pet/${myEmail}/uploadImage/${petId}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${tmpToken}`,
+          'Content-Type': 'multipart/form-data',
+        }
       },
-      data: formData,
-    });
-  };
+    );
+
+    console.log("post 결과", postResponse.data);
+  }
 
   return (
     <View
@@ -154,7 +165,7 @@ const PetRegisterScreen = ({ navigation, route }) => {
     >
       <ScrollView constentContainerStyle={styles.container}>
         <View style={styles.photoContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={uploadImage}>
             <View style={{ alignItems: 'center' }}>
               <View style={styles.photoBox}>
                 {imgUrl === null ? (
@@ -162,8 +173,7 @@ const PetRegisterScreen = ({ navigation, route }) => {
                 ) : (
                   <Image source={{ uri: imgUrl }} style={styles.image} />
                 )}
-                <Pressable onPress={uploadImage}>
-                  {/* <Text>이미지 업로드하기</Text> */}
+                <Pressable>
                   <View style={styles.editIconContainer}>
                     <MaterialIcons name="edit" size={24} color="black" />
                   </View>
