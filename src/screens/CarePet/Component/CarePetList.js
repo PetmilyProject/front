@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { useState, useEffect } from 'react';
-import { BLACK, WHITE } from '../../../colors';
+import { BLACK, GRAY, WHITE } from '../../../colors';
 import { YELLOW } from '../../../colors';
 import ComponentAMD from '../../../components/ComponentAMD';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -83,19 +83,19 @@ const CarePetList = ({
   const textStyle = StyleSheet.create({
     schdule: {
       color: schedueltextColor,
-      fontSize: widthPercentageToDP('5%'),
+      fontSize: 20,
     },
     photo: {
       color: phototextColor,
-      fontSize: widthPercentageToDP('5%'),
+      fontSize: 20,
     },
     rearer: {
       color: rearertextColor,
-      fontSize: widthPercentageToDP('5%'),
+      fontSize: 20,
     },
     statistics: {
       color: statisticstextColor,
-      fontSize: widthPercentageToDP('5%'),
+      fontSize: 20,
     },
   });
   const fetchData = async () => {
@@ -157,72 +157,70 @@ const CarePetList = ({
 
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <View style={styles.container_main}>
-          {/* 이미지 */}
-          <TouchableOpacity onPress={onPetPress}>
-            <Image
-              source={{
-                uri:
-                  `http://43.200.8.47:8080/pet/${inviterEmail}/downloadImage/${petId}.jpg` +
-                  '?cache=' +
-                  Math.random(),
-              }}
-              style={[
-                styles.image,
-                {
-                  width: widthPercentageToDP('30%'),
-                  height: heightPercentageToDP('15%'),
-                },
-              ]}
-            />
-            <View style={styles.editIconContainer}>
-              <MaterialIcons name="edit" size={24} color="black" />
+      <View style={styles.container_main}>
+        {/* 이미지 */}
+        <TouchableOpacity onPress={onPetPress}>
+          <Image
+            source={{
+              uri:
+                `http://43.200.8.47:8080/pet/${inviterEmail}/downloadImage/${petId}.jpg` +
+                '?cache=' +
+                Math.random(),
+            }}
+            style={[
+              styles.image,
+              {
+                width: 100,
+                height: 100,
+              },
+            ]}
+          />
+          <View style={styles.editIconContainer}>
+            <MaterialIcons name="edit" size={24} color="black" />
+          </View>
+        </TouchableOpacity>
+        {/* 이름,케어 목록 */}
+        <View style={styles.container_content}>
+          <View style={{ flexDirection: 'row' }}>
+            <View style={styles.container_name}>
+              <Text
+                style={[
+                  styles.name,
+                  {
+                    fontSize: 25,
+                  },
+                ]}
+              >
+                {petName}
+              </Text>
             </View>
-          </TouchableOpacity>
-          {/* 이름,케어 목록 */}
-          <View style={styles.container_content}>
-            <View style={{ flexDirection: 'row' }}>
-              <View style={styles.container_name}>
-                <Text
-                  style={[
-                    styles.name,
-                    {
-                      fontSize: widthPercentageToDP('7%'),
-                    },
-                  ]}
-                >
-                  {petName}
-                </Text>
-              </View>
-            </View>
-            {/* 케어 목록 */}
-            <View style={styles.container_row}>
-              <Pressable onPress={handleSchedulePress}>
-                <Text style={textStyle.schdule}>일정</Text>
-              </Pressable>
-              <Text> | </Text>
-              <Pressable onPress={handlePhotoPress}>
-                <Text style={textStyle.photo}>사진첩</Text>
-              </Pressable>
-              <Text> | </Text>
-              <Pressable onPress={handleRearerPress}>
-                <Text style={textStyle.rearer}>양육자</Text>
-              </Pressable>
-              {/* <Text> | </Text>
+          </View>
+          {/* 케어 목록 */}
+          <View style={styles.container_row}>
+            <Pressable onPress={handleSchedulePress}>
+              <Text style={textStyle.schdule}>일정</Text>
+            </Pressable>
+            <Text> | </Text>
+            <Pressable onPress={handlePhotoPress}>
+              <Text style={textStyle.photo}>사진첩</Text>
+            </Pressable>
+            <Text> | </Text>
+            <Pressable onPress={handleRearerPress}>
+              <Text style={textStyle.rearer}>양육자</Text>
+            </Pressable>
+            {/* <Text> | </Text>
               <Pressable onPress={handleStatisticsPress}>
                 <Text style={textStyle.statistics}>통계</Text>
               </Pressable> */}
-            </View>
           </View>
         </View>
-      </View>
-      <View style={styles.componentAMD}>
-        <ComponentAMD
-          onAddPress={onAddPress}
-          navigation={navigation}
-          petName={petName}
-        />
+        <View style={styles.componentAMD}>
+          <ComponentAMD
+            onAddPress={onAddPress}
+            navigation={navigation}
+            petName={petName}
+          />
+        </View>
       </View>
     </View>
   );
@@ -230,28 +228,28 @@ const CarePetList = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: heightPercentageToDP('8%'),
+    paddingTop: 50,
+    marginBottom: 15,
   },
   container_row: {
     flexDirection: 'row',
   },
   container_main: {
     flexDirection: 'row',
-    marginRight: widthPercentageToDP('9%'),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   componentAMD: {
-    width: widthPercentageToDP('90%'),
-    marginBottom: heightPercentageToDP('-1.5%'),
+    marginTop: 100,
   },
   container_content: {
     justifyContent: 'center',
-    marginLeft: widthPercentageToDP('2%'),
+    marginLeft: 10,
   },
   container_name: {
-    marginBottom: heightPercentageToDP('2%'),
+    marginBottom: 10,
   },
   name: {
     fontSize: 30,
@@ -260,16 +258,14 @@ const styles = StyleSheet.create({
   image: {
     borderRadius: 100,
     alignItems: 'center',
-    marginRight: widthPercentageToDP('5%'),
   },
   editIconContainer: {
     position: 'absolute',
-    bottom: heightPercentageToDP('1%'),
-    right: widthPercentageToDP('1%'),
-    borderWidth: 0.2,
-    backgroundColor: WHITE,
-    borderRadius: widthPercentageToDP('12%'),
-    padding: widthPercentageToDP('2%'),
+    bottom: 5,
+    right: 5,
+    backgroundColor: '#FFCC33',
+    borderRadius: 50,
+    padding: 5,
   },
 });
 

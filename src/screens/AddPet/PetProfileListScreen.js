@@ -169,8 +169,9 @@ const PetProfileListScreen = ({ navigation, AddPress }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
     backgroundColor: WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container_list: {
     flex: 0.1,
@@ -179,6 +180,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 40,
     marginHorizontal: 20,
+    width: 350,
     backgroundColor: WHITE,
   },
   petHeaderText: {

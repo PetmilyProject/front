@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { Entypo } from '@expo/vector-icons';
-import { YELLOW } from '../../colors';
+import { WHITE, YELLOW } from '../../colors';
 import { CommunityRoutes } from '../../navigations/routes';
 
 const CommunityPhotoScreen = () => {
@@ -136,51 +136,58 @@ const CommunityPhotoScreen = () => {
 
   return (
     <View style={styles.background}>
-      <View style={styles.icon_style}>
-        <TouchableOpacity onPress={AddCommunityScreen}>
-          <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.separator} />
-      <FlatList
-        data={sortedPhotoUrl}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <TouchableOpacity
-            onPress={() => gotoDetail(index)}
-            style={styles.photoList}
-          >
-            <View style={{ alignItems: 'center' }}>
-              <Image
-                source={{ uri: item + '?cache=' + Math.random() }}
-                style={styles.photoItem}
-              />
-            </View>
-            <Text
-              style={{
-                marginTop: 10,
-                marginLeft: 10,
-                fontSize: 16,
-                marginBottom: -20,
-              }}
-            >
-              {titleOfPost[index]}
-            </Text>
+      <View style={{ width: 380 }}>
+        <View style={styles.icon_style}>
+          <TouchableOpacity onPress={AddCommunityScreen}>
+            <Entypo name="circle-with-plus" size={40} color={YELLOW.DEFAULT} />
           </TouchableOpacity>
-        )}
-        numColumns={2}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-        }
-      />
+        </View>
+        <View style={styles.separator} />
+        <FlatList
+          data={sortedPhotoUrl}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <TouchableOpacity
+              onPress={() => gotoDetail(index)}
+              style={styles.photoList}
+            >
+              <View style={{ alignItems: 'center' }}>
+                <Image
+                  source={{ uri: item + '?cache=' + Math.random() }}
+                  style={styles.photoItem}
+                />
+              </View>
+              <Text
+                style={{
+                  marginTop: 10,
+                  marginLeft: 10,
+                  fontSize: 16,
+                  marginBottom: -20,
+                }}
+              >
+                {titleOfPost[index]}
+              </Text>
+            </TouchableOpacity>
+          )}
+          numColumns={2}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+            />
+          }
+        />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: 'white',
-    height: '100%',
+    backgroundColor: WHITE,
+    flex: 1,
+    // height: '100%',
+    alignItems: 'center',
   },
   icon_style: {
     alignItems: 'flex-end',
@@ -190,7 +197,7 @@ const styles = StyleSheet.create({
   separator: {
     backgroundColor: 'lightgray',
     height: 1,
-    width: '100%',
+    width: 380,
   },
   photoList: {
     width: '50%',

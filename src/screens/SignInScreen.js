@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   ActivityIndicator,
+  View,
 } from 'react-native';
 
 import Input, { InputTypes, ReturnKeyTypes } from '../components/Input';
@@ -13,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import SquareButton, { ColorTypes } from '../components/Button';
 import { useContext } from 'react';
 import { AuthContext } from '../navigations/Nest';
-import { BLACK, WHITE } from '../colors';
+import { BLACK, GRAY, WHITE, YELLOW } from '../colors';
 
 const SignInScreen = () => {
   const [email, setEmail] = useState('');
@@ -63,40 +64,58 @@ const SignInScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <KeyboardAvoidingView style={styles.container} behavior="height">
-        <Input
-          styles={{
-            container: { marginBottom: 20, paddingHorizontal: 20 },
-            input: { borderWidth: 1 },
+        <View
+          style={{
+            width: 500,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: WHITE,
+            flex: 1,
           }}
-          value={email}
-          onChangeText={(text) => setEmail(text.trim())}
-          inputType={InputTypes.EMAIL}
-          returnKeyType={ReturnKeyTypes.NEXT}
-        />
-        <Input
-          styles={{
-            container: { marginBottom: 20, paddingHorizontal: 20 },
-            input: { borderWidth: 1 },
-          }}
-          value={password}
-          onChangeText={(text) => setPassword(text.trim())}
-          inputType={InputTypes.PASSWORD}
-          returnKeyType={ReturnKeyTypes.DONE}
-        />
+        >
+          <View
+            style={{
+              width: 380,
+              justifyContent: 'center',
+            }}
+          >
+            <Input
+              styles={{
+                container: { marginBottom: 20, paddingHorizontal: 20 },
+                input: { borderWidth: 1 },
+              }}
+              value={email}
+              onChangeText={(text) => setEmail(text.trim())}
+              inputType={InputTypes.EMAIL}
+              returnKeyType={ReturnKeyTypes.NEXT}
+            />
+            <Input
+              styles={{
+                container: { marginBottom: 20, paddingHorizontal: 20 },
+                input: { borderWidth: 1 },
+                width: { width: 380 },
+              }}
+              value={password}
+              onChangeText={(text) => setPassword(text.trim())}
+              inputType={InputTypes.PASSWORD}
+              returnKeyType={ReturnKeyTypes.DONE}
+            />
+          </View>
 
-        {loading ? (
-          <SquareButton
-            colorType={ColorTypes.YELLOW}
-            text={<ActivityIndicator size="small" color={BLACK} />}
-            onPress={handleSignIn}
-          />
-        ) : (
-          <SquareButton
-            colorType={ColorTypes.YELLOW}
-            text="로그인하기"
-            onPress={handleSignIn}
-          />
-        )}
+          {loading ? (
+            <SquareButton
+              colorType={ColorTypes.YELLOW}
+              text={<ActivityIndicator size="small" color={BLACK} />}
+              onPress={handleSignIn}
+            />
+          ) : (
+            <SquareButton
+              colorType={ColorTypes.YELLOW}
+              text="로그인하기"
+              onPress={handleSignIn}
+            />
+          )}
+        </View>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );

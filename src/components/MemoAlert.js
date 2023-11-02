@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingBottom: 20,
     marginTop: -200,
-    width: '70%',
+    width: 300,
     borderRadius: 20,
     overflow: 'hidden', // 자식 컨텐츠가 넘치는 경우를 처리하기 위해 오버플로우 제어
   },

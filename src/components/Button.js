@@ -38,7 +38,7 @@ SquareButton.prototype = {
 
 const btnStyle = StyleSheet.create({
   yellow: {
-    width: 360,
+    width: 350,
     alignItems: 'center',
     paddingVertical: 17,
     borderRadius: 30,

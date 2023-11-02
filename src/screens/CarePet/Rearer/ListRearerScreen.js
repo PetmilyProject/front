@@ -187,43 +187,41 @@ const ListRearerScreen = ({ petName, petId }) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      width: window.width,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     scrollView: {
       flex: 1,
       marginBottom: 10,
-      marginHorizontal: window.width * 0.04,
+      backgroundColor: BLACK,
     },
     container_invite: {
       flexDirection: 'row',
-      marginBottom: window.height * 0.015,
       flex: 1,
     },
     container_rearer: {
       flex: 1,
+
+      width: 380,
+      paddingHorizontal: 20,
     },
     rearerContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      marginTop: window.height * 0.01,
     },
-    rearerItem: {
-      width: window.width * 0.3,
-    },
+    rearerItem: { marginBottom: 10, marginHorizontal: 10 },
     dogImage: {
-      width: window.width * 0.25,
-      height: window.width * 0.25,
-      borderRadius: window.width * 0.125,
+      width: 100,
+      height: 100,
+      borderRadius: 100,
     },
     container_profile: {
       justifyContent: 'center',
       alignItems: 'center',
-      width: window.width * 0.3,
-      marginVertical: window.height * 0.01,
     },
     nicname: {
       textAlign: 'center',
-      marginTop: window.height * 0.009,
+      marginTop: 10,
       fontSize: 17,
     },
   });
@@ -283,41 +281,37 @@ const ListRearerScreen = ({ petName, petId }) => {
           leftBtnColor={GRAY.LIGHT}
           rightBtnColor={YELLOW.DEFAULT}
         />
-        <View style={{ flex: 1, marginTop: window.height * 0.03 }}>
+        <View style={{ flex: 1, width: 380 }}>
           {inviter !== email ? (
             <View></View>
           ) : (
             <>
-              <Text
-                style={{
-                  fontSize: 16,
-                  margin: window.width * 0.05,
-                  marginBottom: window.height * 0.015,
-                  flex: 1,
-                }}
-              >
-                초대하기
-              </Text>
+              <View style={{ margin: 20 }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    marginBottom: 10,
+                  }}
+                >
+                  초대하기
+                </Text>
 
-              <View style={styles.container_invite}>
-                <View style={{ flex: 0.7 }}>
+                <View style={styles.container_invite}>
                   <TextInput
                     borderRadius={30}
                     style={{
-                      marginLeft: window.width * 0.05,
-                      marginRight: window.width * 0.05,
-                      height: window.height * 0.05,
-                      width: window.width * 0.7,
-                      borderWidth: 0,
-                      borderColor: 'gray',
-                      paddingLeft: window.width * 0.05,
-                      // marginLeft: 10,
-                      // marginRight: 10,
-                      // height: 40,
-                      // width: 250,
+                      // marginLeft: window.width * 0.05,
+                      // marginRight: window.width * 0.05,
+                      // height: window.height * 0.05,
+                      // width: window.width * 0.7,
                       // borderWidth: 0,
+                      // borderColor: 'gray',
+                      // paddingLeft: window.width * 0.05,
+                      height: 40,
+                      width: '75%',
+                      borderWidth: 0,
                       backgroundColor: GRAY.BRIGHT,
-                      // paddingLeft: 20,
+                      paddingLeft: 20,
                     }}
                     onChangeText={(text) => setInviteName(text)}
                     keyboardType="email-address"
@@ -325,30 +319,28 @@ const ListRearerScreen = ({ petName, petId }) => {
                   >
                     {inviteName}
                   </TextInput>
-                </View>
 
-                <View
-                  borderRadius={30}
-                  style={{
-                    flex: 0.25,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: YELLOW.DEFAULT,
-                    height: window.height * 0.05,
-                    marginLeft: window.width * 0.19,
-                  }}
-                >
-                  <TouchableOpacity
+                  <View
+                    borderRadius={30}
                     style={{
-                      fontSize: 17,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: YELLOW.DEFAULT,
+                      width: '25%',
+                      marginLeft: 10,
                     }}
-                    onPress={() => {
-                      setVisible(true);
-                    }}
-                    paddingVertical={window.height * 0.02}
                   >
-                    <Text>초대</Text>
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        fontSize: 17,
+                      }}
+                      onPress={() => {
+                        setVisible(true);
+                      }}
+                    >
+                      <Text>초대</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </>
@@ -359,32 +351,29 @@ const ListRearerScreen = ({ petName, petId }) => {
           <Text
             style={{
               fontSize: 16,
-              marginBottom: window.height * 0.01,
-              margin: window.width * 0.05,
             }}
           >
             등록된 양육자
           </Text>
-          <ScrollView style={styles.scrollView}>
-            <View style={{ alignItems: 'flex-start' }}>
-              <View style={{ alignItems: 'center' }}>
-                <Image
-                  style={{ marginBottom: -9, width: 40, height: 40 }}
-                  source={require('../../../assets/crown.png')}
-                />
-                {mainRearer && (
-                  <View style={styles.rearerItem}>
-                    {renderRearer(mainRearer)}
-                  </View>
-                )}
-              </View>
+
+          <View style={{ alignItems: 'flex-start' }}>
+            <View style={{ alignItems: 'center' }}>
+              <Image
+                style={{ marginBottom: -5, width: 40, height: 40 }}
+                source={require('../../../assets/crown.png')}
+              />
+              {mainRearer && (
+                <View style={styles.rearerItem}>
+                  {renderRearer(mainRearer)}
+                </View>
+              )}
             </View>
-            <View style={styles.rearerContainer}>
-              {subRearer.map((item) => (
-                <RearerItem key={item.linkId} owner={item} />
-              ))}
-            </View>
-          </ScrollView>
+          </View>
+          <View style={styles.rearerContainer}>
+            {subRearer.map((item) => (
+              <RearerItem key={item.linkId} owner={item} />
+            ))}
+          </View>
         </View>
       </View>
     </ScrollView>

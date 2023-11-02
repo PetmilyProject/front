@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { GRAY, WHITE, YELLOW } from '../../../colors';
+import { BLACK, GRAY, WHITE, YELLOW } from '../../../colors';
 import { CarePetRoutes } from '../../../navigations/routes';
 import { useNavigation } from '@react-navigation/native';
 import SingleButtonAlert from '../../../components/SingleButtonAlert';
@@ -209,7 +209,7 @@ const ScheduleListScreen = ({ petName, petId }) => {
             {
               opacity: isSelected ? 0.4 : 1,
               backgroundColor: backgroundColor,
-              width: window.width * 0.9,
+              // width: window.width * 0.9,
             },
           ]}
         >
@@ -227,17 +227,15 @@ const ScheduleListScreen = ({ petName, petId }) => {
           </TouchableOpacity>
 
           <View style={styles.container_detail}>
-            <Text style={[styles.details, { fontSize: 0.046 * window.width }]}>
+            <Text style={[styles.details, { fontSize: 17 }]}>
               {item.schedule}
             </Text>
           </View>
           <View style={styles.container_time}>
-            <Text style={[styles.time, { fontSize: 0.046 * window.width }]}>
-              {item.hm}
-            </Text>
+            <Text style={[styles.time, { fontSize: 17 }]}>{item.hm}</Text>
           </View>
           <View style={styles.container_executor}>
-            <Text style={[styles.executor, { fontSize: 0.036 * window.width }]}>
+            <Text style={[styles.executor, { fontSize: 15 }]}>
               {item.executor}
             </Text>
           </View>
@@ -323,15 +321,26 @@ const ScheduleListScreen = ({ petName, petId }) => {
           <Text style={styles.select_date}>▶</Text>
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={responseData}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        style={styles.schedule_container}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-        }
-      />
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+
+            paddingLeft: 27,
+          }}
+        >
+          <FlatList
+            data={responseData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            style={[styles.schedule_container]}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+          />
+        </View>
+      </View>
     </View>
   );
 };
@@ -339,8 +348,10 @@ const ScheduleListScreen = ({ petName, petId }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
+    alignItems: 'center',
     backgroundColor: WHITE,
+
+    // backgroundColor: YELLOW.DEFAULT,
   },
   container_row: {
     flexDirection: 'row',
@@ -355,17 +366,15 @@ const styles = StyleSheet.create({
     fontSize: 22,
   },
   schedule_container: {
-    flex: 1,
-    width: '90%',
-    marginLeft: 5,
-    marginRight: 5,
+    width: 370,
     marginTop: 20,
   },
   scheduleItem: {
-    width: 320,
+    width: 340,
     height: 50,
     flexDirection: 'row',
     alignItems: 'center',
+
     marginBottom: 15,
     borderRadius: 30,
     paddingHorizontal: 10,
@@ -379,19 +388,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   container_time: {
-    flex: 1,
     width: '20%',
     alignItems: 'flex-end',
-    marginRight: 5,
   },
   time: {
     fontSize: 12,
     fontWeight: '500',
-    marginRight: 15,
+    marginRight: 5,
   },
   container_executor: {
-    flex: 1,
-    width: '10%',
+    width: '20%',
     alignItems: 'flex-start',
     margin: 5,
   },

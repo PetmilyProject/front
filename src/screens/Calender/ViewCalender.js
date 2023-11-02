@@ -1,4 +1,10 @@
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { GRAY, WHITE, YELLOW } from '../../colors';
 import { useEffect, useState } from 'react';

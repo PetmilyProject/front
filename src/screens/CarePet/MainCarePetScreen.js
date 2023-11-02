@@ -126,8 +126,7 @@ const styles = StyleSheet.create({
   line: {
     backgroundColor: GRAY.LIGHT,
     height: 1,
-    width: '95%',
-    marginTop: 15,
+    width: 380,
   },
   container2: {
     flex: 3.5,
